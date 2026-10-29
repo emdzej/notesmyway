@@ -44,6 +44,9 @@ targets:
     settings:
       base:
         SWIFT_VERSION: "6.0"
+        # A multiplatform target gets the iOS runpath; macOS bundles keep frameworks in Contents/Frameworks.
+        "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "$(inherited) @executable_path/../Frameworks"
+        "LD_RUNPATH_SEARCH_PATHS[sdk=iphone*]": "$(inherited) @executable_path/Frameworks"
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGN_STYLE: Manual
         TARGETED_DEVICE_FAMILY: "1,2"
