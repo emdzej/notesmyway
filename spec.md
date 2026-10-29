@@ -15,7 +15,7 @@
 
 ### Non-goals (v1)
 - Real-time multi-user collaboration or CRDTs.
-- Android, Windows, or web clients. The format and sync protocol are specified so these can come later.
+- Android, Windows, Linux or web clients in v1. The format and sync protocol are specified so these can come later (see §9).
 - A plugin system. Revisit after v1.
 
 ---
@@ -381,3 +381,14 @@ Each milestone ends with something that works.
 ## 9. Open questions
 - Daily notes / templates: v1 or later?
 - Apple Pencil drawings: as `.png` attachments with a `.drawing` sidecar, or out of scope?
+
+## 9. Later platforms (roadmap)
+
+Order, each step building on the previous one:
+
+1. **nmw server** (§7.3) — needed for self-hosted sync anyway.
+2. **Web client, served by the server.** TypeScript; editor on CodeMirror 6 with live-preview decorations (Obsidian-style blend editing), table grid widget, `{…}` attributes, frontmatter chips. Formulas evaluated with the same semantics as the Swift engine / vitepress-plugin-markdownformula (shared test corpus: the engine's FormulaTests cases exported as JSON). Themes: the §4.5 JSON schema, mapped to CSS variables. Works on the server's copy of a notebook; offline cache later.
+3. **Hosted cloud.** The same server, multi-tenant: accounts (Sign in with Apple / passkeys), quotas, and end-to-end encryption (§7.3 "Later") on by default, so the operator stores ciphertext only.
+4. **Windows and Linux desktop.** The web client wrapped in Tauri, with direct file-system access: a local folder is a notebook exactly as on the Mac (same `.nmw/` index-free conventions; the index is rebuilt locally), sync through the server. Not native ports: the Swift engine depends on TextKit 2.
+5. **Android** — Tauri mobile or native, decided after 4.
+

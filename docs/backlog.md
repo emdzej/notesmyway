@@ -20,3 +20,11 @@ What's done, and what comes next. Dates aren't promised.
 - **Self-hosted sync** — a small Go server with device pairing, for people who'd rather not use iCloud.
 - **System integration** — Spotlight, a Share extension, widgets, Shortcuts and Quick Note.
 - Smaller things: a command palette, find and replace, restoring from the trash, Move to Notebook…, an option to rename files after their first heading.
+
+## Later
+
+- **Web app, self-hosted** — the same notebooks in a browser, served by the self-hosted sync server: plain files, the same Markdown features (blend editing, tables, formulas, themes), working against the server's copy.
+- **Web app in the cloud** — a hosted version of the same server for people who don't want to run one, with accounts and end-to-end encryption, so notes stay unreadable to whoever runs it.
+- **Windows and Linux** — desktop apps built on the web app's editor, opening local folders as notebooks just like the Mac app, and syncing through the server.
+- **Android** — after the desktop apps, on the same foundation.
+
