@@ -65,7 +65,9 @@ nmw/
       sketch.jpg                original file names; " 2", " 3" appended on clashes
   .nmw/
     config.json                 notebook settings (synced)
-    trash/                      soft-deleted notes, kept 30 days
+    trash/                      soft-deleted notes and folders, kept 30 days ("Recently Deleted")
+      <unix time> <path, / as " - ">   one item per trashed note or folder
+      .index.json               item name → original path (exact restore)
 ```
 
 **Attachments** are configurable per notebook (Settings window on macOS, "Notebook Settings…" on iOS), stored in `.nmw/config.json`:
@@ -78,8 +80,10 @@ nmw/
 
 ```json
 { "attachments": { "folderName": ".attachments", "placement": "nextToNote", "showInSidebar": false },
-  "webPreviews": true }
+  "webPreviews": true, "renameFilesToTitle": false }
 ```
+
+`renameFilesToTitle` (Notebook settings: "Rename files to match the first heading", default off): after the first `#` heading changes and typing pauses ~1.5 s, or when the note is left, the file is renamed to the sanitized heading (`/` `:` `\` → `-`, no leading dots, ≤ 120 characters) through the normal rename + link fix (banner with Undo). Skipped when the name is taken, the heading is empty or starts with "Untitled", or the user undid that rename for that heading. It's a notebook setting so every device renames the same way.
 
 Changing a setting never moves existing files. Keys nmw doesn't know are kept when it saves.
 
@@ -263,9 +267,11 @@ Apple Notes structure, Obsidian power:
 - **Folders:** the notebook's own folder is the top row of the tree, with its subfolders nested under it, all expanded; a folder lists its own notes and those in its subfolders (captioned with the subfolder). The notebook root lists only its own notes (All Notes lists everything).
 - **Three columns** (`NavigationSplitView`): sidebar with notebooks, folders, tags, and Pinned / Recent / Trash; note list with title, date, two-line snippet, and thumbnail of the first image; editor. iPhone collapses to a stack.
 - **Note list:** sort by modified, created, or title. Pinned notes on top. Swipe actions on iOS: pin, move, delete.
-- **New note:** Cmd-N, or a toolbar button that creates `Untitled.md` and focuses it. The file name follows the H1, debounced.
+- **New note:** Cmd-N, or a toolbar button that creates `Untitled.md` and focuses it. The file name follows the H1 (debounced) when the notebook's `renameFilesToTitle` is on.
 - **Search:** a toolbar search field. FTS over titles and bodies, plus `tag:` and `path:` filters.
-- **Quick switcher** (Cmd-O) and command palette (Cmd-K) on macOS. "Open File…" is Shift-Cmd-O.
+- **Quick switcher** (Cmd-O) and **command palette** (Shift-Cmd-P; on iOS also in the notebook menu): fuzzy search over commands (note, folder, format, view, notebook, theme, go-to) and notes, ↑/↓ + Return. "Open File…" is Shift-Cmd-O.
+- **Recently Deleted:** a sidebar row (count badge) listing `.nmw/trash`: original path, deletion date, days left. Notes open read-only; Restore (original path, "Name 2" if taken, parents recreated), Delete Now, Empty Trash.
+- **Move to Notebook…:** writes the note in the target notebook first, copies the attachments it links to from its attachment folder to the target's attachment location (per that notebook's config) and rewrites those links, then removes the original. Links from other notes in the source notebook aren't rewritten; the user is warned with their count first. The originals of the attachments stay (other notes may use them).
 - **Conflicts while editing:** an outside change is adopted silently when the editor has no unsaved text; otherwise a bar offers Keep Mine, Use Disk Version, or Keep Both (saves the other version as `Note (conflict <date>).md`).
 - **Panels:** backlinks and outline, as an inspector on macOS and iPad, or a sheet on iPhone.
 - **System integration:** Spotlight (CoreSpotlight), a Share extension that appends to Inbox or creates a note, widgets (pinned or recent notes), App Intents / Shortcuts, Quick Note on macOS.

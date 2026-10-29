@@ -40,10 +40,13 @@ public struct NotebookConfig: Equatable, Sendable {
     public var attachments: Attachments
     /// Fetch previews for web links marked `{.preview}`.
     public var webPreviews: Bool
+    /// Rename a note's file to match its first heading (default off).
+    public var renameFilesToTitle: Bool
 
-    public init(attachments: Attachments = Attachments(), webPreviews: Bool = true) {
+    public init(attachments: Attachments = Attachments(), webPreviews: Bool = true, renameFilesToTitle: Bool = false) {
         self.attachments = attachments
         self.webPreviews = webPreviews
+        self.renameFilesToTitle = renameFilesToTitle
     }
 
     public static func url(for notebook: Notebook) -> URL {
@@ -61,6 +64,7 @@ public struct NotebookConfig: Equatable, Sendable {
             if let show = a["showInSidebar"] as? Bool { config.attachments.showInSidebar = show }
         }
         if let web = json["webPreviews"] as? Bool { config.webPreviews = web }
+        if let rename = json["renameFilesToTitle"] as? Bool { config.renameFilesToTitle = rename }
         return config
     }
 
@@ -74,6 +78,7 @@ public struct NotebookConfig: Equatable, Sendable {
         a["showInSidebar"] = attachments.showInSidebar
         json["attachments"] = a
         json["webPreviews"] = webPreviews
+        json["renameFilesToTitle"] = renameFilesToTitle
         let data = try JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys])
         try NoteFile(url: url).write(String(decoding: data, as: UTF8.self) + "\n", replacing: nil)
     }

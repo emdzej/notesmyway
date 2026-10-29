@@ -131,6 +131,23 @@ public final class Library {
         if !pendingStandaloneFiles.contains(url) { pendingStandaloneFiles.append(url) }
     }
 
+    /// Moves a note to another notebook in the library (into `folder` there),
+    /// with the attachments it links to in its attachment folder. Links from
+    /// other notes to it aren't changed (they break; the UI warns first).
+    @discardableResult
+    public func move(_ path: NotebookPath, from source: NotebookSession, toNotebook id: String,
+                     folder: NotebookPath? = nil) async throws -> NotebookPath {
+        guard let target = session(for: id), target.notebook != source.notebook else {
+            throw CocoaError(.fileWriteUnknown)
+        }
+        let text = source.detach(path)
+        let result = try NoteTransfer.move(path, from: source.notebook, fromConfig: source.config,
+                                           to: target.notebook, toConfig: target.config, folder: folder, text: text)
+        await source.reindex([path])
+        await target.reindex([result.path] + result.attachments.compactMap(target.notebook.path(for:)))
+        return result.path
+    }
+
     /// Stops all sessions, saving open notes.
     public func shutdown() {
         for session in sessions.values { session.stop() }

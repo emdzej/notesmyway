@@ -24,8 +24,10 @@ struct NotebookView: View {
             SidebarView(session: session, library: library, addNotebook: addNotebook)
                 .navigationSplitViewColumnWidth(min: 180, ideal: 220)
         } content: {
-            NoteListView(session: session)
-                .navigationSplitViewColumnWidth(min: 240, ideal: 300)
+            Group {
+                if session.scope == .trash { TrashListView(session: session) } else { NoteListView(session: session, library: library) }
+            }
+            .navigationSplitViewColumnWidth(min: 240, ideal: 300)
         } detail: {
             detail
         }
@@ -37,6 +39,9 @@ struct NotebookView: View {
             if let fix = session.linkFix { LinkFixBanner(session: session, fix: fix).padding() }
         }
         .onChange(of: session.selection) { _, new in session.closeEditors(except: new) }
+        .sheet(isPresented: $session.isShowingPalette) {
+            CommandPalette(session: session, library: library)
+        }
         .sheet(isPresented: $session.isShowingSwitcher) {
             NotePicker(prompt: "Open note…", notes: (try? session.index.notes(sortedBy: .modified)) ?? []) { note in
                 session.isShowingSwitcher = false
@@ -95,9 +100,12 @@ struct NotebookView: View {
     #endif
 
     @ViewBuilder private var detail: some View {
-        if let path = session.selection {
+        if session.scope == .trash {
+            TrashDetail(session: session)
+        } else if let path = session.selection {
+            let model = session.editor(for: path)
             NoteEditorView(
-                model: session.editor(for: path),
+                model: model,
                 root: session.notebook.root,
                 previews: session.previews,
                 attachments: session.config.attachments,
@@ -106,9 +114,11 @@ struct NotebookView: View {
                 onLink: handle,
                 onStoredFiles: { _ in },
                 backlinks: { (try? session.index.backlinks(to: path)) ?? [] },
-                onOpenNote: { session.selection = $0 }
+                onOpenNote: { session.selection = $0 },
+                onController: { session.activeController = $0 }
             )
-            .id(path)
+            // The model, not the path: a rename (e.g. after the heading) keeps the editor.
+            .id(model.documentID)
             #if os(macOS)
             .navigationTitle(session.notes.first { $0.path == path }?.title ?? path.stem)
             #else
@@ -183,7 +193,6 @@ struct SidebarView: View {
     @State private var folderName = ""
     @State private var errorMessage: String?
     @State private var trashingFolder: NotebookPath?
-    @State private var showingSettings = false
     @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -234,6 +243,13 @@ struct SidebarView: View {
                     }
                 }
             }
+            if !session.trashItems.isEmpty || session.scope == .trash {
+                Section {
+                    Label("Recently Deleted", systemImage: "trash")
+                        .badge(session.trashItems.count)
+                        .tag(NotebookSession.Scope.trash)
+                }
+            }
         }
         #if os(macOS)
         .safeAreaInset(edge: .top) { NotebookMenu(session: session, library: library, addNotebook: addNotebook).padding(.horizontal, 10).padding(.vertical, 6) }
@@ -252,22 +268,22 @@ struct SidebarView: View {
                     .fixedSize()
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Button { showingSettings = true } label: { Label("Settings", systemImage: "gearshape") }
+                Button { session.isShowingSettings = true } label: { Label("Settings", systemImage: "gearshape") }
             }
         }
-        .sheet(isPresented: $showingSettings) { MobileSettings(session: session) }
+        .sheet(isPresented: $session.isShowingSettings) { MobileSettings(session: session) }
         #endif
         #if os(macOS)
         .onDeleteCommand {
             if case .folder(let folder?) = session.scope { trashingFolder = folder }
         }
         #endif
-        .confirmationDialog("Move “\(trashingFolder?.name ?? "")” to the Trash?", isPresented: Binding(get: { trashingFolder != nil }, set: { if !$0 { trashingFolder = nil } })) {
+        .confirmationDialog("Move “\(trashingFolder?.name ?? "")” to Recently Deleted?", isPresented: Binding(get: { trashingFolder != nil }, set: { if !$0 { trashingFolder = nil } })) {
             Button("Move to Trash", role: .destructive) {
                 if let folder = trashingFolder { run { try await session.moveFolderToTrash(folder) } }
             }
         } message: {
-            Text("The folder and the notes in it go to the notebook’s trash (.nmw/trash), where they’re kept for 30 days.")
+            Text("The folder and the notes in it go to Recently Deleted (.nmw/trash), where they’re kept for 30 days and can be restored.")
         }
         .alert("Rename Folder", isPresented: Binding(get: { renamingFolder != nil }, set: { if !$0 { renamingFolder = nil } })) {
             TextField("Name", text: $folderName)
@@ -356,7 +372,6 @@ struct NotebookMenu: View {
     let session: NotebookSession
     let library: Library
     let addNotebook: () -> Void
-    @State private var showingSettings = false
 
     var body: some View {
         Menu {
@@ -367,8 +382,9 @@ struct NotebookMenu: View {
             }
             Divider()
             Button("Add Notebook…", action: addNotebook)
+            Button("Command Palette…", systemImage: "command") { session.isShowingPalette = true }
             #if !os(macOS)
-            Button("Settings…") { showingSettings = true }
+            Button("Settings…") { session.isShowingSettings = true }
             #endif
             if let current = library.entries.first(where: { $0.id == library.selectedID }) {
                 Button("Remove “\(current.name)” from Notes my Way") { library.remove(current) }
@@ -387,9 +403,6 @@ struct NotebookMenu: View {
         }
         .menuStyle(.borderlessButton)
         .frame(maxWidth: .infinity, alignment: .leading)
-        #if !os(macOS)
-        .sheet(isPresented: $showingSettings) { MobileSettings(session: session) }
-        #endif
     }
 }
 

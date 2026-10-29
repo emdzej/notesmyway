@@ -25,7 +25,7 @@ In a table cell the bar changes: it shows the cell's address (such as `B3`) and 
 
 ## The Format menu (Mac)
 
-The same commands, with the shortcuts Apple Notes uses:
+The same commands, with the shortcuts Apple Notes uses. They're also in the command palette (**⇧⌘P**): type "bold", "check", "table"…
 
 | Command | Shortcut |
 | --- | --- |

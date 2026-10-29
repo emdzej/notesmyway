@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import MarkdownEngine
 import NmwCore
 import Observation
 
@@ -40,6 +41,8 @@ public final class NotebookSession {
         case all, pinned
         case folder(NotebookPath?)
         case tag(String)
+        /// Recently Deleted: `.nmw/trash`.
+        case trash
     }
 
     public let notebook: Notebook
@@ -74,6 +77,32 @@ public final class NotebookSession {
 
     /// The quick switcher (⌘O) is showing.
     public var isShowingSwitcher = false
+    /// The command palette (⇧⌘P) is showing.
+    public var isShowingPalette = false
+    /// iPhone / iPad Settings sheet (the Mac has its Settings window).
+    public var isShowingSettings = false
+    /// Asks the note list to show its Rename alert for this note (palette).
+    public var renameRequest: NotebookPath?
+    /// Asks the note list to show its Move to Notebook picker for this note (palette).
+    public var moveToNotebookRequest: NotebookPath?
+
+    /// The editor of the selected note (format commands in the palette).
+    @ObservationIgnored public weak var activeController: MarkdownEditorController?
+
+    /// Recently Deleted, newest first.
+    public private(set) var trashItems: [TrashItem] = []
+    /// The selected Recently Deleted item.
+    public var trashSelection: TrashItem.ID?
+    public var trash: NotebookTrash { NotebookTrash(notebook: notebook) }
+
+    /// How long typing must pause before a file is renamed after its heading.
+    @ObservationIgnored public var titleRenameDelay: Duration = .milliseconds(1500)
+    @ObservationIgnored private var titleRenameTask: Task<Void, Never>?
+    @ObservationIgnored private var pendingTitleRename: NotebookPath?
+    /// The rename made after a heading, so undoing it isn't redone on the next save.
+    @ObservationIgnored private var lastTitleRename: (from: NotebookPath, to: NotebookPath)?
+    /// Headings the user undid a rename for, by note: left alone while unchanged.
+    @ObservationIgnored private var declinedTitles: [NotebookPath: String] = [:]
 
     @ObservationIgnored private var editors: [NotebookPath: NoteEditorModel] = [:]
     /// The move being made by nmw itself, so its banner can offer undoing it.
@@ -142,11 +171,19 @@ public final class NotebookSession {
         refreshNotes()
         tags = (try? index.tags()) ?? []
         folders = Self.folderTree(in: notebook, config: config)
+        refreshTrash()
+    }
+
+    public func refreshTrash() {
+        trashItems = trash.items()
+        if let selected = trashSelection, !trashItems.contains(where: { $0.id == selected }) { trashSelection = nil }
     }
 
     private func refreshNotes() {
         do {
-            if !searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+            if scope == .trash {
+                notes = []
+            } else if !searchText.trimmingCharacters(in: .whitespaces).isEmpty {
                 var query = searchText
                 switch scope {
                 case .folder(let folder?): query += " path:\"\(folder.rawValue)/\""
@@ -162,6 +199,7 @@ public final class NotebookSession {
                 // A folder lists its notes and its subfolders' notes; the notebook root only its own.
                 case .folder(let folder): notes = try index.notes(in: folder, recursive: folder != nil, sortedBy: sort)
                 case .tag(let tag): notes = try index.notes(taggedWith: tag, sortedBy: sort)
+                case .trash: notes = []
                 }
             }
         } catch {
@@ -209,13 +247,52 @@ public final class NotebookSession {
             editor.flush()
             editors[path] = nil
         }
+        // Leaving a note renames it right away (instead of after the pause).
+        if let pending = pendingTitleRename, pending != keep {
+            titleRenameTask?.cancel()
+            Task { await renameToTitleIfNeeded() }
+        }
     }
 
     private func fileSaved(_ url: URL) {
         guard let path = notebook.path(for: url) else { return }
         Task {
             if let changes = try? await indexer.update([path]) { await apply(changes, fromSave: true) }
+            scheduleTitleRename(path)
         }
+    }
+
+    // MARK: File names from headings
+
+    /// With "Rename files to match the first heading" on, renames the note
+    /// once typing pauses (or the note is left).
+    func scheduleTitleRename(_ path: NotebookPath) {
+        guard config.renameFilesToTitle, FileKind(path: path) == .note else { return }
+        pendingTitleRename = path
+        titleRenameTask?.cancel()
+        let delay = titleRenameDelay
+        titleRenameTask = Task { [weak self] in
+            try? await Task.sleep(for: delay)
+            guard !Task.isCancelled else { return }
+            await self?.renameToTitleIfNeeded()
+        }
+    }
+
+    /// Renames the pending note after its first heading, through the usual
+    /// rename (links fixed, banner with Undo). Skips taken names, empty or
+    /// "Untitled" headings, and headings whose rename the user undid.
+    func renameToTitleIfNeeded() async {
+        guard let path = pendingTitleRename else { return }
+        pendingTitleRename = nil
+        guard config.renameFilesToTitle else { return }
+        let text = editors[path]?.text ?? (try? NoteFile(url: notebook.url(for: path)).read().text)
+        guard let text, let heading = NoteTitle.firstHeading(in: text), let stem = NoteTitle.fileStem(for: heading),
+              stem != path.stem, declinedTitles[path] != stem else { return }
+        let name = path.pathExtension.isEmpty ? stem : stem + "." + (path.name as NSString).pathExtension
+        guard let target = path.parent.flatMap({ $0.appending(name) }) ?? NotebookPath(name) else { return }
+        let caseOnly = target.rawValue.lowercased() == path.rawValue.lowercased()
+        guard caseOnly || !FileManager.default.fileExists(atPath: notebook.url(for: target).path) else { return }
+        if let renamed = try? await rename(path, to: stem) { lastTitleRename = (path, renamed) }
     }
 
     // MARK: Changes
@@ -272,6 +349,11 @@ public final class NotebookSession {
         linkFix = nil
         for edit in fix.undo { _ = write(edit.newText, to: edit.path, expecting: edit.oldText) }
         _ = try? await indexer.update(fix.undo.map(\.path))
+        if let move = fix.move, let title = lastTitleRename, title.from == move.from, title.to == move.to {
+            // Don't rename it again for the same heading.
+            declinedTitles[move.from] = move.to.stem
+            lastTitleRename = nil
+        }
         if let move = fix.move {
             let fixes = fixesLinksOnMove
             fixesLinksOnMove = false   // the edits above already restored the links
@@ -433,25 +515,62 @@ public final class NotebookSession {
             editor.flush()
             editors[open] = nil
         }
-        let trash = notebook.root.appending(path: ".nmw/trash", directoryHint: .isDirectory)
-        try FileManager.default.createDirectory(at: trash, withIntermediateDirectories: true)
-        let stamp = Int(Date().timeIntervalSince1970)
-        let target = trash.appending(path: "\(stamp) \(path.rawValue.replacingOccurrences(of: "/", with: " - "))")
+        let target = try trash.prepare(path)
         try Self.coordinatedMove(notebook.url(for: path), target)
         if let selected = selection, selected == path || selected.isInside(path) { selection = nil }
         if let changes = try? await indexer.update([path]) { await apply(changes, fromSave: true) }
+        refreshTrash()
     }
 
     /// Deletes trashed items older than `days` (by the time they were trashed).
-    public func purgeTrash(olderThan days: Int = 30, now: Date = Date()) {
-        let trash = notebook.root.appending(path: ".nmw/trash", directoryHint: .isDirectory)
-        guard let items = try? FileManager.default.contentsOfDirectory(atPath: trash.path) else { return }
-        let cutoff = now.timeIntervalSince1970 - Double(days) * 86_400
-        for item in items {
-            // Names start with the Unix time they were trashed at.
-            guard let stamp = item.split(separator: " ", maxSplits: 1).first.flatMap({ TimeInterval($0) }), stamp < cutoff else { continue }
-            try? FileManager.default.removeItem(at: trash.appending(path: item))
+    public func purgeTrash(olderThan days: Int = NotebookTrash.keepDays, now: Date = Date()) {
+        trash.purge(olderThan: days, now: now)
+        refreshTrash()
+    }
+
+    /// Puts a trashed note or folder back where it was ("Name 2" if that's
+    /// taken) and selects it.
+    @discardableResult
+    public func restore(_ item: TrashItem) async throws -> NotebookPath {
+        let restored = try trash.restore(item)
+        if let changes = try? await indexer.update([restored]) { await apply(changes, fromSave: true) }
+        refreshTrash()
+        if item.isFolder {
+            scope = .folder(restored)
+        } else {
+            scope = .folder(restored.parent)
+            selection = restored
         }
+        return restored
+    }
+
+    /// Deletes a trashed item for good.
+    public func deleteForever(_ item: TrashItem) throws {
+        try trash.delete(item)
+        refreshTrash()
+    }
+
+    public func emptyTrash() throws {
+        try trash.empty()
+        refreshTrash()
+    }
+
+    // MARK: Other notebooks
+
+    /// The note's current text (an open editor's, else the file's), saving
+    /// the editor and closing it, before the note leaves this notebook.
+    func detach(_ path: NotebookPath) -> String? {
+        let text = editors[path]?.text
+        editors[path]?.flush()
+        editors[path] = nil
+        if selection == path { selection = nil }
+        if pendingTitleRename == path { pendingTitleRename = nil }
+        return text
+    }
+
+    /// Re-reads `paths` after files changed outside the session's own operations.
+    func reindex(_ paths: [NotebookPath]) async {
+        if let changes = try? await indexer.update(paths) { await apply(changes, fromSave: true) }
     }
 
     static func coordinatedMove(_ from: URL, _ to: URL) throws {

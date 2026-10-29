@@ -11,7 +11,12 @@ import SwiftUI
 
 struct NoteListView: View {
     @Bindable var session: NotebookSession
+    let library: Library
     @State private var renaming: NoteSummary?
+    /// Move to Notebook…: the note whose target notebook is being picked.
+    @State private var movingToNotebook: NotebookPath?
+    /// Move to Notebook… confirmed only after warning about links that will break.
+    @State private var pendingMove: PendingNotebookMove?
     @State private var newName = ""
     @State private var errorMessage: String?
     /// A click selects a row but doesn't focus the list once the editor had
@@ -77,9 +82,60 @@ struct NoteListView: View {
         } message: {
             Text("Links to this note are updated.")
         }
+        .confirmationDialog("Move “\(movingToNotebook?.stem ?? "")” to Notebook", isPresented: Binding(get: { movingToNotebook != nil }, set: { if !$0 { movingToNotebook = nil } }), titleVisibility: .visible) {
+            ForEach(otherNotebooks) { entry in
+                Button(entry.name) { if let path = movingToNotebook { prepareMove(path, to: entry) } }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("The note and the attachments it uses move to the other notebook.")
+        }
+        .alert("Links Will Break", isPresented: Binding(get: { pendingMove != nil }, set: { if !$0 { pendingMove = nil } }), presenting: pendingMove) { move in
+            Button("Move Anyway", role: .destructive) { perform(move) }
+            Button("Cancel", role: .cancel) {}
+        } message: { move in
+            Text(move.backlinks == 1
+                 ? "1 note in “\(session.name)” links to “\(move.path.stem)”. That link will break."
+                 : "\(move.backlinks) notes in “\(session.name)” link to “\(move.path.stem)”. Their links will break.")
+        }
+        .onChange(of: session.renameRequest) { _, path in
+            guard let path else { return }
+            session.renameRequest = nil
+            if let note = session.notes.first(where: { $0.path == path }) ?? (try? session.index.note(at: path)) {
+                newName = note.path.stem
+                renaming = note
+            }
+        }
+        .onChange(of: session.moveToNotebookRequest) { _, path in
+            guard let path else { return }
+            session.moveToNotebookRequest = nil
+            requestMoveToNotebook(path)
+        }
         .alert("Couldn’t Complete", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK", role: .cancel) {}
         } message: { Text(errorMessage ?? "") }
+    }
+
+    private var otherNotebooks: [Library.Entry] {
+        library.entries.filter { $0.id != session.notebook.localID }
+    }
+
+    private func requestMoveToNotebook(_ path: NotebookPath) {
+        if otherNotebooks.isEmpty {
+            errorMessage = "Add another notebook first (notebook menu › Add Notebook…)."
+        } else {
+            movingToNotebook = path
+        }
+    }
+
+    private func prepareMove(_ path: NotebookPath, to entry: Library.Entry) {
+        let backlinks = ((try? session.index.backlinks(to: path)) ?? []).filter { $0.path != path }.count
+        let move = PendingNotebookMove(path: path, entryID: entry.id, backlinks: backlinks)
+        if backlinks > 0 { pendingMove = move } else { perform(move) }
+    }
+
+    private func perform(_ move: PendingNotebookMove) {
+        run { try await library.move(move.path, from: session, toNotebook: move.entryID) }
     }
 
     /// Where a note sits below the selected folder ("2026/Q4"), nil when directly in it.
@@ -95,6 +151,7 @@ struct NoteListView: View {
         case .pinned: "Pinned"
         case .folder(let folder): folder?.name ?? session.name
         case .tag(let tag): "#\(tag)"
+        case .trash: "Recently Deleted"
         }
     }
 
@@ -107,6 +164,7 @@ struct NoteListView: View {
                 Button(folder.path.rawValue) { run { try await session.move(note.path, toFolder: folder.path) } }
             }
         }
+        Button("Move to Notebook…") { requestMoveToNotebook(note.path) }
         Divider()
         Button("Move to Trash", role: .destructive) { trash(note.path) }
     }
@@ -188,4 +246,11 @@ struct NoteRow: View {
         return Image(uiImage: image)
         #endif
     }
+}
+
+struct PendingNotebookMove: Identifiable {
+    var id: String { path.rawValue + "→" + entryID }
+    let path: NotebookPath
+    let entryID: String
+    let backlinks: Int
 }

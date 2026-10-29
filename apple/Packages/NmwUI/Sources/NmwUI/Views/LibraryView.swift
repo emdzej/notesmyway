@@ -310,6 +310,9 @@ struct NmwCommands: Commands {
             Button("Open Quickly…") { session?.isShowingSwitcher = true }
                 .keyboardShortcut("o")
                 .disabled(session == nil)
+            Button("Command Palette…") { session?.isShowingPalette = true }
+                .keyboardShortcut("p", modifiers: [.command, .shift])
+                .disabled(session == nil)
         }
         CommandGroup(after: .textEditing) {
             Button("Link to Note…") { linkToNote?.run() }

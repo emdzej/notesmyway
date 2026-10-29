@@ -23,7 +23,8 @@ Right-click (or long-press) a note in the list:
 - **Pin / Unpin:** pinned notes are listed first and gathered under **Pinned**. Pinning writes `pinned: true` into the note's [frontmatter](/guide/writing#frontmatter), so it syncs with the file.
 - **Rename…:** renames the file and updates every link to it.
 - **Move To:** moves it to another folder, again updating links.
-- **Move to Trash:** the **Delete** key on the Mac; on iPhone and iPad, swipe left. Swipe right to pin.
+- **Move to Trash:** the **Delete** key on the Mac; on iPhone and iPad, swipe left. Swipe right to pin. It goes to [Recently Deleted](#recently-deleted).
+- **File names from headings:** with **Rename files to match the first heading** on (notebook settings), a note's file is renamed after its first `# heading` when you pause typing or leave the note. Links to it are updated, and the banner offers **Undo**.
 
 After a rename or a move, a banner says how many notes had their links updated, with an **Undo**.
 
@@ -35,14 +36,28 @@ After a rename or a move, a banner says how many notes had their links updated, 
 
 The search field above the note list filters as you type. It matches every word you type by prefix, ignoring case and accents. Two filters narrow it down: `tag:baking` (or `#baking`) and `path:Projects/`.
 
-## Quick switcher, outline and backlinks
+## Quick switcher, command palette, outline and backlinks
 
 - **⌘O** opens a quick switcher: type part of a note's name to jump to it.
+- **⇧⌘P** opens the **command palette** (on iPhone and iPad also from the notebook menu, **Command Palette…**). Type a few letters of any command or note: new note or folder, pin, rename, move to a folder or another notebook, move to trash, formatting, Markdown source, the outline, switching notebooks or themes, going to a folder or tag. **↑** / **↓** pick, **Return** runs it.
 - **⌥⌘I**, or the inspector button, shows the note's **outline** (tap a heading to jump there) and its **backlinks**, the notes that link to it.
 
-## Trash
+## Recently Deleted
 
-Trashed notes and folders go to the notebook's `.nmw/trash/` folder and are kept there for 30 days. To get one back before then, move it out of that folder in Finder or Files.
+Deleted notes and folders go to **Recently Deleted** at the bottom of the sidebar, and are kept there for 30 days. Each item shows where it was and how many days it has left.
+
+- **See a deleted note:** select it; it opens read-only.
+- **Restore:** the **Restore** button, the context menu, or on iPhone and iPad a swipe right. The note or folder goes back to where it was, recreating its folder if needed. If something with the same name is there now, it comes back as "Name 2".
+- **Delete Now:** the context menu, a swipe left, or the **Delete** key on the Mac. This can't be undone.
+- **Empty Trash:** in the toolbar of Recently Deleted.
+
+On disk, Recently Deleted is the notebook's hidden `.nmw/trash/` folder.
+
+## Move to another notebook
+
+**Move to Notebook…** (context menu of a note, or the command palette) moves a note into another notebook in the app, with the images and files it uses from its attachment folder. They're copied to the other notebook's attachment folder, following its settings, and the note's links to them are updated.
+
+If other notes in the current notebook link to the note, the app tells you how many first: those links will stop working, because they point into a notebook the note has left.
 
 ## Changes made elsewhere
 
