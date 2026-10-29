@@ -1,4 +1,4 @@
-# nmy — Notes My Way
+# nmw — Notes my Way
 
 **Status:** living document. Last updated 2026-10-29. Supersedes `legacy/spec-web.md` (web-first design, archived).
 **One-line:** an Apple Notes–feeling, plain-markdown notes app for macOS and iOS/iPadOS. Notes are plain `.md` files in plain folders; the editor blends raw markdown with WYSIWYG.
@@ -7,11 +7,11 @@
 
 ## 1. Principles
 
-1. **Files are the truth.** A notebook is a folder of `.md` files plus attachments. Anything nmy does, you can also do with `vim`, `grep`, `git`, or any other markdown editor.
+1. **Files are the truth.** A notebook is a folder of `.md` files plus attachments. Anything nmw does, you can also do with `vim`, `grep`, `git`, or any other markdown editor.
 2. **Blend, don't hide.** Markdown renders in place. Markers like `**` and `#` collapse when the cursor is elsewhere and reappear on the line being edited. The bytes on disk are exactly what you typed.
 3. **Native first.** SwiftUI + TextKit 2 on Apple platforms. No web views in the editing path.
 4. **Derived data is disposable.** SQLite holds only what can be rebuilt from files. Deleting it never loses data.
-5. **Sync is a notebook property.** Each notebook uses exactly one sync mode: none, iCloud, or the nmy server.
+5. **Sync is a notebook property.** Each notebook uses exactly one sync mode: none, iCloud, or the nmw server.
 
 ### Non-goals (v1)
 - Real-time multi-user collaboration or CRDTs.
@@ -34,17 +34,17 @@
 ### Repository layout
 
 ```
-nmy/
+nmw/
   apple/
-    project.yml                 xcodegen spec for the multiplatform app (nmy.xcodeproj is generated)
+    project.yml                 xcodegen spec for the multiplatform app (nmw.xcodeproj is generated)
     App/                        app sources
     Packages/
-      NmyCore/                  notebook, file watching, frontmatter, markdown extensions, index (GRDB)
-      NmyUI/                    app models and SwiftUI views (library, sessions, editor wiring)
-      NmySync/                  SyncProvider protocol, iCloud + server providers, 3-way merge
-  server/                       Go module: nmy-server
+      NmwCore/                  notebook, file watching, frontmatter, markdown extensions, index (GRDB)
+      NmwUI/                    app models and SwiftUI views (library, sessions, editor wiring)
+      NmwSync/                  SyncProvider protocol, iCloud + server providers, 3-way merge
+  server/                       Go module: nmw-server
   spec/
-    format.md                   nmy markdown dialect (normative)
+    format.md                   nmw markdown dialect (normative)
     sync-protocol.md            server sync protocol (normative)
   legacy/                       archived Svelte/web prototype
 ../swift-markdown-engine        editor package (separate repo, consumed as a local SPM dependency)
@@ -64,7 +64,7 @@ nmy/
   _attachments/
     Idea/
       sketch.jpg                original file names; " 2", " 3" appended on clashes
-  .nmy/
+  .nmw/
     config.json                 notebook settings (synced)
     trash/                      soft-deleted notes, kept 30 days
 ```
@@ -76,7 +76,7 @@ nmy/
 
 ### 3.2 Frontmatter
 
-Optional YAML. nmy never requires it, and only writes keys the user set through the UI:
+Optional YAML. nmw never requires it, and only writes keys the user set through the UI:
 
 ```yaml
 ---
@@ -101,7 +101,7 @@ The baseline is CommonMark + GFM: tables, task lists, strikethrough, autolinks, 
 | `> [!note] Title` | Callout | Obsidian |
 | `{.class key=value}` after an image or link | Attributes, see 3.5 | Pandoc, kramdown, markdown-it-attrs |
 
-**No wikilinks.** `[[Note]]` and `![[image]]` are not CommonMark, so nmy does not parse them; they render as plain text. Notes link to each other with standard links to relative paths, so the links work on GitHub, in other editors, and in static-site generators:
+**No wikilinks.** `[[Note]]` and `![[image]]` are not CommonMark, so nmw does not parse them; they render as plain text. Notes link to each other with standard links to relative paths, so the links work on GitHub, in other editors, and in static-site generators:
 
 ```markdown
 [Project idea](Projects/Idea.md)
@@ -110,14 +110,14 @@ The baseline is CommonMark + GFM: tables, task lists, strikethrough, autolinks, 
 
 ### 3.4 Standalone files
 
-nmy also opens a single `.md` file that isn't in a notebook (Finder "Open With", double-click, the Files app, drag onto the Dock icon).
+nmw also opens a single `.md` file that isn't in a notebook (Finder "Open With", double-click, the Files app, drag onto the Dock icon).
 
-- **Same core:** reading, saving, metadata, and link resolution in `NmyCore` work on a file URL, so a standalone file behaves like a notebook note: coordinated atomic saves, external-change detection, a byte-order mark and line endings kept as found.
+- **Same core:** reading, saving, metadata, and link resolution in `NmwCore` work on a file URL, so a standalone file behaves like a notebook note: coordinated atomic saves, external-change detection, a byte-order mark and line endings kept as found.
 - **Relative links and images** resolve against the file's folder. A `/`-rooted link has no notebook root, so it resolves against the folder too.
 - **Not indexed:** no backlinks, tags, or search across files; the outline and the note's own tags still work.
-- **In a notebook already?** If the file sits inside a folder that is an open notebook, or under a folder marked `.nmy/` or `.obsidian/`, nmy offers to open it in that notebook instead.
+- **In a notebook already?** If the file sits inside a folder that is an open notebook, or under a folder marked `.nmw/` or `.obsidian/`, nmw offers to open it in that notebook instead.
 - **Dropped files** go to `_attachments/<file name>/` next to the file, as in a notebook.
-- **Sandbox:** opening a file grants access to that file only. Showing sibling images and writing attachments need the folder; nmy asks for it once (a folder picker preselected to the file's folder) and keeps a security-scoped bookmark.
+- **Sandbox:** opening a file grants access to that file only. Showing sibling images and writing attachments need the folder; nmw asks for it once (a folder picker preselected to the file's folder) and keeps a security-scoped bookmark.
 - The window has no sidebar; "Move to Notebook…" copies the file (and the attachments it links to) into a notebook.
 
 ### 3.5 Attributes on images and links
@@ -150,8 +150,8 @@ A `{…}` block directly after an image or a link carries display attributes. Th
 - The block must follow the `)` directly (no space) and be valid attribute syntax (`.class`, `#id`, `key=value`, `key="…"`); otherwise it is ordinary text.
 - `.small` / `.medium` / `.large` cap the width and never upscale; no image grows past the text column.
 - Unknown attributes are preserved byte-for-byte and ignored.
-- Without attributes, links render as ordinary styled links; nmy never previews a link on its own.
-- On read, nmy also accepts the `![alt|200](img.png)` width hint (valid CommonMark, used by Obsidian). nmy rewrites it to the brace form only when the user changes the size through the UI.
+- Without attributes, links render as ordinary styled links; nmw never previews a link on its own.
+- On read, nmw also accepts the `![alt|200](img.png)` width hint (valid CommonMark, used by Obsidian). nmw rewrites it to the brace form only when the user changes the size through the UI.
 - The size menu (context menu or pinch on iOS) edits the brace attributes in the source; the link context menu offers "Show Preview" (adds `{.preview}`) and the sizes.
 - Other renderers show the `{…}` text after the link or image, but the link itself still works.
 
@@ -171,7 +171,7 @@ A `{…}` block directly after an image or a link carries display attributes. Th
 - Fenced code with syntax highlighting and a copy button.
 - Inline and block math.
 - Inline images and link previews with attribute-driven sizing (3.5, 4.4).
-- **Adding files:** drop any file onto the editor (or paste / camera / scan an image on iOS). nmy copies it to `_attachments/<note>/` (name kept, ` 2`, ` 3` … appended on clashes) and inserts a link at the drop point: `![](…){.medium}` for images, `[name](…)` for other files (add `{.preview}` for a card, 4.4). The engine hands drops to nmy through its `onDropFiles` hook and inserts the returned markdown as one undoable edit.
+- **Adding files:** drop any file onto the editor (or paste / camera / scan an image on iOS). nmw copies it to `_attachments/<note>/` (name kept, ` 2`, ` 3` … appended on clashes) and inserts a link at the drop point: `![](…){.medium}` for images, `[name](…)` for other files (add `{.preview}` for a card, 4.4). The engine hands drops to nmw through its `onDropFiles` hook and inserts the returned markdown as one undoable edit.
 - **Note links:** "Link to note" (Cmd-L, or the iOS accessory bar) opens a fuzzy picker over the index and inserts `[Title](relative/path.md)`, with the path percent-encoded. Cmd-click (macOS) or tap (iOS) on a relative `.md` link opens that note; a link to a missing note offers "create".
 - Tags with `#` autocomplete.
 - Find and replace, spelling (suppressed in code, math, links), Writing Tools.
@@ -203,7 +203,7 @@ A link marked `{.preview}` (or any size attribute) renders as a preview card in 
 - **Cache:** fetched metadata and thumbnails live in the per-device index (`link_previews` table, section 6) and an on-disk image cache. Both are derived, never synced, and safe to delete. Entries refresh after 7 days or on "Refresh Preview".
 - **Editing:** clicking a card opens the link (Cmd-click on macOS, as for other links); the context menu changes the size, refreshes, or removes the preview (deletes the attribute).
 - **Placement:** a card replaces a link that is alone on its line. A `{.preview}` link inside a sentence stays an ordinary link; `{.icon}` works anywhere.
-- **Engine** (done): the engine renders cards from data supplied by a `LinkPreviewProvider` service. Lookups are synchronous and return `LinkPreview` (`.ready`, `.loading`, `.unavailable`) or nil for a plain link; the provider changes its `fingerprint()` when a fetch completes, and the editor restyles. Fetching and caching live in the app (`NmyCore`), not in the engine.
+- **Engine** (done): the engine renders cards from data supplied by a `LinkPreviewProvider` service. Lookups are synchronous and return `LinkPreview` (`.ready`, `.loading`, `.unavailable`) or nil for a plain link; the provider changes its `fingerprint()` when a fetch completes, and the editor restyles. Fetching and caching live in the app (`NmwCore`), not in the engine.
 
 ### 4.5 Engine work (in `swift-markdown-engine`)
 1. **Multiplatform** (done): platform typealiases (`PlatformFont`, `PlatformColor`, `PlatformImage`, …) so Parser, Styling, Renderer, Configuration, Input, and Services compile for macOS and iOS. The TextView layer is split into `TextView/AppKit` (existing) and `TextView/UIKit` (new: a `UITextView` subclass, a `UIViewRepresentable` wrapper, and a coordinator).
@@ -220,6 +220,7 @@ A link marked `{.preview}` (or any size attribute) renders as a preview card in 
 
 Apple Notes structure, Obsidian power:
 
+- **Folders:** the sidebar shows the folder tree expanded; a folder lists its own notes and those in its subfolders (captioned with the subfolder). The notebook root lists only its own notes (All Notes lists everything).
 - **Three columns** (`NavigationSplitView`): sidebar with notebooks, folders, tags, and Pinned / Recent / Trash; note list with title, date, two-line snippet, and thumbnail of the first image; editor. iPhone collapses to a stack.
 - **Note list:** sort by modified, created, or title. Pinned notes on top. Swipe actions on iOS: pin, move, delete.
 - **New note:** Cmd-N, or a toolbar button that creates `Untitled.md` and focuses it. The file name follows the H1, debounced.
@@ -234,7 +235,7 @@ Apple Notes structure, Obsidian power:
 
 ## 6. Index (SQLite)
 
-- **Location:** `Application Support/nmy/index/<notebook-id>.sqlite`, per device. Never stored inside the notebook, never synced.
+- **Location:** `Application Support/nmw/index/<notebook-id>.sqlite`, per device. Never stored inside the notebook, never synced.
 
 ```sql
 CREATE TABLE files (
@@ -295,12 +296,12 @@ protocol SyncProvider {
 The notebook is a local folder or any user-picked folder (security-scoped bookmark). External sync tools such as Syncthing or Dropbox work through file watching.
 
 ### 7.2 iCloud
-- **Location:** notebooks live in the app's ubiquity container, `iCloud Drive/nmy/<Notebook>/`, which is visible in Files and Finder.
+- **Location:** notebooks live in the app's ubiquity container, `iCloud Drive/nmw/<Notebook>/`, which is visible in Files and Finder.
 - **Discovery:** `NSMetadataQuery`. Placeholders are downloaded on demand, with eager download for notes smaller than 1 MB.
 - **File access:** all reads and writes go through `NSFileCoordinator`, and the open note registers as an `NSFilePresenter`, so external edits reload live.
-- **Conflicts:** `NSFileVersion.unresolvedConflictVersionsOfItem`. nmy first tries a 3-way merge, using the last version it wrote as the base. If the merge is clean, nmy resolves the conflict silently. Otherwise it keeps both copies, saving the other one as `Note (conflict <device> <date>).md`.
+- **Conflicts:** `NSFileVersion.unresolvedConflictVersionsOfItem`. nmw first tries a 3-way merge, using the last version it wrote as the base. If the merge is clean, nmw resolves the conflict silently. Otherwise it keeps both copies, saving the other one as `Note (conflict <device> <date>).md`.
 
-### 7.3 nmy server (self-hosted, Go)
+### 7.3 nmw server (self-hosted, Go)
 Full protocol in `spec/sync-protocol.md`. Summary:
 
 - **Model:** per notebook, the server stores a **change log** of `(rev, path, hash | deleted, device, ts)` with a monotonic `rev`, plus a **blob store** keyed by sha256.
@@ -330,11 +331,11 @@ Each milestone ends with something that works.
 |---|---|---|
 | M0 | Engine goes multiplatform | Typealiases; core targets build for iOS; minimal `UITextView` editor with live styling; iOS demo |
 | M1 | WYSIWYG tables (done) | Editable grid on macOS and iOS; write-back; undo; "Edit as Markdown" |
-| M2 | Notebook + index | NmyCore: open folder, watch, frontmatter, GRDB index, FTS, links/backlinks, tags |
+| M2 | Notebook + index | NmwCore: open folder, watch, frontmatter, GRDB index, FTS, links/backlinks, tags |
 | M3 | App shell | Three-column UI, note list, create/rename/delete/trash, search, note-link picker |
 | M4 | Attachments + previews | Paste/drop/camera, `_attachments/`, `{.size}` attributes on images and links, size menu, link preview cards (web, notes, files) |
 | M5 | iCloud | Ubiquity container, placeholders, presenters, conflict merge |
-| M6 | nmy server | Go server and protocol, NmySync server provider, pairing UI |
+| M6 | nmw server | Go server and protocol, NmwSync server provider, pairing UI |
 | M7 | System integration | Spotlight, Share extension, widgets, App Intents, Quick Note |
 
 ## 9. Open questions
