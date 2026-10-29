@@ -23,7 +23,10 @@ struct NoteListView: View {
             ForEach(session.notes) { note in
                 NoteRow(note: note, root: session.notebook.root, subfolder: subfolder(of: note))
                     .tag(note.path)
+                    #if os(macOS)
+                    // macOS only: on iOS the gesture swallowed taps on the row's text.
                     .simultaneousGesture(TapGesture().onEnded { isFocused = true })
+                    #endif
                     .contextMenu { menu(for: note) }
                     #if os(iOS)
                     .swipeActions(edge: .trailing) {

@@ -73,13 +73,13 @@ struct NoteEditorView: View {
         #if os(iOS)
         // Notes-style formatting bar above the keyboard while editing.
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            if controller.isEditing, model.isLoaded {
+            if controller.isEditingAnything, model.isLoaded {
                 FormatBar(controller: controller,
                           attach: EditorSetup.dropHandler(for: context, stored: onStoredFiles))
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
-        .animation(.snappy(duration: 0.2), value: controller.isEditing)
+        .animation(.snappy(duration: 0.2), value: controller.isEditingAnything)
         #endif
         .inspector(isPresented: $showsInspector) {
             NoteInspector(text: model.text, backlinks: backlinks?(), onHeading: { controller.reveal($0.range) },

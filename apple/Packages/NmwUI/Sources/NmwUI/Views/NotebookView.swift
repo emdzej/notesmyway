@@ -138,9 +138,27 @@ struct SidebarView: View {
     @State private var errorMessage: String?
     @State private var trashingFolder: NotebookPath?
     @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
+    #if os(iOS)
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    /// iPhone: going back clears the list's selection; the scope stays, and
+    /// tapping the same row again pushes the note list again.
+    @State private var compactSelection: NotebookSession.Scope?
+    #endif
+
+    private var selection: Binding<NotebookSession.Scope?> {
+        #if os(iOS)
+        if sizeClass == .compact {
+            return Binding(get: { compactSelection }, set: { value in
+                compactSelection = value
+                if let value { session.scope = value }
+            })
+        }
+        #endif
+        return Binding(get: { session.scope }, set: { if let s = $0 { session.scope = s } })
+    }
 
     var body: some View {
-        List(selection: Binding<NotebookSession.Scope?>(get: { session.scope }, set: { if let s = $0 { session.scope = s } })) {
+        List(selection: selection) {
             Section {
                 Label("All Notes", systemImage: "note.text").tag(NotebookSession.Scope.all)
                 Label("Pinned", systemImage: "pin").tag(NotebookSession.Scope.pinned)
