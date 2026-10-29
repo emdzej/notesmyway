@@ -10,6 +10,7 @@
 import MarkdownEngine
 import NmwCore
 import SwiftUI
+import CoreSpotlight
 import UniformTypeIdentifiers
 #if os(macOS)
 import AppKit
@@ -19,6 +20,7 @@ public struct LibraryView: View {
     @Bindable var library: Library
     @State private var pickingFolder = false
     @State private var pickingFile = false
+    @Environment(\.scenePhase) private var scenePhase
     #if os(macOS)
     @Environment(\.openWindow) private var openWindow
     #endif
@@ -43,7 +45,10 @@ public struct LibraryView: View {
             if case .success(let url) = result { library.open(file: url) }
         }
         .focusedSceneValue(\.libraryActions, LibraryActions(addNotebook: { pickingFolder = true }, openFile: { pickingFile = true }))
-        .onOpenURL { library.open(file: $0) }
+        // `notesmyway://` links (widgets, Shortcuts), else a Markdown file.
+        .onOpenURL { if !library.handle($0) { library.open(file: $0) } }
+        .onContinueUserActivity(CSSearchableItemActionType) { library.handle(spotlightActivity: $0) }
+        .onChange(of: scenePhase, initial: true) { _, phase in if phase == .active { library.activateIntegration() } }
         #if os(macOS)
         .onChange(of: library.pendingStandaloneFiles, initial: true) { _, files in
             guard !files.isEmpty else { return }
@@ -400,10 +405,10 @@ public struct NmwScenes: Scene {
 /// Receives files opened from Finder and saves notes on quit.
 @MainActor
 public final class NmwAppDelegate: NSObject, NSApplicationDelegate {
-    public let library = Library()
+    public let library = Library.shared
 
     public func application(_ application: NSApplication, open urls: [URL]) {
-        for url in urls { library.open(file: url) }
+        for url in urls where !library.handle(url) { library.open(file: url) }
     }
 
     public func applicationWillTerminate(_ notification: Notification) {

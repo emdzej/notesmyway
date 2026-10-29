@@ -94,6 +94,7 @@ public final class Library {
         entry.url.stopAccessingSecurityScopedResource()
         persist()
         if selectedID == entry.id { selectedID = entries.first?.id }
+        Integration.shared.notebookRemoved(entry.id)
     }
 
     /// The session for a notebook, opened (and started) on first use.
@@ -108,6 +109,9 @@ public final class Library {
                 cacheFolder: (storage ?? FileManager.default.temporaryDirectory).appending(path: "previews/\(notebook.localID)")
             )
             sessions[id] = session
+            session.onIndexChange = { [weak session] changes, initial in
+                if let session { Integration.shared.indexDidChange(session, changes, initial: initial) }
+            }
             Task { await session.start() }
             return session
         } catch {
