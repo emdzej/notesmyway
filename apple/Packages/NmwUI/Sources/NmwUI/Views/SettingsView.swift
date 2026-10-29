@@ -78,7 +78,7 @@ struct GeneralSettingsForm: View {
             } header: {
                 Text("Editor")
             } footer: {
-                Text("Switch any note with View › Show Markdown Source (⇧⌘M).").foregroundStyle(.secondary)
+                Text("Switch the open note with the </> toolbar button (⇧⌘M).").foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)

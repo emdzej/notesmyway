@@ -31,11 +31,18 @@ struct NoteEditorView: View {
     @State private var controller = MarkdownEditorController()
     @State private var showingLinkPicker = false
     @AppStorage("nmw.showsInspector") private var showsInspector = false
+    @AppStorage(EditorMode.key) private var defaultMode = EditorMode.formatted
+    /// This note's mode while it's open; nil follows the setting.
+    @State private var mode: EditorMode?
+
+    private var effectiveMode: EditorMode { mode ?? defaultMode }
 
     private var context: NoteContext { NoteContext(noteURL: model.url, root: root, previews: previews, attachments: attachments) }
 
     private var configuration: MarkdownEditorConfiguration {
-        EditorSetup.configuration(for: context, version: version)
+        var configuration = EditorSetup.configuration(for: context, version: version)
+        configuration.renderingMode = effectiveMode == .source ? .source : .formatted
+        return configuration
     }
 
     var body: some View {
@@ -70,6 +77,14 @@ struct NoteEditorView: View {
         }
         .toolbar {
             ToolbarItem {
+                Button { mode = effectiveMode == .source ? .formatted : .source } label: {
+                    Label(effectiveMode == .source ? "Show Formatted" : "Show Markdown Source",
+                          systemImage: effectiveMode == .source ? "doc.richtext" : "chevron.left.forwardslash.chevron.right")
+                }
+                .keyboardShortcut("m", modifiers: [.command, .shift])
+                .help(effectiveMode == .source ? "Show Formatted (⇧⌘M)" : "Show Markdown Source (⇧⌘M)")
+            }
+            ToolbarItem {
                 Button { showsInspector.toggle() } label: { Label("Outline and Backlinks", systemImage: "sidebar.right") }
                     .keyboardShortcut("i", modifiers: [.command, .option])
                     .help("Outline and Backlinks (⌥⌘I)")
@@ -77,6 +92,7 @@ struct NoteEditorView: View {
         }
         .task(id: model.url) { if !model.isLoaded { model.load() } }
         .onDisappear { model.flush() }
+        .focusedSceneValue(\.noteEditor, controller)
         .focusedSceneValue(\.linkToNote, linkableNotes == nil ? nil : LinkToNoteAction(noteURL: model.url) { showingLinkPicker = true })
         .sheet(isPresented: $showingLinkPicker) {
             if let linkableNotes {

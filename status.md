@@ -56,6 +56,10 @@ Last updated 2026-10-29. See `spec.md` for the design.
   - Ran the real app: macOS (sandboxed) opened a standalone `.md` via `open -a`, with code highlighting; iOS simulator shows the welcome screen. A hosted snapshot of the three columns on a sample notebook looked right.
   - iOS (`xcodebuild test` on the `MarkdownEngineDemoiOS` scheme): 6 editor tests (grid + file drop) hosted by the demo app (package tests on iOS have no window scene).
 
+- Look & settings (nmw 1024458, 1cf759e): lighter accent `#1A8FA8` / `#5CCFDB`; Settings › General: appearance (System / Light / Dark via NSApp.appearance), sidebar style (System Default / My Way gradient), notes open as Formatted / Markdown Source. Delete key trashes the selected note (selects the next) or folder (asks first); iOS swipe to trash / pin. Note list takes focus on click (selection stayed gray after editing).
+- Editor (engine d7f389d…3ccfdc6, 186 tests): links use the theme color on macOS; markdown source mode (`configuration.renderingMode`, toolbar </> ⇧⌘M) with syntax colors; frontmatter parsed as a block and shown as chips (pin, #tags, key: value) until the caret enters; tables: hover "+" markers, row / column handle menus (insert, move, align, delete, fit), drag column borders → `{cols="30%,auto,120"}` line after the table; image / link marker menus (Size, Align, Preview Card), floating marker bar, Format menu using `MarkdownEditorController.setImageSize / setAlignment / setLinkPreview`.
+- Shipped to iPhone (<device>) as a Release build signed with team A2WT9CD8P3.
+
 ## Not yet verified
 
 - Typing with a real software keyboard on device; the keyboard-keeper hand-off between cells is only exercised in tests.
@@ -77,6 +81,11 @@ Last updated 2026-10-29. See `spec.md` for the design.
 - Not ported from AppKit yet: code-block copy button, find, Writing Tools hooks, placeholder, scroll-away header, reading column, paste-image handling.
 - Code-block background selection cut-out depends on `textLayoutManager.textSelections`, which UITextView may not keep in sync.
 - On macOS, the input handlers edit via `shouldChangeText` + `replaceCharacters` + `didChangeText` instead of `insertText(_:replacementRange:)`. Both are undoable, but LaTeX block auto-wrap deserves a manual check.
+
+## Not yet verified (2026-10-29 batch)
+
+- Table markers / drag resize, marker bar, source-mode switch and frontmatter chips were tested by unit tests and hosted snapshots, not clicked through in the running app (screen was locked). iOS paths compiled only.
+- Table rows: no per-row heights (by design); the cell editor is single-line for wrapped cells; GitHub may render the `{cols=…}` line as a table row.
 
 ## Known gaps (app)
 

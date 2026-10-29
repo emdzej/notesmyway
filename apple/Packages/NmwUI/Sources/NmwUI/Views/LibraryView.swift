@@ -275,12 +275,14 @@ extension FocusedValues {
     @Entry var notebookSession: NotebookSession?
     @Entry var linkToNote: LinkToNoteAction?
     @Entry var libraryActions: LibraryActions?
+    @Entry var noteEditor: MarkdownEditorController?
 }
 
 struct NmwCommands: Commands {
     @FocusedValue(\.notebookSession) private var session
     @FocusedValue(\.linkToNote) private var linkToNote
     @FocusedValue(\.libraryActions) private var libraryActions
+    @FocusedValue(\.noteEditor) private var editor
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -306,7 +308,33 @@ struct NmwCommands: Commands {
                 .keyboardShortcut("l")
                 .disabled(linkToNote == nil)
         }
+        CommandMenu("Format") {
+            // Act on the image or link at the caret; no-ops elsewhere.
+            Group {
+            Menu("Image Size") {
+                Button("Original") { _ = editor?.setImageSize(nil) }
+                Divider()
+                ForEach(Self.sizes, id: \.1) { size, title in
+                    Button(title) { _ = editor?.setImageSize(size) }
+                }
+            }
+            Menu("Align") {
+                Button("Left") { _ = editor?.setAlignment(.left) }
+                Button("Center") { _ = editor?.setAlignment(.center) }
+                Button("Right") { _ = editor?.setAlignment(.right) }
+            }
+            Divider()
+            Button("Show Link as Preview Card") { _ = editor?.setLinkPreview(true) }
+                .keyboardShortcut("k", modifiers: [.command, .shift])
+            Button("Show Card as Link") { _ = editor?.setLinkPreview(false) }
+            }
+            .disabled(editor == nil)
+        }
     }
+
+    private static let sizes: [(MarkdownAttributes.Size, String)] = [
+        (.icon, "Icon"), (.small, "Small"), (.medium, "Medium"), (.large, "Large"), (.full, "Full Width"),
+    ]
 }
 
 /// The app's scenes; the app target's `@main` just returns these.
