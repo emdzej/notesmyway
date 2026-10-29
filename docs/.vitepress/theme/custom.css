@@ -1,0 +1,108 @@
+/*
+ * Notes my Way look, shared with the app: the icon's teal-to-navy
+ * gradient, a faint teal wash at the top, and the icon's page with a #
+ * as a large, barely visible watermark off the bottom-right corner.
+ */
+
+:root {
+  --vp-c-brand-1: #1a8fa8;
+  --vp-c-brand-2: #1f9fba;
+  --vp-c-brand-3: #0b6e8e;
+  --vp-c-brand-soft: rgba(26, 143, 168, 0.14);
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #148093 20%, #0a345c);
+  --vp-home-hero-image-background-image: radial-gradient(circle, rgba(26, 143, 168, 0.38), rgba(10, 52, 92, 0) 65%);
+  --vp-home-hero-image-filter: blur(56px);
+
+  --nmw-wash: rgba(26, 143, 168, 0.10);
+  --nmw-watermark-opacity: 0.06;
+}
+
+.dark {
+  --vp-c-brand-1: #5ccfdb;
+  --vp-c-brand-2: #45bccb;
+  --vp-c-brand-3: #1a8fa8;
+  --vp-c-brand-soft: rgba(92, 207, 219, 0.16);
+
+  --vp-home-hero-name-background: linear-gradient(120deg, #5ccfdb 20%, #1a8fa8);
+
+  --nmw-wash: rgba(92, 207, 219, 0.10);
+  --nmw-watermark-opacity: 0.08;
+}
+
+/* Background layers sit behind everything and never take clicks. */
+.Layout::before,
+.Layout::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Teal wash fading out towards the middle of the viewport. */
+.Layout::before {
+  inset: 0 0 50% 0;
+  background: linear-gradient(to bottom, var(--nmw-wash), transparent);
+}
+
+/* The page with a #, tilted and partly off the edge, like the app. */
+.Layout::after {
+  width: 70vmax;
+  height: 86vmax;
+  right: -24vmax;
+  bottom: -30vmax;
+  background-color: var(--vp-c-brand-1);
+  -webkit-mask: url('/page-mask.svg') center / contain no-repeat;
+  mask: url('/page-mask.svg') center / contain no-repeat;
+  opacity: var(--nmw-watermark-opacity);
+  transform: rotate(-10deg);
+}
+
+/* Let the layers show through the page; the nav and sidebar keep theirs. */
+.Layout,
+.VPContent,
+.VPHome,
+.VPDoc {
+  background: transparent;
+}
+.Layout {
+  isolation: isolate;
+}
+
+/* The hero icon gets the macOS icon's own corners and shadow. */
+.VPHero .image-src {
+  max-width: 240px;
+  max-height: 240px;
+}
+
+/* Feature cards: a touch of glass over the watermark. */
+.VPFeature {
+  background-color: color-mix(in srgb, var(--vp-c-bg-soft) 82%, transparent) !important;
+  backdrop-filter: blur(6px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .VPHero .image-src {
+    animation: nmw-page-settle 1.1s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  }
+}
+
+/* The hero icon drops onto the page like a note on a desk. */
+@keyframes nmw-page-settle {
+  from { transform: translate(-50%, -46%) rotate(-6deg); opacity: 0; }
+  to   { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+}
+
+/* "Coming" badges inline in the text. */
+.nmw-coming {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-brand-soft);
+  vertical-align: middle;
+}

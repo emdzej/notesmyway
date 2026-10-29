@@ -10,3 +10,7 @@ legacy/node_modules/
 legacy/.turbo/
 node_modules/
 dist/
+# VitePress site
+docs/node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/

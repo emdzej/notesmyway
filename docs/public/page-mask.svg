@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 124" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- The icon's page with a folded corner and a #, as an outline. -->
+  <path d="M8 4 H68 L92 28 V116 a4 4 0 0 1 -4 4 H8 a4 4 0 0 1 -4 -4 V8 a4 4 0 0 1 4 -4 Z"/>
+  <path d="M68 4 V28 H92"/>
+  <path d="M40 50 L34 96 M62 50 L56 96 M26 64 H72 M23 82 H69"/>
+</svg>
