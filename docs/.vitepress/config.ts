@@ -68,6 +68,7 @@ export default defineConfig({
           { text: 'Tables and formulas', link: '/guide/tables' },
           { text: 'Themes and appearance', link: '/guide/themes' },
           { text: 'Settings and shortcuts', link: '/guide/settings' },
+          { text: 'Spotlight, Shortcuts and widgets', link: '/guide/integration' },
         ],
       },
       {

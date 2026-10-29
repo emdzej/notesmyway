@@ -268,8 +268,21 @@ Apple Notes structure, Obsidian power:
 - **Quick switcher** (Cmd-O) and command palette (Cmd-K) on macOS. "Open File…" is Shift-Cmd-O.
 - **Conflicts while editing:** an outside change is adopted silently when the editor has no unsaved text; otherwise a bar offers Keep Mine, Use Disk Version, or Keep Both (saves the other version as `Note (conflict <date>).md`).
 - **Panels:** backlinks and outline, as an inspector on macOS and iPad, or a sheet on iPhone.
-- **System integration:** Spotlight (CoreSpotlight), a Share extension that appends to Inbox or creates a note, widgets (pinned or recent notes), App Intents / Shortcuts, Quick Note on macOS.
+- **System integration:** Spotlight (CoreSpotlight), a Share extension that appends to Inbox or creates a note, widgets (pinned or recent notes), App Intents / Shortcuts, Quick Note on macOS. See §5.1.
 - **Saving:** autosave 500 ms after the last keystroke, with coordinated writes. There is no save button.
+
+### 5.1 System integration
+
+Extensions can't open notebooks: folder access (security-scoped bookmarks) belongs to the app. They talk to it through the App Group `group.pl.emdzej.notesmyway` (macOS: `A2WT9CD8P3.group.pl.emdzej.notesmyway`, which needs no provisioning profile). The shared formats live in the `NmwShared` package, which has no dependencies.
+
+| Piece | How |
+| --- | --- |
+| Spotlight | One `CSSearchableItem` per note: title, snippet, text (first 20 000 characters), tags and the notebook name as keywords, modification date. Domain = notebook id, identifier = `<notebook id>/<path>`. The first scan of a notebook indexes everything; afterwards every index change (including the scan's changes on launch) updates or removes items; removing a notebook deletes its domain. Opening a result selects the notebook and the note. |
+| Links | `notesmyway://open?notebook=<id>&path=<path>` selects a note; `notesmyway://new?notebook=&folder=&text=` creates one (all optional) and selects it. |
+| Shortcuts | App Intents in the app target, running in the app's process: Create Note (title, text, notebook, folder), Append to Note, Open Note, Search Notes (app search syntax, returns notes), Get Note Text. `NoteEntity` (`<notebook id>/<path>`) with title search and recent suggestions; `NotebookEntity`. |
+| Widget snapshot | `widgets.json` in the group container: per notebook its name, id, up to 12 pinned and 12 recent notes (title, snippet, path, modified). Written 1 s after the last index change, when it differs; then widget timelines reload. |
+| Widgets | Pinned Notes and Recent Notes: small, medium, large; on iOS also Lock Screen rectangular and inline. A note opens with an `open` link; a button makes a new note. They read only the snapshot. |
+| Share extension | Text, one web URL, up to 5 images. The user picks a notebook (from the snapshot) and New Note or Add to Inbox (`Inbox.md` at the notebook root, under a date heading), with an optional title and comment. The extension queues `Inbox/<uuid>/job.json` plus image copies in the group container and posts a Darwin notification; the app imports jobs when it becomes active or gets the notification. Web URLs become `[title](url){.preview}`, images are stored as attachments (`![](…){.medium}`). A job stays queued if importing fails. |
 
 ---
 
