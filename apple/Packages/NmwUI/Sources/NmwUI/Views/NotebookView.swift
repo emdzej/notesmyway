@@ -137,6 +137,7 @@ struct SidebarView: View {
     @State private var folderName = ""
     @State private var errorMessage: String?
     @State private var trashingFolder: NotebookPath?
+    @State private var showingSettings = false
     @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -193,6 +194,14 @@ struct SidebarView: View {
             if session.isIndexing { ProgressView("Indexing…").controlSize(.small).padding(8) }
         }
         .sidebarStyle(sidebarStyle)
+        #if os(iOS)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { showingSettings = true } label: { Label("Settings", systemImage: "gearshape") }
+            }
+        }
+        .sheet(isPresented: $showingSettings) { MobileSettings(session: session) }
+        #endif
         #if os(macOS)
         .onDeleteCommand {
             if case .folder(let folder?) = session.scope { trashingFolder = folder }
@@ -315,21 +324,33 @@ struct NotebookMenu: View {
         .menuStyle(.borderlessButton)
         .frame(maxWidth: .infinity, alignment: .leading)
         #if !os(macOS)
-        .sheet(isPresented: $showingSettings) {
-            NavigationStack {
-                List {
-                    NavigationLink("General") { GeneralSettingsForm().navigationTitle("General") }
-                    NavigationLink("“\(session.name)” Notebook") {
-                        NotebookSettingsForm(session: session).navigationTitle(session.name)
-                    }
-                }
-                .navigationTitle("Settings")
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showingSettings = false } } }
-            }
-        }
+        .sheet(isPresented: $showingSettings) { MobileSettings(session: session) }
         #endif
     }
 }
+
+#if os(iOS)
+/// Settings on iPhone and iPad: app-wide ones and this notebook's.
+struct MobileSettings: View {
+    let session: NotebookSession
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                NavigationLink { GeneralSettingsForm().navigationTitle("General") } label: {
+                    Label("General", systemImage: "gearshape")
+                }
+                NavigationLink { NotebookSettingsForm(session: session).navigationTitle(session.name) } label: {
+                    Label("“\(session.name)” Notebook", systemImage: "books.vertical")
+                }
+            }
+            .navigationTitle("Settings")
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        }
+    }
+}
+#endif
 
 extension View {
     /// "My Way": the icon's gradient behind the sidebar, with light text on it.
