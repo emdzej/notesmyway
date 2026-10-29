@@ -215,7 +215,7 @@ struct NotebookMenu: View {
             Divider()
             Button("Add Notebook…", action: addNotebook)
             if let current = library.entries.first(where: { $0.id == library.selectedID }) {
-                Button("Remove “\(current.name)” from nmy") { library.remove(current) }
+                Button("Remove “\(current.name)” from Notes my Way") { library.remove(current) }
             }
         } label: {
             Label(session.name, systemImage: "books.vertical").font(.headline)

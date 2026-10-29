@@ -17,7 +17,8 @@ targets:
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: nmy
+        CFBundleDisplayName: Notes my Way
+        CFBundleName: Notes my Way
         LSApplicationCategoryType: public.app-category.productivity
         UILaunchScreen: {}
         # Standalone .md files open from Finder / Files (spec §3.5).
@@ -44,6 +45,9 @@ targets:
     settings:
       base:
         SWIFT_VERSION: "6.0"
+        PRODUCT_NAME: Notes my Way
+        PRODUCT_MODULE_NAME: nmy
+        PRODUCT_BUNDLE_IDENTIFIER: dev.emdzej.nmy
         # A multiplatform target gets the iOS runpath; macOS bundles keep frameworks in Contents/Frameworks.
         "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "$(inherited) @executable_path/../Frameworks"
         "LD_RUNPATH_SEARCH_PATHS[sdk=iphone*]": "$(inherited) @executable_path/Frameworks"

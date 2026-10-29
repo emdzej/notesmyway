@@ -58,7 +58,7 @@ enum FolderGrants {
         panel.allowsMultipleSelection = false
         panel.directoryURL = folder
         panel.prompt = "Allow"
-        panel.message = "nmy needs this folder to show the note’s images and save files you drop into it."
+        panel.message = "Notes my Way needs this folder to show the note’s images and save files you drop into it."
         guard panel.runModal() == .OK, let url = panel.url, contains(url, folder) else { return false }
         remember(url)
         return isAccessible(folder)

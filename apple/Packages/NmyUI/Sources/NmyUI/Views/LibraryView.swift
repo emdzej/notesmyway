@@ -71,7 +71,7 @@ struct WelcomeView: View {
     var body: some View {
         VStack(spacing: 14) {
             Image(systemName: "books.vertical").font(.system(size: 48)).foregroundStyle(.secondary)
-            Text("Welcome to nmy").font(.title2.bold())
+            Text("Welcome to Notes my Way").font(.title2.bold())
             Text("A notebook is any folder of Markdown files. Your notes stay plain .md files you can open anywhere.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
@@ -236,7 +236,7 @@ public struct NmyScenes: Scene {
     }
 
     public var body: some Scene {
-        WindowGroup("nmy", id: "main") {
+        WindowGroup("Notes my Way", id: "main") {
             LibraryView(library: library)
                 #if os(macOS)
                 .frame(minWidth: 760, minHeight: 480)
