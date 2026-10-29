@@ -59,6 +59,17 @@ On disk, Recently Deleted is the notebook's hidden `.nmw/trash/` folder.
 
 If other notes in the current notebook link to the note, the app tells you how many first: those links will stop working, because they point into a notebook the note has left.
 
+## Share, print and PDF
+
+**Share** sends a note as a Markdown file, as a PDF and as plain text. The app receiving it picks what it understands: Mail attaches the files, Messages takes the text, Files and AirDrop get the `.md` and the PDF.
+
+- **iPhone and iPad:** the Share button at the top of a note. The share sheet also has **Print**. With a keyboard, ⌘P prints straight away.
+- **Mac:** the Share button in the note's toolbar, or **File › Share…**. **File › Print…** (⌘P) prints, and **File › Export as PDF…** saves a PDF where you choose.
+- **From the note list:** right-click (or touch and hold) a note › **Share…**, without opening it.
+- **Command palette:** Share…, Print… and, on the Mac, Export as PDF….
+
+The printed page looks like the formatted note, on a white page in your theme's light colors and font. Frontmatter prints as a line of chips (pinned, tags). Images print at their `{.small}` / `{.medium}` / `{.large}` sizes and alignment. Tables print with their column widths, formula cells show their values, and checklists show their boxes with checked items struck through. `{.preview}` links print as cards when their preview is loaded. `<!-- -->` lines don't print. Pages are A4, or Letter where that's the local paper size.
+
 ## Changes made elsewhere
 
 If a note changes on disk while you have unsaved edits — another app, another device — a bar above it offers **Keep Mine**, **Use Disk Version** or **Keep Both**, which saves your version as a separate `(conflict …)` copy. Without unsaved edits, the new version is simply loaded.

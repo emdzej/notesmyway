@@ -277,6 +277,12 @@ Apple Notes structure, Obsidian power:
 - **System integration:** Spotlight (CoreSpotlight), a Share extension that appends to Inbox or creates a note, widgets (pinned or recent notes), App Intents / Shortcuts, Quick Note on macOS. See §5.1.
 - **Saving:** autosave 500 ms after the last keystroke, with coordinated writes. There is no save button.
 
+### 5.0 Share, print, PDF
+
+- **Rendering:** the engine's `MarkdownHTML.body(for:options:)` turns a note into HTML from the same block and inline parse the editor styles from (no second Markdown parser). Frontmatter becomes chips. `{…}` image sizes and alignment become CSS, `{.preview}` links become cards, and `{cols=…}` becomes `<col>` widths. Formula values come from `MarkdownFormulas.evaluate`. Checklists print boxes, `<!-- -->` lines are dropped, and LaTeX becomes PNG data URIs. Code is highlighted when the app is in light mode.
+- **App (`NmwUI/Export/NoteExport.swift`):** the theme's light palette and font become CSS. Images and preview icons are embedded as downsampled data URIs, so the page needs no file access and the PDF stands alone. An offscreen `WKWebView` paginates the page: on iOS through `UIPrintPageRenderer`, on macOS through its `NSPrintOperation` in an offscreen window. Pages are A4, or Letter in the US, Canada and Mexico.
+- **Share items:** a temporary `Title.md`, `Title.pdf`, and the plain text. iOS also gets the web view's print formatter, so the share sheet offers Print.
+
 ### 5.1 System integration
 
 Extensions can't open notebooks: folder access (security-scoped bookmarks) belongs to the app. They talk to it through the App Group `group.pl.emdzej.notesmyway` (macOS: `A2WT9CD8P3.group.pl.emdzej.notesmyway`, which needs no provisioning profile). The shared formats live in the `NmwShared` package, which has no dependencies.

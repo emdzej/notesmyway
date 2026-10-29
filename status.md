@@ -60,6 +60,13 @@ Last updated 2026-10-29. See `spec.md` for the design.
 - Editor (engine d7f389d…3ccfdc6, 186 tests): links use the theme color on macOS; markdown source mode (`configuration.renderingMode`, toolbar </> ⇧⌘M) with syntax colors; frontmatter parsed as a block and shown as chips (pin, #tags, key: value) until the caret enters; tables: hover "+" markers, row / column handle menus (insert, move, align, delete, fit), drag column borders → `{cols="30%,auto,120"}` line after the table; image / link marker menus (Size, Align, Preview Card), floating marker bar, Format menu using `MarkdownEditorController.setImageSize / setAlignment / setLinkPreview`.
 - Shipped to iPhone (<device>) as a Release build signed with team A2WT9CD8P3.
 
+- Share / Print / PDF (branch `print`):
+  - The engine's `MarkdownHTML` renders the note, and `NoteExport` styles and paginates it.
+  - iOS: a Share button and a "…" menu (Find, Find and Replace, source toggle, outline) in the note toolbar; Print is in the share sheet, and ⌘P works on iPad keyboards.
+  - macOS: a Share toolbar button (the sharing picker), plus File › Print… ⌘P, Export as PDF… and Share….
+  - Also: Share… in the note list context menu, and Share / Print / Export as PDF in the command palette.
+  - Tests: engine HTML 11; NmwUI export 3, including real PDFs of demo notes.
+
 ## Not yet verified
 
 - Typing with a real software keyboard on device; the keyboard-keeper hand-off between cells is only exercised in tests.

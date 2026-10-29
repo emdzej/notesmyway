@@ -206,7 +206,27 @@ struct CommandPalette: View {
             PaletteItem(id: "trash", title: "Move to Trash", systemImage: "trash", keywords: "delete remove") {
                 Task { try? await session.moveToTrash(path) }
             },
-        ]
+            PaletteItem(id: "share", title: "Share…", systemImage: "square.and.arrow.up", keywords: "send export airdrop mail", presents: true) {
+                Self.export(.share, controller)
+            },
+            PaletteItem(id: "print", title: "Print…", systemImage: "printer", shortcut: "⌘P", presents: true) {
+                Self.export(.print, controller)
+            },
+        ] + exportPDFCommand(controller)
+    }
+
+    private static func export(_ action: NoteExportAction, _ controller: MarkdownEditorController?) {
+        NotificationCenter.default.post(name: .nmwExportNote, object: controller, userInfo: ["action": action.rawValue])
+    }
+
+    private func exportPDFCommand(_ controller: MarkdownEditorController?) -> [PaletteItem] {
+        #if os(macOS)
+        [PaletteItem(id: "export-pdf", title: "Export as PDF…", systemImage: "doc.richtext", keywords: "save pdf", presents: true) {
+            Self.export(.exportPDF, controller)
+        }]
+        #else
+        []
+        #endif
     }
 
     private var formatCommands: [PaletteItem] {

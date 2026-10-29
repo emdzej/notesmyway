@@ -10,6 +10,9 @@
 import MarkdownEngine
 import NmwCore
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 struct NoteEditorView: View {
     @Bindable var model: NoteEditorModel
@@ -106,18 +109,30 @@ struct NoteEditorView: View {
         }
         .toolbar {
             #if os(iOS)
-            // Mac: Edit › Find (⌘F, ⌥⌘F) reaches the text view directly.
+            // As in Notes: Share, and the rest in a "…" menu.
+            ToolbarItem {
+                Button { share() } label: { Label("Share", systemImage: "square.and.arrow.up") }
+                    .disabled(!model.isLoaded)
+            }
             ToolbarItem {
                 Menu {
                     Button("Find in Note", systemImage: "magnifyingglass") { controller.showFind() }
                     Button("Find and Replace", systemImage: "arrow.left.arrow.right") { controller.showFind(replacing: true) }
+                    Divider()
+                    Button(effectiveMode == .source ? "Show Formatted" : "Show Markdown Source",
+                           systemImage: effectiveMode == .source ? "doc.richtext" : "chevron.left.forwardslash.chevron.right") {
+                        mode = effectiveMode == .source ? .formatted : .source
+                    }
+                    .keyboardShortcut("m", modifiers: [.command, .shift])
+                    Button(showsInspector ? "Hide Outline and Backlinks" : "Outline and Backlinks", systemImage: "sidebar.right") {
+                        showsInspector.toggle()
+                    }
+                    .keyboardShortcut("i", modifiers: [.command, .option])
                 } label: {
-                    Label("Find", systemImage: "magnifyingglass")
-                } primaryAction: {
-                    controller.showFind()
+                    Label("More", systemImage: "ellipsis")
                 }
             }
-            #endif
+            #else
             ToolbarItem {
                 Button { mode = effectiveMode == .source ? .formatted : .source } label: {
                     Label(effectiveMode == .source ? "Show Formatted" : "Show Markdown Source",
@@ -131,6 +146,17 @@ struct NoteEditorView: View {
                     .keyboardShortcut("i", modifiers: [.command, .option])
                     .help("Outline and Backlinks (⌥⌘I)")
             }
+            ToolbarItem {
+                ShareToolbarButton(enabled: model.isLoaded) { anchor in share(anchor: anchor) }
+                    .help("Share")
+            }
+            #endif
+        }
+        .focusedSceneValue(\.noteExport, NoteExportCommands(noteURL: model.url, run: run))
+        .onReceive(NotificationCenter.default.publisher(for: .nmwExportNote)) { note in
+            guard note.object as? MarkdownEditorController === controller,
+                  let raw = note.userInfo?["action"] as? String, let action = NoteExportAction(rawValue: raw) else { return }
+            run(action)
         }
         .task(id: model.url) { if !model.isLoaded { model.load() } }
         .onAppear { onController?(controller) }
@@ -149,6 +175,32 @@ struct NoteEditorView: View {
                     insertLink(to: note)
                 }
             }
+        }
+    }
+
+    // MARK: Print, PDF, Share
+
+    private func makeExporter() -> NoteExporter {
+        let fileName = model.url.deletingPathExtension().lastPathComponent
+        let title = NoteMetadata(markdown: model.text, fileName: fileName).title
+        return NoteExporter(markdown: model.text, title: title, context: context)
+    }
+
+    private func share(anchor: ShareAnchorView? = nil) {
+        NoteSharing.share(makeExporter(), anchor: anchor)
+    }
+
+    private func run(_ action: NoteExportAction) {
+        let exporter = makeExporter()
+        switch action {
+        case .share: NoteSharing.share(exporter)
+        #if os(macOS)
+        case .print: Task { await exporter.print(in: NSApp.keyWindow) }
+        case .exportPDF: Task { await exporter.exportPDF(in: NSApp.keyWindow) }
+        #else
+        case .print: Task { await exporter.print() }
+        case .exportPDF: NoteSharing.share(exporter)
+        #endif
         }
     }
 
