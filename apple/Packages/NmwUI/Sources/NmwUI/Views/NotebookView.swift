@@ -67,6 +67,7 @@ struct NotebookView: View {
         } else {
             ContentUnavailableView("No Note Selected", systemImage: "note.text",
                                    description: Text("Pick a note, or press ⌘N to start one."))
+                .background { WelcomeBackground() }
         }
     }
 

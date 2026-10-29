@@ -70,7 +70,7 @@ struct WelcomeView: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            Image(systemName: "books.vertical").font(.system(size: 48)).foregroundStyle(.secondary)
+            AppIconImage().frame(width: 96, height: 96)
             Text("Welcome to Notes my Way").font(.title2.bold())
             Text("A notebook is any folder of Markdown files. Your notes stay plain .md files you can open anywhere.")
                 .multilineTextAlignment(.center)
@@ -83,6 +83,90 @@ struct WelcomeView: View {
         }
         .padding(32)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background { WelcomeBackground() }
+    }
+}
+
+/// The app icon on macOS; on iOS (no public API for it) the icon's motif.
+struct AppIconImage: View {
+    var body: some View {
+        #if os(macOS)
+        Image(nsImage: NSApplication.shared.applicationIconImage)
+            .resizable()
+            .interpolation(.high)
+        #else
+        ZStack {
+            RoundedRectangle(cornerRadius: 22, style: .continuous).fill(
+                LinearGradient(colors: [Color(red: 0.01, green: 0.53, blue: 0.55), Color(red: 0.04, green: 0.11, blue: 0.25)],
+                               startPoint: .top, endPoint: .bottom))
+            NotePageMark(lineWidth: 0).fill(Color(white: 0.97)).padding(20).rotationEffect(.degrees(-6))
+        }
+        #endif
+    }
+}
+
+/// A soft accent glow and, as a watermark, the icon's page with a `#`, very faint.
+struct WelcomeBackground: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        GeometryReader { proxy in
+            let side = min(proxy.size.width, proxy.size.height) * 0.95
+            ZStack {
+                RadialGradient(colors: [Palette.accentColor.opacity(colorScheme == .dark ? 0.16 : 0.10), .clear],
+                               center: .top, startRadius: 0, endRadius: max(proxy.size.width, proxy.size.height) * 0.8)
+                // Bottom right, partly off the edge, clear of the centred content.
+                NotePageMark(lineWidth: side * 0.016)
+                    .stroke(Palette.accentColor.opacity(colorScheme == .dark ? 0.11 : 0.08),
+                            style: StrokeStyle(lineWidth: side * 0.016, lineCap: .round, lineJoin: .round))
+                    .frame(width: side * 0.62, height: side * 0.78)
+                    .rotationEffect(.degrees(-10))
+                    .position(x: proxy.size.width - side * 0.18, y: proxy.size.height - side * 0.2)
+            }
+            .frame(width: proxy.size.width, height: proxy.size.height)
+        }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
+/// A page with a folded top-right corner and a `#` on it, as one shape.
+struct NotePageMark: Shape {
+    var lineWidth: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let r = min(rect.width, rect.height) * 0.08
+        let fold = min(rect.width, rect.height) * 0.26
+        let minX = rect.minX, minY = rect.minY, maxX = rect.maxX, maxY = rect.maxY
+        // Outline with the folded corner.
+        path.move(to: CGPoint(x: minX + r, y: minY))
+        path.addLine(to: CGPoint(x: maxX - fold, y: minY))
+        path.addLine(to: CGPoint(x: maxX, y: minY + fold))
+        path.addLine(to: CGPoint(x: maxX, y: maxY - r))
+        path.addQuadCurve(to: CGPoint(x: maxX - r, y: maxY), control: CGPoint(x: maxX, y: maxY))
+        path.addLine(to: CGPoint(x: minX + r, y: maxY))
+        path.addQuadCurve(to: CGPoint(x: minX, y: maxY - r), control: CGPoint(x: minX, y: maxY))
+        path.addLine(to: CGPoint(x: minX, y: minY + r))
+        path.addQuadCurve(to: CGPoint(x: minX + r, y: minY), control: CGPoint(x: minX, y: minY))
+        path.closeSubpath()
+        // The fold.
+        path.move(to: CGPoint(x: maxX - fold, y: minY))
+        path.addLine(to: CGPoint(x: maxX - fold, y: minY + fold))
+        path.addLine(to: CGPoint(x: maxX, y: minY + fold))
+        // The `#`: two slanted verticals, two horizontals.
+        let cx = rect.midX, cy = rect.midY + rect.height * 0.04
+        let w = rect.width * 0.46, h = rect.height * 0.38, slant = w * 0.12
+        for dx in [-w * 0.2, w * 0.2] {
+            path.move(to: CGPoint(x: cx + dx + slant, y: cy - h / 2))
+            path.addLine(to: CGPoint(x: cx + dx - slant, y: cy + h / 2))
+        }
+        for dy in [-h * 0.18, h * 0.18] {
+            path.move(to: CGPoint(x: cx - w / 2, y: cy + dy))
+            path.addLine(to: CGPoint(x: cx + w / 2, y: cy + dy))
+        }
+        return path
     }
 }
 
