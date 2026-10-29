@@ -27,7 +27,9 @@ struct NoteListView: View {
                     .contextMenu { menu(for: note) }
                     #if os(iOS)
                     .swipeActions(edge: .trailing) {
+                        // The app-wide accent tint would otherwise override the destructive red.
                         Button("Trash", systemImage: "trash", role: .destructive) { trash(note.path) }
+                            .tint(.red)
                     }
                     .swipeActions(edge: .leading) {
                         Button(note.pinned ? "Unpin" : "Pin", systemImage: note.pinned ? "pin.slash" : "pin") {
