@@ -10,6 +10,10 @@
 
 import NmwCore
 import SwiftUI
+import UniformTypeIdentifiers
+#if os(macOS)
+import AppKit
+#endif
 
 /// The Settings window: app-wide look, and the selected notebook's settings.
 public struct SettingsView: View {
@@ -80,10 +84,58 @@ struct GeneralSettingsForm: View {
             } footer: {
                 Text("Switch the open note with the </> toolbar button (⇧⌘M).").foregroundStyle(.secondary)
             }
+            #if os(macOS)
+            MarkdownDefaultAppSection()
+            #endif
         }
         .formStyle(.grouped)
     }
 }
+
+#if os(macOS)
+/// Which app opens .md files from Finder, and a button to make it this one.
+struct MarkdownDefaultAppSection: View {
+    @State private var current: URL?
+    @State private var errorMessage: String?
+
+    private static let markdown = UTType("net.daringfireball.markdown") ?? .plainText
+
+    private var isDefault: Bool {
+        current?.resolvingSymlinksInPath().path == Bundle.main.bundleURL.resolvingSymlinksInPath().path
+    }
+
+    var body: some View {
+        Section {
+            LabeledContent("Opens Markdown files") {
+                Text(current.map { FileManager.default.displayName(atPath: $0.path) } ?? "None")
+            }
+            if !isDefault {
+                Button("Make Notes my Way the Default") { makeDefault() }
+            }
+            if let errorMessage { Text(errorMessage).foregroundStyle(.red) }
+        } header: {
+            Text("Markdown Files")
+        } footer: {
+            Text("Files opened from Finder that aren’t in a notebook open in their own window.").foregroundStyle(.secondary)
+        }
+        .onAppear(perform: refresh)
+    }
+
+    private func refresh() {
+        current = NSWorkspace.shared.urlForApplication(toOpen: Self.markdown)
+    }
+
+    private func makeDefault() {
+        // macOS asks the user to confirm the change.
+        NSWorkspace.shared.setDefaultApplication(at: Bundle.main.bundleURL, toOpen: Self.markdown) { error in
+            Task { @MainActor in
+                errorMessage = error?.localizedDescription
+                refresh()
+            }
+        }
+    }
+}
+#endif
 
 struct NotebookSettingsForm: View {
     let session: NotebookSession
