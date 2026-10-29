@@ -382,7 +382,10 @@ struct NotebookMenu: View {
             }
             Divider()
             Button("Add Notebook…", action: addNotebook)
+            #if os(macOS)
+            // iPhone / iPad: ⇧⌘P with a keyboard only; without one the buttons are quicker.
             Button("Command Palette…", systemImage: "command") { session.isShowingPalette = true }
+            #endif
             #if !os(macOS)
             Button("Settings…") { session.isShowingSettings = true }
             #endif

@@ -2,7 +2,7 @@
 //  CommandPalette.swift
 //  NmwUI
 //
-//  ⇧⌘P (and Command Palette… in the notebook menu): every command and
+//  ⇧⌘P (on the Mac also in the notebook menu): every command and
 //  every note in one fuzzy list. ↑ / ↓ move, Return runs, Esc closes.
 //  Commands for the selected note and its editor come first.
 //

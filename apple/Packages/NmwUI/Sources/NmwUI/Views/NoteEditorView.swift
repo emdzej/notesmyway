@@ -53,6 +53,11 @@ struct NoteEditorView: View {
         // Round, accent-colored checkboxes, as in Notes.
         configuration.checkbox.shape = .circle
         configuration.checkbox.movesCheckedToBottom = movesCheckedToBottom
+        #if os(iOS)
+        // Bigger boxes for fingers (the tap target around them is 44 pt).
+        configuration.checkbox.sizeFromFontHeightFactor = 1.5
+        configuration.checkbox.sizeFromMarkerWidthFactor = 1.7
+        #endif
         return configuration
     }
 
