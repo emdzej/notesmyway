@@ -162,6 +162,12 @@ struct NoteRow: View {
                 Text("\(date)  \(snippet)")
                     .font(.subheadline)
                     .lineLimit(2)
+                if note.tasksTotal > 0 {
+                    // Checklist progress, e.g. "3/5".
+                    Label("\(note.tasksDone)/\(note.tasksTotal)", systemImage: note.tasksDone == note.tasksTotal ? "checkmark.circle.fill" : "circle.dashed")
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(note.tasksDone == note.tasksTotal ? Palette.accentColor : .secondary)
+                }
                 if let subfolder {
                     Label(subfolder, systemImage: "folder").font(.caption).foregroundStyle(.secondary).lineLimit(1)
                 }

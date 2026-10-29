@@ -35,6 +35,12 @@ struct NoteMetadataTests {
         #expect(m.snippet == "Some bold and a link here. a task quoted a b")
     }
 
+    @Test func checklistItemsAreCountedOutsideCode() {
+        let m = meta("# List\n- [x] milk\n- [ ] eggs\n  * [X] nested\n```\n- [ ] not this\n```\n- [] nor this")
+        #expect(m.tasksDone == 2)
+        #expect(m.tasksTotal == 3)
+    }
+
     @Test func htmlCommentsAreNotInTheSnippet() {
         let m = meta("# Budget\n<!-- budget -->\n| a |\n|---|\n| 1 |\nAfter")
         #expect(!m.snippet.contains("<!--"))

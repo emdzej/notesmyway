@@ -64,6 +64,7 @@ struct GeneralSettingsForm: View {
     @AppStorage(AppAppearance.key) private var appearance = AppAppearance.system
     @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
     @AppStorage(EditorMode.key) private var editorMode = EditorMode.formatted
+    @AppStorage(ChecklistSettings.movesCheckedKey) private var movesCheckedToBottom = false
 
     var body: some View {
         Form {
@@ -79,6 +80,7 @@ struct GeneralSettingsForm: View {
                 Picker("Notes open as", selection: $editorMode) {
                     ForEach(EditorMode.allCases) { Text($0.title).tag($0) }
                 }
+                Toggle("Move checked items to the bottom", isOn: $movesCheckedToBottom)
             } header: {
                 Text("Editor")
             } footer: {

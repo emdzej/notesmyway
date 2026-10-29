@@ -118,3 +118,8 @@ public enum EditorMode: String, CaseIterable, Identifiable, Sendable {
         }
     }
 }
+
+enum ChecklistSettings {
+    /// Checking an item moves it below the unchecked ones (Notes' "Sort Checked Items").
+    static let movesCheckedKey = "nmw.movesCheckedToBottom"
+}

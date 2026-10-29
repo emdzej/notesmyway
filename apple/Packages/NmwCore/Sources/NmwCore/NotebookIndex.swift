@@ -20,6 +20,9 @@ public struct NoteSummary: Hashable, Sendable, Identifiable {
     public let modified: Date
     /// First image destination as written in the note.
     public let firstImage: String?
+    /// Checklist progress; total 0 when the note has no checklist.
+    public var tasksDone = 0
+    public var tasksTotal = 0
 }
 
 public struct TagCount: Hashable, Sendable {
@@ -115,6 +118,12 @@ public final class NotebookIndex: Sendable {
         migrator.registerMigration("v2-preview-subtitle") { db in
             try db.execute(sql: "ALTER TABLE link_previews ADD COLUMN subtitle TEXT")
         }
+        migrator.registerMigration("v3-task-counts") { db in
+            try db.execute(sql: "ALTER TABLE notes ADD COLUMN tasks_done INTEGER NOT NULL DEFAULT 0")
+            try db.execute(sql: "ALTER TABLE notes ADD COLUMN tasks_total INTEGER NOT NULL DEFAULT 0")
+            // Re-read every note on the next sync so the counts fill in.
+            try db.execute(sql: "UPDATE files SET mtime = 0")
+        }
         return migrator
     }
 
@@ -147,9 +156,11 @@ public final class NotebookIndex: Sendable {
             guard let note else { return }
 
             try db.execute(sql: """
-                INSERT INTO notes (file_id, title, snippet, pinned, created, first_image) VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO notes (file_id, title, snippet, pinned, created, first_image, tasks_done, tasks_total)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, arguments: [id, note.title, note.snippet, note.pinned,
-                                 note.created.map { Int64($0.timeIntervalSince1970 * 1000) }, note.firstImage])
+                                 note.created.map { Int64($0.timeIntervalSince1970 * 1000) }, note.firstImage,
+                                 note.tasksDone, note.tasksTotal])
             for tag in note.tags {
                 try db.execute(sql: "INSERT INTO tags (file_id, tag) VALUES (?, ?)", arguments: [id, tag])
             }
@@ -188,7 +199,7 @@ public final class NotebookIndex: Sendable {
     // MARK: Reading
 
     private static let summaryColumns = """
-        f.id, f.path, f.mtime, n.title, n.snippet, n.pinned, n.created, n.first_image
+        f.id, f.path, f.mtime, n.title, n.snippet, n.pinned, n.created, n.first_image, n.tasks_done, n.tasks_total
         """
 
     private static func summary(_ row: Row) -> NoteSummary? {
@@ -198,7 +209,8 @@ public final class NotebookIndex: Sendable {
             id: row["id"], path: path, title: row["title"], snippet: row["snippet"], pinned: row["pinned"],
             created: created.map { Date(timeIntervalSince1970: Double($0) / 1000) },
             modified: Date(timeIntervalSince1970: Double(row["mtime"] as Int64) / 1000),
-            firstImage: row["first_image"]
+            firstImage: row["first_image"],
+            tasksDone: row["tasks_done"], tasksTotal: row["tasks_total"]
         )
     }
 

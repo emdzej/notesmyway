@@ -330,6 +330,14 @@ struct NmwCommands: Commands {
             Button("Code") { editor?.toggle(.code) }.keyboardShortcut("e")
             Divider()
             Button("Checklist") { editor?.setBlockStyle(.task) }.keyboardShortcut("l", modifiers: [.command, .shift])
+            Menu("Checklist Items") {
+                Button("Mark as Checked") { editor?.checklist(.toggleChecked) }.keyboardShortcut("u", modifiers: [.command, .shift])
+                Button("Check All") { editor?.checklist(.checkAll) }
+                Button("Uncheck All") { editor?.checklist(.uncheckAll) }
+                Divider()
+                Button("Move Checked to Bottom") { editor?.checklist(.moveCheckedToBottom) }
+                Button("Delete Checked") { editor?.checklist(.deleteChecked) }
+            }
             Button("Bulleted List") { editor?.setBlockStyle(.bullet) }.keyboardShortcut("7", modifiers: [.command, .shift])
             Button("Numbered List") { editor?.setBlockStyle(.numbered) }.keyboardShortcut("9", modifiers: [.command, .shift])
             Button("Quote") { editor?.setBlockStyle(.quote) }.keyboardShortcut("'")

@@ -32,6 +32,9 @@ public struct NoteMetadata: Equatable, Sendable {
     public var firstImage: String?
     public var pinned: Bool
     public var created: Date?
+    /// Checklist items (`- [ ]` / `- [x]`) outside code: checked and total.
+    public var tasksDone = 0
+    public var tasksTotal = 0
     /// Body text for full-text search (frontmatter and code fences removed).
     public var searchText: String
 
@@ -49,6 +52,7 @@ public struct NoteMetadata: Equatable, Sendable {
         links = scan.links
         firstImage = scan.links.first { $0.kind == .image }?.destination
         pinned = frontmatter?.pinned ?? false
+        (tasksDone, tasksTotal) = Self.taskCounts(in: body)
         created = frontmatter?.created
         searchText = scan.searchText
     }
@@ -216,3 +220,22 @@ struct MarkdownScan {
         return s.trimmingCharacters(in: .whitespaces)
     }
 }
+
+extension NoteMetadata {
+    private static let taskItem = try! NSRegularExpression(pattern: #"^[ \t]*(?:[-*+]|\d{1,9}[.)])[ \t]+\[([ xX])\](?:[ \t]|$)"#)
+
+    static func taskCounts(in body: Substring) -> (done: Int, total: Int) {
+        var fence = FenceTracker()
+        var done = 0, total = 0
+        for line in body.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline) {
+            if fence.isCode(line) { continue }
+            let text = String(line)
+            let ns = text as NSString
+            guard let m = taskItem.firstMatch(in: text, range: NSRange(location: 0, length: ns.length)) else { continue }
+            total += 1
+            if ns.substring(with: m.range(at: 1)) != " " { done += 1 }
+        }
+        return (done, total)
+    }
+}
+

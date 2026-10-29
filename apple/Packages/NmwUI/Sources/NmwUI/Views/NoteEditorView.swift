@@ -39,8 +39,14 @@ struct NoteEditorView: View {
 
     private var context: NoteContext { NoteContext(noteURL: model.url, root: root, previews: previews, attachments: attachments) }
 
+    @AppStorage(ChecklistSettings.movesCheckedKey) private var movesCheckedToBottom = false
+
     private var configuration: MarkdownEditorConfiguration {
-        EditorSetup.configuration(for: context, version: version, mode: effectiveMode == .source ? .source : .formatted)
+        var configuration = EditorSetup.configuration(for: context, version: version, mode: effectiveMode == .source ? .source : .formatted)
+        // Round, accent-colored checkboxes, as in Notes.
+        configuration.checkbox.shape = .circle
+        configuration.checkbox.movesCheckedToBottom = movesCheckedToBottom
+        return configuration
     }
 
     var body: some View {

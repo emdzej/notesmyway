@@ -44,7 +44,20 @@ struct FormatBar: View {
                     StylePanel(controller: controller)
                         .presentationCompactAdaptation(.popover)
                 }
-            button("Checklist", "checklist") { controller.setBlockStyle(.task) }
+            // Tap: make a checklist; hold: the checklist commands.
+            Menu {
+                Button("Mark as Checked", systemImage: "checkmark.circle") { controller.checklist(.toggleChecked) }
+                Button("Check All", systemImage: "checklist.checked") { controller.checklist(.checkAll) }
+                Button("Uncheck All", systemImage: "checklist.unchecked") { controller.checklist(.uncheckAll) }
+                Button("Move Checked to Bottom", systemImage: "arrow.down.to.line") { controller.checklist(.moveCheckedToBottom) }
+                Button("Delete Checked", systemImage: "trash", role: .destructive) { controller.checklist(.deleteChecked) }
+            } label: {
+                icon("checklist")
+            } primaryAction: {
+                controller.setBlockStyle(.task)
+            }
+            .accessibilityLabel("Checklist")
+            .frame(maxWidth: .infinity)
             button("Table", "tablecells") { controller.insertTable() }
             if attach != nil {
                 Menu {
