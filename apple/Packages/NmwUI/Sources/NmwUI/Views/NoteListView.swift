@@ -157,6 +157,7 @@ struct NoteListView: View {
 
     @ViewBuilder private func menu(for note: NoteSummary) -> some View {
         Button(note.pinned ? "Unpin" : "Pin", systemImage: note.pinned ? "pin.slash" : "pin") { run { try await session.setPinned(note.path, !note.pinned) } }
+        Button("Share…", systemImage: "square.and.arrow.up") { share(note) }
         Button("Rename…", systemImage: "pencil") { newName = note.path.stem; renaming = note }
         Menu("Move To", systemImage: "folder") {
             Button(session.name, systemImage: "books.vertical") { run { try await session.move(note.path, toFolder: nil) } }
@@ -180,6 +181,16 @@ struct NoteListView: View {
             try await session.moveToTrash(path)
             if wasSelected { session.selection = next }
         }
+    }
+
+    /// Shares a note from the list: the open editor's text, else the file's.
+    private func share(_ note: NoteSummary) {
+        let url = session.notebook.url(for: note.path)
+        let text = session.openEditorText(for: note.path) ?? (try? NoteFile(url: url).read().text)
+        guard let text else { return }
+        let context = NoteContext(noteURL: url, root: session.notebook.root, previews: session.previews,
+                                  attachments: session.config.attachments)
+        NoteSharing.share(NoteExporter(markdown: text, title: note.title, context: context))
     }
 
     static func flatten(_ nodes: [FolderNode]) -> [FolderNode] {

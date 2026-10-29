@@ -517,6 +517,11 @@ public final class NotebookSession {
         }
     }
 
+    /// The text of the note's open editor, if it's open (it may be unsaved).
+    func openEditorText(for path: NotebookPath) -> String? {
+        editors[path].map(\.text)
+    }
+
     /// Moves a note (or folder) to `.nmw/trash/` (kept 30 days, spec §3.1).
     public func moveToTrash(_ path: NotebookPath) async throws {
         for (open, editor) in editors where open == path || open.isInside(path) {

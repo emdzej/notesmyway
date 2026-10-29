@@ -289,6 +289,7 @@ extension FocusedValues {
     @Entry var linkToNote: LinkToNoteAction?
     @Entry var libraryActions: LibraryActions?
     @Entry var noteEditor: MarkdownEditorController?
+    @Entry var noteExport: NoteExportCommands?
 }
 
 struct NmwCommands: Commands {
@@ -296,6 +297,7 @@ struct NmwCommands: Commands {
     @FocusedValue(\.linkToNote) private var linkToNote
     @FocusedValue(\.libraryActions) private var libraryActions
     @FocusedValue(\.noteEditor) private var editor
+    @FocusedValue(\.noteExport) private var export
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -310,6 +312,17 @@ struct NmwCommands: Commands {
             Button("Open File…", systemImage: "doc") { libraryActions?.openFile() }
                 .keyboardShortcut("o", modifiers: [.command, .shift])
             Button("Add Notebook…", systemImage: "plus") { libraryActions?.addNotebook() }
+        }
+        CommandGroup(replacing: .printItem) {
+            Button("Print…", systemImage: "printer") { export?.run(.print) }
+                .keyboardShortcut("p")
+                .disabled(export == nil)
+            #if os(macOS)
+            Button("Export as PDF…", systemImage: "doc.richtext") { export?.run(.exportPDF) }
+                .disabled(export == nil)
+            #endif
+            Button("Share…", systemImage: "square.and.arrow.up") { export?.run(.share) }
+                .disabled(export == nil)
         }
         CommandGroup(after: .newItem) {
             Button("Open Quickly…", systemImage: "magnifyingglass") { session?.isShowingSwitcher = true }
