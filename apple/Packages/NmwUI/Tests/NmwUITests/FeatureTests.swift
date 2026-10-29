@@ -112,8 +112,9 @@ struct FeatureTests {
         editor.load()
         editor.text = "# Trip: Lisbon\nnotes"
         #expect(await eventually { tmp.exists("Trip- Lisbon.md") })
-        #expect(s.selection == p("Trip- Lisbon.md"))
-        #expect(try tmp.read("Inbox.md") == "[new](Trip-%20Lisbon.md)\n")
+        // The file moves first; selection and link fixing follow.
+        #expect(await eventually { s.selection == p("Trip- Lisbon.md") })
+        #expect(await eventually { (try? tmp.read("Inbox.md")) == "[new](Trip-%20Lisbon.md)\n" })
         // Same editor (the view keeps its caret).
         #expect(s.editor(for: p("Trip- Lisbon.md")) === editor)
 
