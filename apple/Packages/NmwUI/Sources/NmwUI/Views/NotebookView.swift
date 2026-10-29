@@ -63,7 +63,13 @@ struct NotebookView: View {
                 onOpenNote: { session.selection = $0 }
             )
             .id(path)
+            #if os(macOS)
             .navigationTitle(session.notes.first { $0.path == path }?.title ?? path.stem)
+            #else
+            // The note's own first line is its title; don't repeat it above the text.
+            .navigationTitle("")
+            .toolbarTitleDisplayMode(.inline)
+            #endif
         } else {
             ContentUnavailableView("No Note Selected", systemImage: "note.text",
                                    description: Text("Pick a note, or press ⌘N to start one."))

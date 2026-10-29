@@ -193,6 +193,9 @@ public struct StandaloneNoteView: View {
                        linkableNotes: nil, onLink: handle, onStoredFiles: { _ in previews.version += 1 },
                        banner: needsFolderAccess ? AnyView(folderAccessBar) : nil)
             .navigationTitle(model.fileName)
+            #if os(iOS)
+            .toolbarTitleDisplayMode(.inline)
+            #endif
             .onAppear { needsFolderAccess = !FolderGrants.restore(covering: folder) }
             #if !os(macOS)
             .fileImporter(isPresented: $pickingFolder, allowedContentTypes: [.folder]) { result in
