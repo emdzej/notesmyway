@@ -78,6 +78,9 @@ struct MarkdownScan {
             let found = LinkScanner.occurrences(inLine: rawLine)
             links += found.map { NoteLink(destination: $0.destination, kind: $0.kind) }
             if LinkScanner.referenceDefinition(rawLine) != nil { continue }
+            // `<!-- name -->` (a formula sheet name) isn't prose.
+            let bare = trimmed.trimmingCharacters(in: .whitespaces)
+            if bare.hasPrefix("<!--"), bare.hasSuffix("-->") { continue }
 
             let prose = Self.removingCodeSpans(line)
             tags.formUnion(Self.inlineTags(in: prose))

@@ -35,6 +35,11 @@ struct NoteMetadataTests {
         #expect(m.snippet == "Some bold and a link here. a task quoted a b")
     }
 
+    @Test func htmlCommentsAreNotInTheSnippet() {
+        let m = meta("# Budget\n<!-- budget -->\n| a |\n|---|\n| 1 |\nAfter")
+        #expect(!m.snippet.contains("<!--"))
+    }
+
     @Test func longSnippetsAreCut() {
         let m = meta("# T\n" + String(repeating: "word ", count: 100))
         #expect(m.snippet.count <= 201)
