@@ -2,10 +2,11 @@
 //  AttachmentStore.swift
 //  NmwCore
 //
-//  Where dropped and pasted files go (spec §4.2): `_attachments/<note>/`
-//  at the notebook root, or next to a standalone file. Names are kept;
-//  a clash gets " 2", " 3", … unless the existing file has the same
-//  contents, which is then reused.
+//  Where dropped and pasted files go (spec §4.2), per the notebook's
+//  settings: `<note's folder>/.attachments/` (default) or
+//  `<root>/.attachments/<note>/`. Standalone files always use the folder
+//  next to them. Names are kept; a clash gets " 2", " 3", … unless the
+//  existing file has the same contents, which is then reused.
 //
 
 import Foundation
@@ -22,18 +23,23 @@ public struct StoredAttachment: Equatable, Sendable {
 
 public enum AttachmentStore {
 
-    /// `<notebook root or note folder>/_attachments/<note name>/`.
-    public static func folder(for noteURL: URL, notebookRoot: URL?) -> URL {
-        let base = notebookRoot ?? noteURL.deletingLastPathComponent()
+    /// The folder a note's attachments go to.
+    public static func folder(for noteURL: URL, notebookRoot: URL?,
+                              layout: NotebookConfig.Attachments = NotebookConfig.Attachments()) -> URL {
+        let name = NotebookConfig.Attachments.isValidFolderName(layout.folderName) ? layout.folderName : ".attachments"
+        guard layout.placement == .notebookRoot, let notebookRoot else {
+            return noteURL.deletingLastPathComponent().appending(path: name, directoryHint: .isDirectory)
+        }
         let noteName = noteURL.deletingPathExtension().lastPathComponent
-        return base.appending(path: "_attachments", directoryHint: .isDirectory)
+        return notebookRoot.appending(path: name, directoryHint: .isDirectory)
             .appending(path: noteName.isEmpty ? "Untitled" : noteName, directoryHint: .isDirectory)
     }
 
     /// Copies `source` into the note's attachment folder.
     /// - Parameter name: file name to keep; defaults to the source's.
-    public static func store(_ source: URL, named name: String? = nil, for noteURL: URL, notebookRoot: URL?) throws -> StoredAttachment {
-        let folder = folder(for: noteURL, notebookRoot: notebookRoot)
+    public static func store(_ source: URL, named name: String? = nil, for noteURL: URL, notebookRoot: URL?,
+                             layout: NotebookConfig.Attachments = NotebookConfig.Attachments()) throws -> StoredAttachment {
+        let folder = folder(for: noteURL, notebookRoot: notebookRoot, layout: layout)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let wanted = sanitized(name ?? source.lastPathComponent)
 

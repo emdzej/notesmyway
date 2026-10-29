@@ -61,17 +61,31 @@ nmw/
   Inbox.md
   Projects/
     Idea.md
-  _attachments/
-    Idea/
+    .attachments/               files dropped into notes in Projects/ (default placement)
       sketch.jpg                original file names; " 2", " 3" appended on clashes
   .nmw/
     config.json                 notebook settings (synced)
     trash/                      soft-deleted notes, kept 30 days
 ```
 
+**Attachments** are configurable per notebook (Settings window on macOS, "Notebook Settings…" on iOS), stored in `.nmw/config.json`:
+
+| Setting | Default | Options |
+|---|---|---|
+| Folder name | `.attachments` | any folder name (e.g. `attachments`, `_files`) |
+| Location | next to the note: `<note's folder>/<name>/` | in the notebook folder: `<root>/<name>/<note name>/` |
+| Show in sidebar | off | on |
+
+```json
+{ "attachments": { "folderName": ".attachments", "placement": "nextToNote", "showInSidebar": false },
+  "webPreviews": true }
+```
+
+Changing a setting never moves existing files. Keys nmw doesn't know are kept when it saves.
+
 - Any folder can be a notebook. Obsidian vaults open as notebooks, and `.obsidian/` is ignored, but their `[[wikilinks]]` show as plain text (see 3.3).
 - Folders are real folders, with unlimited nesting.
-- Files and folders starting with `.` are hidden in the UI. `_attachments/` is shown only in "Show attachments".
+- Files and folders starting with `.` are hidden in the UI (and not indexed). The attachment folder shows in the sidebar only when its setting is on.
 - Text encoding is UTF-8. Line endings are preserved as read; new files use `\n`.
 
 ### 3.2 Frontmatter
@@ -116,7 +130,7 @@ nmw also opens a single `.md` file that isn't in a notebook (Finder "Open With",
 - **Relative links and images** resolve against the file's folder. A `/`-rooted link has no notebook root, so it resolves against the folder too.
 - **Not indexed:** no backlinks, tags, or search across files; the outline and the note's own tags still work.
 - **In a notebook already?** If the file sits inside a folder that is an open notebook, or under a folder marked `.nmw/` or `.obsidian/`, nmw offers to open it in that notebook instead.
-- **Dropped files** go to `_attachments/<file name>/` next to the file, as in a notebook.
+- **Dropped files** go to `.attachments/` next to the file.
 - **Sandbox:** opening a file grants access to that file only. Showing sibling images and writing attachments need the folder; nmw asks for it once (a folder picker preselected to the file's folder) and keeps a security-scoped bookmark.
 - The window has no sidebar; "Move to Notebook…" copies the file (and the attachments it links to) into a notebook.
 
@@ -125,13 +139,13 @@ nmw also opens a single `.md` file that isn't in a notebook (Finder "Open With",
 A `{…}` block directly after an image or a link carries display attributes. The same size vocabulary applies to both.
 
 ```markdown
-![Diagram](_attachments/Idea/3f2a.jpg){.small}
+![Diagram](.attachments/3f2a.jpg){.small}
 ![](logo.png){.icon}
 ![](photo.jpg){.large .center}
 ![](chart.png){width=320}
 
 [Swift Evolution](https://www.swift.org/swift-evolution/){.preview}
-[Q3 report](_attachments/Q3.pdf){.preview .large}
+[Q3 report](.attachments/Q3.pdf){.preview .large}
 [Project idea](Projects/Idea.md){.preview .small}
 ```
 
@@ -171,7 +185,7 @@ A `{…}` block directly after an image or a link carries display attributes. Th
 - Fenced code with syntax highlighting and a copy button.
 - Inline and block math.
 - Inline images and link previews with attribute-driven sizing (3.5, 4.4).
-- **Adding files:** drop any file onto the editor (or paste / camera / scan an image on iOS). nmw copies it to `_attachments/<note>/` (name kept, ` 2`, ` 3` … appended on clashes) and inserts a link at the drop point: `![](…){.medium}` for images, `[name](…)` for other files (add `{.preview}` for a card, 4.4). The engine hands drops to nmw through its `onDropFiles` hook and inserts the returned markdown as one undoable edit.
+- **Adding files:** drop any file onto the editor (or paste / camera / scan an image on iOS). nmw copies it to the attachment folder (3.1; default `.attachments/` next to the note; name kept, ` 2`, ` 3` … appended on clashes) and inserts a link at the drop point: `![](…){.medium}` for images, `[name](…)` for other files (add `{.preview}` for a card, 4.4). The engine hands drops to nmw through its `onDropFiles` hook and inserts the returned markdown as one undoable edit.
 - **Note links:** "Link to note" (Cmd-L, or the iOS accessory bar) opens a fuzzy picker over the index and inserts `[Title](relative/path.md)`, with the path percent-encoded. Cmd-click (macOS) or tap (iOS) on a relative `.md` link opens that note; a link to a missing note offers "create".
 - Tags with `#` autocomplete.
 - Find and replace, spelling (suppressed in code, math, links), Writing Tools.
@@ -220,7 +234,7 @@ A link marked `{.preview}` (or any size attribute) renders as a preview card in 
 
 Apple Notes structure, Obsidian power:
 
-- **Folders:** the sidebar shows the folder tree expanded; a folder lists its own notes and those in its subfolders (captioned with the subfolder). The notebook root lists only its own notes (All Notes lists everything).
+- **Folders:** the notebook's own folder is the top row of the tree, with its subfolders nested under it, all expanded; a folder lists its own notes and those in its subfolders (captioned with the subfolder). The notebook root lists only its own notes (All Notes lists everything).
 - **Three columns** (`NavigationSplitView`): sidebar with notebooks, folders, tags, and Pinned / Recent / Trash; note list with title, date, two-line snippet, and thumbnail of the first image; editor. iPhone collapses to a stack.
 - **Note list:** sort by modified, created, or title. Pinned notes on top. Swipe actions on iOS: pin, move, delete.
 - **New note:** Cmd-N, or a toolbar button that creates `Untitled.md` and focuses it. The file name follows the H1, debounced.
@@ -333,7 +347,7 @@ Each milestone ends with something that works.
 | M1 | WYSIWYG tables (done) | Editable grid on macOS and iOS; write-back; undo; "Edit as Markdown" |
 | M2 | Notebook + index | NmwCore: open folder, watch, frontmatter, GRDB index, FTS, links/backlinks, tags |
 | M3 | App shell | Three-column UI, note list, create/rename/delete/trash, search, note-link picker |
-| M4 | Attachments + previews | Paste/drop/camera, `_attachments/`, `{.size}` attributes on images and links, size menu, link preview cards (web, notes, files) |
+| M4 | Attachments + previews | Paste/drop/camera, attachment folder settings, `{.size}` attributes on images and links, size menu, link preview cards (web, notes, files) |
 | M5 | iCloud | Ubiquity container, placeholders, presenters, conflict merge |
 | M6 | nmw server | Go server and protocol, NmwSync server provider, pairing UI |
 | M7 | System integration | Spotlight, Share extension, widgets, App Intents, Quick Note |

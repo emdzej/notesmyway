@@ -54,6 +54,7 @@ struct NotebookView: View {
                 model: session.editor(for: path),
                 root: session.notebook.root,
                 previews: session.previews,
+                attachments: session.config.attachments,
                 version: session.contentVersion,
                 linkableNotes: { (try? session.index.notes(sortedBy: .title)) ?? [] },
                 onLink: handle,
@@ -135,9 +136,16 @@ struct SidebarView: View {
                 Label("Pinned", systemImage: "pin").tag(NotebookSession.Scope.pinned)
             }
             Section("Folders") {
-                Label(session.name, systemImage: "folder").tag(NotebookSession.Scope.folder(nil))
-                    .contextMenu { Button("New Folder") { newFolder(in: nil) } }
-                FolderRows(nodes: session.folders, session: session, row: folderRow)
+                // The notebook's own folder is the parent of its subfolders.
+                if session.folders.isEmpty {
+                    rootRow
+                } else {
+                    DisclosureGroup(isExpanded: Binding(get: { !session.isRootCollapsed }, set: { session.isRootCollapsed = !$0 })) {
+                        FolderRows(nodes: session.folders, session: session, row: folderRow)
+                    } label: {
+                        rootRow
+                    }
+                }
             }
             if !session.tags.isEmpty {
                 Section("Tags") {
@@ -169,6 +177,12 @@ struct SidebarView: View {
         .alert("Couldn’t Complete", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK", role: .cancel) {}
         } message: { Text(errorMessage ?? "") }
+    }
+
+    private var rootRow: some View {
+        Label(session.name, systemImage: "folder")
+            .tag(NotebookSession.Scope.folder(nil))
+            .contextMenu { Button("New Folder") { newFolder(in: nil) } }
     }
 
     private func folderRow(_ node: FolderNode) -> AnyView {
@@ -239,6 +253,7 @@ struct NotebookMenu: View {
     let session: NotebookSession
     let library: Library
     let addNotebook: () -> Void
+    @State private var showingSettings = false
 
     var body: some View {
         Menu {
@@ -249,6 +264,9 @@ struct NotebookMenu: View {
             }
             Divider()
             Button("Add Notebook…", action: addNotebook)
+            #if !os(macOS)
+            Button("Notebook Settings…") { showingSettings = true }
+            #endif
             if let current = library.entries.first(where: { $0.id == library.selectedID }) {
                 Button("Remove “\(current.name)” from Notes my Way") { library.remove(current) }
             }
@@ -257,5 +275,14 @@ struct NotebookMenu: View {
         }
         .menuStyle(.borderlessButton)
         .frame(maxWidth: .infinity, alignment: .leading)
+        #if !os(macOS)
+        .sheet(isPresented: $showingSettings) {
+            NavigationStack {
+                NotebookSettingsForm(session: session)
+                    .navigationTitle("Notebook Settings")
+                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showingSettings = false } } }
+            }
+        }
+        #endif
     }
 }

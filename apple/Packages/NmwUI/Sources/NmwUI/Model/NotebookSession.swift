@@ -44,7 +44,11 @@ public final class NotebookSession {
 
     public let notebook: Notebook
     public let index: NotebookIndex
-    public let previews: LinkPreviewStore
+    public private(set) var previews: LinkPreviewStore
+    /// The notebook's settings (`.nmw/config.json`).
+    public private(set) var config: NotebookConfig
+    @ObservationIgnored private let cacheFolder: URL
+    @ObservationIgnored private let bump = Bump()
     @ObservationIgnored let indexer: NotebookIndexer
 
     public var scope: Scope = .all { didSet { if scope != oldValue { refreshNotes() } } }
@@ -65,6 +69,8 @@ public final class NotebookSession {
 
     /// Folders the user collapsed in the sidebar (all start expanded).
     public var collapsedFolders: Set<NotebookPath> = []
+    /// The notebook's own folder row is collapsed in the sidebar.
+    public var isRootCollapsed = false
 
     /// The quick switcher (⌘O) is showing.
     public var isShowingSwitcher = false
@@ -81,9 +87,31 @@ public final class NotebookSession {
         self.notebook = notebook
         index = try NotebookIndex(notebook: notebook, at: indexURL)
         indexer = NotebookIndexer(index: index)
-        let bump = Bump()
-        previews = LinkPreviewStore(cacheFolder: cacheFolder, index: index, onChange: { bump.fire() })
+        self.cacheFolder = cacheFolder
+        let config = NotebookConfig.load(for: notebook)
+        self.config = config
+        previews = Self.makePreviews(cacheFolder: cacheFolder, index: index, config: config, bump: bump)
         bump.action = { [weak self] in self?.contentVersion += 1 }
+    }
+
+    private static func makePreviews(cacheFolder: URL, index: NotebookIndex, config: NotebookConfig, bump: Bump) -> LinkPreviewStore {
+        var options = LinkPreviewStore.Options()
+        options.allowsNetwork = config.webPreviews
+        return LinkPreviewStore(cacheFolder: cacheFolder, index: index, options: options, onChange: { bump.fire() })
+    }
+
+    /// Saves new settings to `.nmw/config.json` and applies them.
+    public func updateConfig(_ newConfig: NotebookConfig) throws {
+        guard newConfig != config else { return }
+        guard NotebookConfig.Attachments.isValidFolderName(newConfig.attachments.folderName) else {
+            throw CocoaError(.fileWriteInvalidFileName)
+        }
+        try newConfig.save(for: notebook)
+        let previewsChanged = newConfig.webPreviews != config.webPreviews
+        config = newConfig
+        if previewsChanged { previews = Self.makePreviews(cacheFolder: cacheFolder, index: index, config: config, bump: bump) }
+        folders = Self.folderTree(in: notebook, config: config)
+        contentVersion += 1
     }
 
     /// Scans the folder, then follows changes until `stop()`.
@@ -113,7 +141,7 @@ public final class NotebookSession {
     public func refresh() {
         refreshNotes()
         tags = (try? index.tags()) ?? []
-        folders = Self.folderTree(in: notebook)
+        folders = Self.folderTree(in: notebook, config: config)
     }
 
     private func refreshNotes() {
@@ -141,14 +169,22 @@ public final class NotebookSession {
         }
     }
 
-    /// Visible folders, excluding `_attachments`.
-    static func folderTree(in notebook: Notebook) -> [FolderNode] {
+    /// The notebook's folders, for the sidebar: hidden folders (`.name`) are
+    /// left out, and so are attachment folders unless the settings show them.
+    static func folderTree(in notebook: Notebook, config: NotebookConfig = NotebookConfig()) -> [FolderNode] {
+        let attachments = config.attachments.folderName
         func children(of url: URL) -> [FolderNode] {
             let contents = (try? FileManager.default.contentsOfDirectory(
-                at: url, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles, .skipsPackageDescendants])) ?? []
+                at: url, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsPackageDescendants])) ?? []
             return contents.compactMap { child -> FolderNode? in
-                guard (try? child.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true,
-                      child.lastPathComponent != "_attachments", let path = notebook.path(for: child) else { return nil }
+                let name = child.lastPathComponent
+                guard (try? child.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) == true else { return nil }
+                if name == attachments {
+                    guard config.attachments.showInSidebar else { return nil }
+                } else if name.hasPrefix(".") {
+                    return nil
+                }
+                guard let path = notebook.path(for: child) else { return nil }
                 let sub = children(of: child)
                 return FolderNode(path: path, children: sub.isEmpty ? nil : sub)
             }.sorted { $0.path < $1.path }
@@ -353,7 +389,7 @@ public final class NotebookSession {
         let url = base.appending(path: candidate, directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         guard let path = notebook.path(for: url) else { throw CocoaError(.fileWriteInvalidFileName) }
-        folders = Self.folderTree(in: notebook)
+        folders = Self.folderTree(in: notebook, config: config)
         return path
     }
 

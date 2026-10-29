@@ -15,6 +15,7 @@ struct NoteEditorView: View {
     @Bindable var model: NoteEditorModel
     let root: URL?
     let previews: LinkPreviewStore?
+    var attachments = NotebookConfig.Attachments()
     /// Images or previews changed; restyles the editor.
     let version: Int
     /// Notes the "Link to Note" picker offers; nil hides the picker (standalone files).
@@ -31,7 +32,7 @@ struct NoteEditorView: View {
     @State private var showingLinkPicker = false
     @AppStorage("nmw.showsInspector") private var showsInspector = false
 
-    private var context: NoteContext { NoteContext(noteURL: model.url, root: root, previews: previews) }
+    private var context: NoteContext { NoteContext(noteURL: model.url, root: root, previews: previews, attachments: attachments) }
 
     private var configuration: MarkdownEditorConfiguration {
         EditorSetup.configuration(for: context, version: version)

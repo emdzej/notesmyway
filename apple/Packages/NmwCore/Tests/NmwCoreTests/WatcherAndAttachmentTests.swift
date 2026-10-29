@@ -67,7 +67,7 @@ struct NotebookWatcherTests {
 @Suite("Attachment store", .serialized)
 struct AttachmentStoreTests {
 
-    @Test func storesUnderTheNotebookAndNumbersClashes() throws {
+    @Test func defaultsToADotFolderNextToTheNoteAndNumbersClashes() throws {
         let tmp = try TempFolder()
         defer { tmp.delete() }
         let note = tmp.url.appending(path: "Projects/Idea.md")
@@ -75,12 +75,12 @@ struct AttachmentStoreTests {
         let b = try tmp.write("Desktop/photo.jpg", data: Data([2]))
 
         let first = try AttachmentStore.store(a, for: note, notebookRoot: tmp.url)
-        #expect(first.url.path.hasSuffix("_attachments/Idea/photo.jpg"))
-        #expect(first.linkPath == "../_attachments/Idea/photo.jpg")
+        #expect(first.url.path.hasSuffix("Projects/.attachments/photo.jpg"))
+        #expect(first.linkPath == ".attachments/photo.jpg")
         #expect(!first.reused)
 
         let second = try AttachmentStore.store(b, for: note, notebookRoot: tmp.url)
-        #expect(second.linkPath == "../_attachments/Idea/photo 2.jpg")
+        #expect(second.linkPath == ".attachments/photo 2.jpg")
         #expect(try Data(contentsOf: second.url) == Data([2]))
 
         // The same file again is reused, not copied a third time.
@@ -89,14 +89,52 @@ struct AttachmentStoreTests {
         #expect(try FileManager.default.contentsOfDirectory(atPath: first.url.deletingLastPathComponent().path).count == 2)
     }
 
+    @Test func rootPlacementUsesAFolderPerNote() throws {
+        let tmp = try TempFolder()
+        defer { tmp.delete() }
+        let note = tmp.url.appending(path: "Projects/Idea.md")
+        let file = try tmp.write("Downloads/scan.pdf", data: Data([1]))
+        let layout = NotebookConfig.Attachments(folderName: "attachments", placement: .notebookRoot)
+        let stored = try AttachmentStore.store(file, for: note, notebookRoot: tmp.url, layout: layout)
+        #expect(stored.linkPath == "../attachments/Idea/scan.pdf")
+    }
+
     @Test func standaloneFilesKeepAttachmentsNextToThem() throws {
         let tmp = try TempFolder()
         defer { tmp.delete() }
         let note = tmp.url.appending(path: "Downloads/readme.md")
         let file = try tmp.write("Desktop/Q3 (final).pdf", data: Data([9]))
-        let stored = try AttachmentStore.store(file, named: ".Q3 (final).pdf", for: note, notebookRoot: nil)
-        #expect(stored.linkPath == "_attachments/readme/Q3 (final).pdf")
-        #expect(LinkPath.encode(stored.linkPath) == "_attachments/readme/Q3%20%28final%29.pdf")
+        let layout = NotebookConfig.Attachments(placement: .notebookRoot)   // no notebook: next to the file anyway
+        let stored = try AttachmentStore.store(file, named: ".Q3 (final).pdf", for: note, notebookRoot: nil, layout: layout)
+        #expect(stored.linkPath == ".attachments/Q3 (final).pdf")
+        #expect(LinkPath.encode(stored.linkPath) == ".attachments/Q3%20%28final%29.pdf")
         #expect(AttachmentStore.numbered("archive.tar.gz", 3) == "archive.tar 3.gz")
+    }
+}
+
+@Suite("Notebook config", .serialized)
+struct NotebookConfigTests {
+
+    @Test func defaultsRoundTripAndUnknownKeysSurvive() throws {
+        let tmp = try TempFolder()
+        defer { tmp.delete() }
+        let notebook = Notebook(root: tmp.url)
+        #expect(NotebookConfig.load(for: notebook) == NotebookConfig())
+        try tmp.write(".nmw/config.json", #"{"future": {"x": 1}, "attachments": {"folderName": "files", "placement": "bogus"}}"#)
+        var config = NotebookConfig.load(for: notebook)
+        #expect(config.attachments.folderName == "files")
+        #expect(config.attachments.placement == .nextToNote)   // unknown value: default
+        config.attachments.placement = .notebookRoot
+        config.attachments.showInSidebar = true
+        config.webPreviews = false
+        try config.save(for: notebook)
+        #expect(NotebookConfig.load(for: notebook) == config)
+        let json = try JSONSerialization.jsonObject(with: Data(contentsOf: NotebookConfig.url(for: notebook))) as? [String: Any]
+        #expect((json?["future"] as? [String: Any])?["x"] as? Int == 1)
+    }
+
+    @Test func badFolderNamesAreRejected() {
+        for bad in ["", " ", ".", "..", "a/b", "a:b"] { #expect(!NotebookConfig.Attachments.isValidFolderName(bad)) }
+        for good in [".attachments", "attachments", "_files", "Pliki"] { #expect(NotebookConfig.Attachments.isValidFolderName(good)) }
     }
 }

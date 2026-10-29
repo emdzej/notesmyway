@@ -51,7 +51,7 @@ public struct Notebook: Hashable, Sendable {
 public enum FileKind: String, Sendable, Codable {
     case note, attachment, other
 
-    static let noteExtensions: Set<String> = ["md", "markdown", "mdown", "mkd"]
+    public static let noteExtensions: Set<String> = ["md", "markdown", "mdown", "mkd"]
 
     public init(path: NotebookPath) {
         if Self.noteExtensions.contains(path.pathExtension) {

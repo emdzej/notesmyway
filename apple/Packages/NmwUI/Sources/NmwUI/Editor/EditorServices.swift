@@ -24,11 +24,15 @@ public struct NoteContext: Sendable {
     /// Notebook root; nil for standalone files.
     public let root: URL?
     public let previews: LinkPreviewStore?
+    /// Where dropped files go (the notebook's settings; defaults for standalone files).
+    public let attachments: NotebookConfig.Attachments
 
-    public init(noteURL: URL, root: URL?, previews: LinkPreviewStore?) {
+    public init(noteURL: URL, root: URL?, previews: LinkPreviewStore?,
+                attachments: NotebookConfig.Attachments = NotebookConfig.Attachments()) {
         self.noteURL = noteURL
         self.root = root
         self.previews = previews
+        self.attachments = attachments
     }
 
     func resolve(_ destination: String) -> LinkTarget? {
@@ -124,7 +128,7 @@ enum EditorSetup {
             var urls: [URL] = []
             for file in files {
                 guard let attachment = try? AttachmentStore.store(file.url, named: file.name, for: context.noteURL,
-                                                                  notebookRoot: context.root) else { continue }
+                                                                  notebookRoot: context.root, layout: context.attachments) else { continue }
                 urls.append(attachment.url)
                 let link = file.markdownLink(to: attachment.linkPath)
                 links.append(file.isImage ? link + "{.medium}" : link)

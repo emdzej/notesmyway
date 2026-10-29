@@ -249,6 +249,10 @@ public struct NmwScenes: Scene {
         WindowGroup("Note", id: Self.standaloneWindowID, for: URL.self) { $url in
             if let url { StandaloneNoteView(url: url).tint(Palette.accentColor) }
         }
+
+        Settings {
+            SettingsView(library: library).tint(Palette.accentColor)
+        }
         #endif
     }
 }

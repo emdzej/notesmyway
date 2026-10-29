@@ -145,8 +145,8 @@ struct NotebookSessionTests {
         let tmp = try TempFolder()
         try tmp.write("Inbox.md", "# Inbox\nCall [Ann](People/Ann.md). #todo\n")
         try tmp.write("People/Ann.md", "# Ann\nSee [the idea](../Projects/Idea.md).\n")
-        try tmp.write("Projects/Idea.md", "---\npinned: true\n---\n# Idea\n![](../_attachments/Idea/a.png) #project\n")
-        try tmp.write("_attachments/Idea/a.png", data: Data([1]))
+        try tmp.write("Projects/Idea.md", "---\npinned: true\n---\n# Idea\n![](../.attachments/Idea/a.png) #project\n")
+        try tmp.write(".attachments/Idea/a.png", data: Data([1]))
         try tmp.write(".nmw/config.json", "{}")
         let session = try NotebookSession(notebook: Notebook(root: tmp.url), indexURL: nil, cacheFolder: tmp.url.appending(path: ".nmw/cache"))
         await session.start()
@@ -221,7 +221,7 @@ struct NotebookSessionTests {
         editor.load()
         let moved = try await s.move(p("Projects/Idea.md"), toFolder: nil)
         #expect(moved == p("Idea.md"))
-        #expect(editor.text == "---\npinned: true\n---\n# Idea\n![](_attachments/Idea/a.png) #project\n")
+        #expect(editor.text == "---\npinned: true\n---\n# Idea\n![](.attachments/Idea/a.png) #project\n")
         #expect(try tmp.read("Idea.md") == editor.text)
         #expect(try tmp.read("People/Ann.md") == "# Ann\nSee [the idea](../Idea.md).\n")
     }
@@ -263,6 +263,30 @@ struct NotebookSessionTests {
         #expect(!tmp.exists("Contacts"))
         #expect(s.scope == .folder(nil))
         #expect(!s.notes.contains { $0.path.rawValue.hasPrefix("Contacts/") })
+    }
+
+    @Test func attachmentFoldersFollowTheSettings() async throws {
+        let (tmp, s) = try await session()
+        defer { s.stop(); tmp.delete() }
+        try tmp.write("Projects/.attachments/photo.jpg", data: Data([1]))
+        try tmp.write("Cars/attachments/scan.pdf", data: Data([1]))
+        try tmp.write("Cars/Service.md", "# Service")
+        s.refresh()
+        func paths(_ nodes: [FolderNode]) -> [String] { nodes.flatMap { [$0.path.rawValue] + paths($0.children ?? []) } }
+        // Default: ".attachments", hidden. Other dot folders never show.
+        #expect(paths(s.folders) == ["Cars", "Cars/attachments", "People", "Projects"])
+
+        var config = s.config
+        config.attachments.folderName = "attachments"
+        try s.updateConfig(config)
+        #expect(paths(s.folders) == ["Cars", "People", "Projects"])
+        config.attachments.showInSidebar = true
+        try s.updateConfig(config)
+        #expect(paths(s.folders) == ["Cars", "Cars/attachments", "People", "Projects"])
+        #expect(NotebookConfig.load(for: s.notebook) == config)   // saved in .nmw/config.json
+
+        config.attachments.folderName = "a/b"
+        #expect(throws: (any Error).self) { try s.updateConfig(config) }
     }
 
     @Test func missingNotesAreCreatedFromTheirLink() async throws {
@@ -316,9 +340,9 @@ struct EditorServicesTests {
         var stored: [URL] = []
         let handler = EditorSetup.dropHandler(for: NoteContext(noteURL: note, root: tmp.url, previews: nil)) { stored = $0 }
         let markdown = await handler([DroppedFile(url: photo), DroppedFile(url: pdf)])
-        #expect(markdown == "![](../_attachments/Idea/My%20Photo.png){.medium}\n[Q3.pdf](../_attachments/Idea/Q3.pdf)")
+        #expect(markdown == "![](.attachments/My%20Photo.png){.medium}\n[Q3.pdf](.attachments/Q3.pdf)")
         #expect(stored.count == 2)
-        #expect(tmp.exists("_attachments/Idea/My Photo.png"))
+        #expect(tmp.exists("Projects/.attachments/My Photo.png"))
     }
 
     @Test func linkClicksAreClassified() throws {
