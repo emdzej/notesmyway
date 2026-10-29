@@ -322,7 +322,7 @@ public struct NmwScenes: Scene {
     public var body: some Scene {
         WindowGroup("Notes my Way", id: "main") {
             LibraryView(library: library)
-                .tint(Palette.accentColor)
+                .appLook()
                 #if os(macOS)
                 .frame(minWidth: 760, minHeight: 480)
                 #endif
@@ -331,11 +331,11 @@ public struct NmwScenes: Scene {
 
         #if os(macOS)
         WindowGroup("Note", id: Self.standaloneWindowID, for: URL.self) { $url in
-            if let url { StandaloneNoteView(url: url).tint(Palette.accentColor) }
+            if let url { StandaloneNoteView(url: url).appLook() }
         }
 
         Settings {
-            SettingsView(library: library).tint(Palette.accentColor)
+            SettingsView(library: library).appLook()
         }
         #endif
     }

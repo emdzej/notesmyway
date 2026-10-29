@@ -11,7 +11,7 @@
 import NmwCore
 import SwiftUI
 
-/// The Settings window: the settings of the selected notebook.
+/// The Settings window: app-wide look, and the selected notebook's settings.
 public struct SettingsView: View {
     @Bindable var library: Library
 
@@ -20,28 +20,68 @@ public struct SettingsView: View {
     }
 
     public var body: some View {
-        Group {
-            if let session = library.selectedSession {
-                VStack(alignment: .leading, spacing: 0) {
-                    if library.entries.count > 1 {
-                        Picker("Notebook", selection: Binding(get: { library.selectedID ?? "" }, set: { library.selectedID = $0 })) {
-                            ForEach(library.entries) { Text($0.name).tag($0.id) }
-                        }
-                        .padding([.horizontal, .top], 20)
-                    }
-                    Text("Settings for “\(session.name)”, saved in the notebook (.nmw/config.json) so they sync with it.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .padding([.horizontal, .top], 20)
-                    NotebookSettingsForm(session: session).id(session.notebook.localID)
-                }
-            } else {
-                ContentUnavailableView("No Notebook", systemImage: "books.vertical",
-                                       description: Text("Open a folder as a notebook to change its settings."))
+        TabView {
+            Tab("General", systemImage: "gearshape") {
+                GeneralSettingsForm()
+            }
+            Tab("Notebook", systemImage: "books.vertical") {
+                notebook
             }
         }
         .frame(width: 480)
         .fixedSize(horizontal: false, vertical: true)
+    }
+
+    @ViewBuilder private var notebook: some View {
+        if let session = library.selectedSession {
+            VStack(alignment: .leading, spacing: 0) {
+                if library.entries.count > 1 {
+                    Picker("Notebook", selection: Binding(get: { library.selectedID ?? "" }, set: { library.selectedID = $0 })) {
+                        ForEach(library.entries) { Text($0.name).tag($0.id) }
+                    }
+                    .padding([.horizontal, .top], 20)
+                }
+                Text("Settings for “\(session.name)”, saved in the notebook (.nmw/config.json) so they sync with it.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .padding([.horizontal, .top], 20)
+                NotebookSettingsForm(session: session).id(session.notebook.localID)
+            }
+        } else {
+            ContentUnavailableView("No Notebook", systemImage: "books.vertical",
+                                   description: Text("Open a folder as a notebook to change its settings."))
+                .padding(40)
+        }
+    }
+}
+
+/// Settings for the app on this device (not synced with notebooks).
+struct GeneralSettingsForm: View {
+    @AppStorage(AppAppearance.key) private var appearance = AppAppearance.system
+    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
+    @AppStorage(EditorMode.key) private var editorMode = EditorMode.formatted
+
+    var body: some View {
+        Form {
+            Section("Look") {
+                Picker("Appearance", selection: $appearance) {
+                    ForEach(AppAppearance.allCases) { Text($0.title).tag($0) }
+                }
+                Picker("Sidebar", selection: $sidebarStyle) {
+                    ForEach(SidebarStyle.allCases) { Text($0.title).tag($0) }
+                }
+            }
+            Section {
+                Picker("Notes open as", selection: $editorMode) {
+                    ForEach(EditorMode.allCases) { Text($0.title).tag($0) }
+                }
+            } header: {
+                Text("Editor")
+            } footer: {
+                Text("Switch any note with View › Show Markdown Source (⇧⌘M).").foregroundStyle(.secondary)
+            }
+        }
+        .formStyle(.grouped)
     }
 }
 

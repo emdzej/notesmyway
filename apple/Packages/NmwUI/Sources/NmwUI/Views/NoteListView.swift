@@ -14,15 +14,34 @@ struct NoteListView: View {
     @State private var renaming: NoteSummary?
     @State private var newName = ""
     @State private var errorMessage: String?
+    /// A click selects a row but doesn't focus the list once the editor had
+    /// focus, so the selection stayed gray; clicks focus it explicitly.
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         List(selection: $session.selection) {
             ForEach(session.notes) { note in
                 NoteRow(note: note, root: session.notebook.root, subfolder: subfolder(of: note))
                     .tag(note.path)
+                    .simultaneousGesture(TapGesture().onEnded { isFocused = true })
                     .contextMenu { menu(for: note) }
+                    #if os(iOS)
+                    .swipeActions(edge: .trailing) {
+                        Button("Trash", systemImage: "trash", role: .destructive) { trash(note.path) }
+                    }
+                    .swipeActions(edge: .leading) {
+                        Button(note.pinned ? "Unpin" : "Pin", systemImage: note.pinned ? "pin.slash" : "pin") {
+                            run { try await session.setPinned(note.path, !note.pinned) }
+                        }
+                        .tint(.orange)
+                    }
+                    #endif
             }
         }
+        .focused($isFocused)
+        #if os(macOS)
+        .onDeleteCommand { if let path = session.selection { trash(path) } }
+        #endif
         .overlay {
             if session.notes.isEmpty, !session.isIndexing {
                 if session.searchText.isEmpty {
@@ -84,7 +103,20 @@ struct NoteListView: View {
             }
         }
         Divider()
-        Button("Move to Trash", role: .destructive) { run { try await session.moveToTrash(note.path) } }
+        Button("Move to Trash", role: .destructive) { trash(note.path) }
+    }
+
+    /// Trashes a note; if it was selected, the next one in the list (or the previous) is selected.
+    private func trash(_ path: NotebookPath) {
+        let notes = session.notes
+        let next: NotebookPath? = notes.firstIndex { $0.path == path }.flatMap { i in
+            notes.indices.contains(i + 1) ? notes[i + 1].path : (i > 0 ? notes[i - 1].path : nil)
+        }
+        let wasSelected = session.selection == path
+        run {
+            try await session.moveToTrash(path)
+            if wasSelected { session.selection = next }
+        }
     }
 
     static func flatten(_ nodes: [FolderNode]) -> [FolderNode] {

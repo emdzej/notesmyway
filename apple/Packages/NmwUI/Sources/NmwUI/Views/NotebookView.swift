@@ -67,6 +67,7 @@ struct NotebookView: View {
         } else {
             ContentUnavailableView("No Note Selected", systemImage: "note.text",
                                    description: Text("Pick a note, or press ⌘N to start one."))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background { WelcomeBackground() }
         }
     }
@@ -129,6 +130,8 @@ struct SidebarView: View {
     @State private var renamingFolder: NotebookPath?
     @State private var folderName = ""
     @State private var errorMessage: String?
+    @State private var trashingFolder: NotebookPath?
+    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
 
     var body: some View {
         List(selection: Binding<NotebookSession.Scope?>(get: { session.scope }, set: { if let s = $0 { session.scope = s } })) {
@@ -165,6 +168,19 @@ struct SidebarView: View {
         .overlay(alignment: .bottom) {
             if session.isIndexing { ProgressView("Indexing…").controlSize(.small).padding(8) }
         }
+        .sidebarStyle(sidebarStyle)
+        #if os(macOS)
+        .onDeleteCommand {
+            if case .folder(let folder?) = session.scope { trashingFolder = folder }
+        }
+        #endif
+        .confirmationDialog("Move “\(trashingFolder?.name ?? "")” to the Trash?", isPresented: Binding(get: { trashingFolder != nil }, set: { if !$0 { trashingFolder = nil } })) {
+            Button("Move to Trash", role: .destructive) {
+                if let folder = trashingFolder { run { try await session.moveFolderToTrash(folder) } }
+            }
+        } message: {
+            Text("The folder and the notes in it go to the notebook’s trash (.nmw/trash), where they’re kept for 30 days.")
+        }
         .alert("Rename Folder", isPresented: Binding(get: { renamingFolder != nil }, set: { if !$0 { renamingFolder = nil } })) {
             TextField("Name", text: $folderName)
             Button("Rename") {
@@ -194,9 +210,7 @@ struct SidebarView: View {
                     Button("New Folder") { newFolder(in: node.path) }
                     Button("Rename…") { folderName = node.name; renamingFolder = node.path }
                     Divider()
-                    Button("Move to Trash", role: .destructive) {
-                        run { try await session.moveFolderToTrash(node.path) }
-                    }
+                    Button("Move to Trash…", role: .destructive) { trashingFolder = node.path }
                 }
         )
     }
@@ -266,7 +280,7 @@ struct NotebookMenu: View {
             Divider()
             Button("Add Notebook…", action: addNotebook)
             #if !os(macOS)
-            Button("Notebook Settings…") { showingSettings = true }
+            Button("Settings…") { showingSettings = true }
             #endif
             if let current = library.entries.first(where: { $0.id == library.selectedID }) {
                 Button("Remove “\(current.name)” from Notes my Way") { library.remove(current) }
@@ -279,11 +293,35 @@ struct NotebookMenu: View {
         #if !os(macOS)
         .sheet(isPresented: $showingSettings) {
             NavigationStack {
-                NotebookSettingsForm(session: session)
-                    .navigationTitle("Notebook Settings")
-                    .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showingSettings = false } } }
+                List {
+                    NavigationLink("General") { GeneralSettingsForm().navigationTitle("General") }
+                    NavigationLink("“\(session.name)” Notebook") {
+                        NotebookSettingsForm(session: session).navigationTitle(session.name)
+                    }
+                }
+                .navigationTitle("Settings")
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showingSettings = false } } }
             }
         }
         #endif
+    }
+}
+
+extension View {
+    /// "My Way": the icon's gradient behind the sidebar, with light text on it.
+    @ViewBuilder func sidebarStyle(_ style: SidebarStyle) -> some View {
+        switch style {
+        case .system:
+            self
+        case .myWay:
+            self
+                .scrollContentBackground(.hidden)
+                .background {
+                    LinearGradient(colors: [Palette.sidebarTop, Palette.sidebarBottom], startPoint: .top, endPoint: .bottom)
+                        .ignoresSafeArea()
+                }
+                .environment(\.colorScheme, .dark)
+                .tint(.white)
+        }
     }
 }
