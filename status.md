@@ -82,6 +82,8 @@ Last updated 2026-10-29. See `spec.md` for the design.
 - Code-block background selection cut-out depends on `textLayoutManager.textSelections`, which UITextView may not keep in sync.
 - On macOS, the input handlers edit via `shouldChangeText` + `replaceCharacters` + `didChangeText` instead of `insertText(_:replacementRange:)`. Both are undoable, but LaTeX block auto-wrap deserves a manual check.
 
+- Roadmap 4 (branch `app-features`): command palette (⇧⌘P, notebook menu on iOS) over commands and notes; Recently Deleted in the sidebar (restore to the original path or "Name 2", delete now, empty, read-only preview; `.nmw/trash/.index.json` keeps exact original paths); Move to Notebook… (note + its attachment-folder files, links to those rewritten; warns with the backlink count); notebook setting "Rename files to match the first heading" (`renameFilesToTitle`, debounced 1.5 s or on leaving the note, undo remembered per heading). The editor view is keyed by the model's `documentID`, so a rename keeps caret and keyboard. Tests: NmwCore 71, NmwUI 34.
+
 ## Not yet verified (2026-10-29 batch)
 
 - Table markers / drag resize, marker bar, source-mode switch and frontmatter chips were tested by unit tests and hosted snapshots, not clicked through in the running app (screen was locked). iOS paths compiled only.
@@ -89,7 +91,7 @@ Last updated 2026-10-29. See `spec.md` for the design.
 
 ## Known gaps (app)
 
-- Not built yet: command palette (⌘K), "Move to Notebook…" for standalone files, H1 auto-rename setting, iOS swipe actions and keyboard accessory bar, find & replace UI, restoring from the trash, drag-to-move in the sidebar.
+- Not built yet: "Move to Notebook…" for standalone files, drag-to-move in the sidebar. Palette, Recently Deleted, Move to Notebook… and the heading rename are unit-tested and built for macOS and iOS but not clicked through in the running app.
 - An image that can't be loaded shows as its file name (markers hidden) rather than as dimmed markdown; engine behaviour.
 - Verified in the running sandboxed macOS app: the folder-access bar appears for a standalone note whose folder isn't granted, and the text starts below it. Not clicked through: the Allow panel itself.
 - Not tried by hand: picking a folder, typing and autosave in the running app, drag and drop, renames from the context menu, preview cards fetching real pages, iPad layout, iOS notebook flow (only the welcome screen was looked at).
@@ -97,5 +99,5 @@ Last updated 2026-10-29. See `spec.md` for the design.
 ## Next
 
 1. Try the app by hand on macOS and iPad (list above), fix what turns up.
-2. M3 leftovers: command palette, Move to Notebook…, iOS swipe actions and accessory bar, find & replace.
+2. M3 leftovers: find & replace.
 3. M4 polish (size menu for images and cards), then M5 iCloud.
