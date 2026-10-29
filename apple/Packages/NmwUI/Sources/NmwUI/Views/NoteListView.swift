@@ -175,7 +175,7 @@ struct NoteRow: View {
     private var thumbnail: Image? {
         guard let source = note.firstImage,
               case .file(let url, _)? = LinkTarget.resolve(source, from: note.path.url(in: root), root: root),
-              let image = ImageCache.shared.image(at: url) else { return nil }
+              let image = ImageCache.shared.image(at: url, maxPixelSize: 200) else { return nil }
         #if os(macOS)
         return Image(nsImage: image)
         #else

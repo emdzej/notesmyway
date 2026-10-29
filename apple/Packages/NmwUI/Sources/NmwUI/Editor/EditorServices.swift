@@ -13,6 +13,7 @@ import AppKit
 import UIKit
 #endif
 import Foundation
+import ImageIO
 import MarkdownEngine
 import MarkdownEngineCodeBlocks
 import MarkdownEngineLatex
@@ -45,22 +46,59 @@ final class ImageCache: @unchecked Sendable {
     static let shared = ImageCache()
     private let cache = NSCache<NSString, PlatformImage>()
 
-    init() { cache.countLimit = 200 }
+    init() { cache.totalCostLimit = 256 * 1024 * 1024 }
 
-    func image(at url: URL) -> PlatformImage? {
+    /// The image at `url`, decoded at most `maxPixelSize` pixels on its long
+    /// side (photos from a camera are 12 MP+; drawing those while scrolling
+    /// stuttered). The image keeps its original size in points, so layout
+    /// is unchanged; only its resolution is capped.
+    func image(at url: URL, maxPixelSize: Int = 2400) -> PlatformImage? {
         var url = url
         url.removeAllCachedResourceValues()
         guard let values = try? url.resourceValues(forKeys: [.contentModificationDateKey, .isRegularFileKey]),
               values.isRegularFile == true else { return nil }
-        let key = "\(url.path)|\(values.contentModificationDate?.timeIntervalSince1970 ?? 0)" as NSString
+        let key = "\(url.path)|\(values.contentModificationDate?.timeIntervalSince1970 ?? 0)|\(maxPixelSize)" as NSString
         if let hit = cache.object(forKey: key) { return hit }
+        guard let (image, cost) = Self.downsampled(url, maxPixelSize: maxPixelSize) ?? Self.original(url) else { return nil }
+        cache.setObject(image, forKey: key, cost: cost)
+        return image
+    }
+
+    private static func downsampled(_ url: URL, maxPixelSize: Int) -> (PlatformImage, Int)? {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, [kCGImageSourceShouldCache: false] as CFDictionary),
+              CGImageSourceGetCount(source) > 0,
+              let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+              var width = (properties[kCGImagePropertyPixelWidth] as? NSNumber)?.doubleValue,
+              var height = (properties[kCGImagePropertyPixelHeight] as? NSNumber)?.doubleValue,
+              width > 0, height > 0 else { return nil }
+        // EXIF orientations 5–8 rotate by 90°.
+        if let orientation = (properties[kCGImagePropertyOrientation] as? NSNumber)?.intValue, orientation >= 5 {
+            swap(&width, &height)
+        }
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: min(maxPixelSize, Int(max(width, height))),
+        ]
+        guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else { return nil }
+        let cost = cgImage.bytesPerRow * cgImage.height
+        #if os(macOS)
+        return (NSImage(cgImage: cgImage, size: NSSize(width: width, height: height)), cost)
+        #else
+        // scale < 1 keeps `size` at the original pixel dimensions.
+        return (UIImage(cgImage: cgImage, scale: CGFloat(cgImage.width) / width, orientation: .up), cost)
+        #endif
+    }
+
+    /// Formats ImageIO can't read (e.g. PDF on macOS).
+    private static func original(_ url: URL) -> (PlatformImage, Int)? {
         #if os(macOS)
         guard let image = NSImage(contentsOf: url) else { return nil }
         #else
         guard let image = UIImage(contentsOfFile: url.path) else { return nil }
         #endif
-        cache.setObject(image, forKey: key)
-        return image
+        return (image, Int(image.size.width * image.size.height * 4))
     }
 }
 
@@ -71,7 +109,14 @@ struct NoteImageProvider: ImageProvider {
 
     func image(for request: ImageRequest) -> PlatformImage? {
         guard case .file(let url, _)? = context.resolve(request.source) else { return nil }
-        return ImageCache.shared.image(at: url)
+        // Enough pixels for the size it's shown at (3x screens), no more.
+        let maxPixels = switch request.attributes.size {
+        case .icon: 192
+        case .small: 900
+        case .medium: 1500
+        default: 2400
+        }
+        return ImageCache.shared.image(at: url, maxPixelSize: maxPixels)
     }
 
     func fingerprint() -> AnyHashable { version }
@@ -91,8 +136,8 @@ struct NotePreviewProvider: LinkPreviewProvider {
         case .unavailable: .unavailable
         }
         return LinkPreview(status: status, title: data.title, summary: data.summary, subtitle: data.subtitle,
-                           icon: data.iconURL.flatMap(ImageCache.shared.image(at:)),
-                           image: data.imageURL.flatMap(ImageCache.shared.image(at:)))
+                           icon: data.iconURL.flatMap { ImageCache.shared.image(at: $0, maxPixelSize: 192) },
+                           image: data.imageURL.flatMap { ImageCache.shared.image(at: $0, maxPixelSize: 1200) })
     }
 
     func fingerprint() -> AnyHashable { [version, context.previews?.version ?? 0] }
