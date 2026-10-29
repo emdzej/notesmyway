@@ -67,9 +67,9 @@ struct NoteListView: View {
             ToolbarItemGroup {
                 Menu {
                     Picker("Sort By", selection: $session.sort) {
-                        Text("Date Modified").tag(NoteSort.modified)
-                        Text("Date Created").tag(NoteSort.created)
-                        Text("Title").tag(NoteSort.title)
+                        Label("Date Modified", systemImage: "clock").tag(NoteSort.modified)
+                        Label("Date Created", systemImage: "calendar").tag(NoteSort.created)
+                        Label("Title", systemImage: "textformat").tag(NoteSort.title)
                     }
                 } label: { Label("Sort", systemImage: "arrow.up.arrow.down") }
                 Button { newNote() } label: { Label("New Note", systemImage: "square.and.pencil") }
@@ -156,17 +156,17 @@ struct NoteListView: View {
     }
 
     @ViewBuilder private func menu(for note: NoteSummary) -> some View {
-        Button(note.pinned ? "Unpin" : "Pin") { run { try await session.setPinned(note.path, !note.pinned) } }
-        Button("Rename…") { newName = note.path.stem; renaming = note }
-        Menu("Move To") {
-            Button(session.name) { run { try await session.move(note.path, toFolder: nil) } }
+        Button(note.pinned ? "Unpin" : "Pin", systemImage: note.pinned ? "pin.slash" : "pin") { run { try await session.setPinned(note.path, !note.pinned) } }
+        Button("Rename…", systemImage: "pencil") { newName = note.path.stem; renaming = note }
+        Menu("Move To", systemImage: "folder") {
+            Button(session.name, systemImage: "books.vertical") { run { try await session.move(note.path, toFolder: nil) } }
             ForEach(Self.flatten(session.folders), id: \.path) { folder in
-                Button(folder.path.rawValue) { run { try await session.move(note.path, toFolder: folder.path) } }
+                Button(folder.path.rawValue, systemImage: "folder") { run { try await session.move(note.path, toFolder: folder.path) } }
             }
         }
-        Button("Move to Notebook…") { requestMoveToNotebook(note.path) }
+        Button("Move to Notebook…", systemImage: "books.vertical") { requestMoveToNotebook(note.path) }
         Divider()
-        Button("Move to Trash", role: .destructive) { trash(note.path) }
+        Button("Move to Trash", systemImage: "trash", role: .destructive) { trash(note.path) }
     }
 
     /// Trashes a note; if it was selected, the next one in the list (or the previous) is selected.

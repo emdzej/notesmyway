@@ -303,7 +303,7 @@ struct SidebarView: View {
     private var rootRow: some View {
         Label(session.name, systemImage: "folder")
             .tag(NotebookSession.Scope.folder(nil))
-            .contextMenu { Button("New Folder") { newFolder(in: nil) } }
+            .contextMenu { Button("New Folder", systemImage: "folder.badge.plus") { newFolder(in: nil) } }
     }
 
     private func folderRow(_ node: FolderNode) -> AnyView {
@@ -311,10 +311,10 @@ struct SidebarView: View {
             Label(node.name, systemImage: "folder")
                 .tag(NotebookSession.Scope.folder(node.path))
                 .contextMenu {
-                    Button("New Folder") { newFolder(in: node.path) }
-                    Button("Rename…") { folderName = node.name; renamingFolder = node.path }
+                    Button("New Folder", systemImage: "folder.badge.plus") { newFolder(in: node.path) }
+                    Button("Rename…", systemImage: "pencil") { folderName = node.name; renamingFolder = node.path }
                     Divider()
-                    Button("Move to Trash…", role: .destructive) { trashingFolder = node.path }
+                    Button("Move to Trash…", systemImage: "trash", role: .destructive) { trashingFolder = node.path }
                 }
         )
     }
@@ -375,22 +375,25 @@ struct NotebookMenu: View {
 
     var body: some View {
         Menu {
-            ForEach(library.entries) { entry in
-                Button { library.selectedID = entry.id } label: {
-                    if entry.id == library.selectedID { Label(entry.name, systemImage: "checkmark") } else { Text(entry.name) }
+            // An inline picker: each notebook with an icon, the current one checked.
+            Picker("Notebook", selection: Binding(get: { library.selectedID ?? "" }, set: { library.selectedID = $0 })) {
+                ForEach(library.entries) { entry in
+                    Label(entry.name, systemImage: "book.closed").tag(entry.id)
                 }
             }
+            .pickerStyle(.inline)
             Divider()
-            Button("Add Notebook…", action: addNotebook)
+            Button("Add Notebook…", systemImage: "plus", action: addNotebook)
             #if os(macOS)
             // iPhone / iPad: ⇧⌘P with a keyboard only; without one the buttons are quicker.
             Button("Command Palette…", systemImage: "command") { session.isShowingPalette = true }
             #endif
             #if !os(macOS)
-            Button("Settings…") { session.isShowingSettings = true }
+            Button("Settings…", systemImage: "gearshape") { session.isShowingSettings = true }
             #endif
             if let current = library.entries.first(where: { $0.id == library.selectedID }) {
-                Button("Remove “\(current.name)” from Notes my Way") { library.remove(current) }
+                // Only forgets the folder; its files stay where they are.
+                Button("Remove “\(current.name)” from Notes my Way", systemImage: "minus.circle") { library.remove(current) }
             }
         } label: {
             // Not a Label: toolbars (iOS) would show only its icon.

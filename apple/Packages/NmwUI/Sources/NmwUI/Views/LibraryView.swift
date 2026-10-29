@@ -299,7 +299,7 @@ struct NmwCommands: Commands {
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
-            Button("New Note") {
+            Button("New Note", systemImage: "square.and.pencil") {
                 guard let session else { return }
                 let folder: NotebookPath? = if case .folder(let f) = session.scope { f } else { nil }
                 Task { try? await session.createNote(in: folder) }
@@ -307,72 +307,82 @@ struct NmwCommands: Commands {
             .keyboardShortcut("n")
             .disabled(session == nil)
             Divider()
-            Button("Open File…") { libraryActions?.openFile() }
+            Button("Open File…", systemImage: "doc") { libraryActions?.openFile() }
                 .keyboardShortcut("o", modifiers: [.command, .shift])
-            Button("Add Notebook…") { libraryActions?.addNotebook() }
+            Button("Add Notebook…", systemImage: "plus") { libraryActions?.addNotebook() }
         }
         CommandGroup(after: .newItem) {
-            Button("Open Quickly…") { session?.isShowingSwitcher = true }
+            Button("Open Quickly…", systemImage: "magnifyingglass") { session?.isShowingSwitcher = true }
                 .keyboardShortcut("o")
                 .disabled(session == nil)
-            Button("Command Palette…") { session?.isShowingPalette = true }
+            Button("Command Palette…", systemImage: "command") { session?.isShowingPalette = true }
                 .keyboardShortcut("p", modifiers: [.command, .shift])
                 .disabled(session == nil)
         }
         CommandGroup(after: .textEditing) {
-            Button("Link to Note…") { linkToNote?.run() }
+            Button("Link to Note…", systemImage: "link") { linkToNote?.run() }
                 .keyboardShortcut("l")
                 .disabled(linkToNote == nil)
         }
         CommandMenu("Format") {
             Group {
             // Paragraph and character styles (Apple Notes' shortcuts).
-            Button("Title") { editor?.setBlockStyle(.title) }.keyboardShortcut("t", modifiers: [.command, .shift])
-            Button("Heading") { editor?.setBlockStyle(.heading) }.keyboardShortcut("h", modifiers: [.command, .shift])
-            Button("Subheading") { editor?.setBlockStyle(.subheading) }.keyboardShortcut("j", modifiers: [.command, .shift])
-            Button("Body") { editor?.setBlockStyle(.body) }.keyboardShortcut("b", modifiers: [.command, .shift])
+            Button("Title", systemImage: "textformat.size.larger") { editor?.setBlockStyle(.title) }.keyboardShortcut("t", modifiers: [.command, .shift])
+            Button("Heading", systemImage: "textformat.size") { editor?.setBlockStyle(.heading) }.keyboardShortcut("h", modifiers: [.command, .shift])
+            Button("Subheading", systemImage: "textformat.size.smaller") { editor?.setBlockStyle(.subheading) }.keyboardShortcut("j", modifiers: [.command, .shift])
+            Button("Body", systemImage: "text.alignleft") { editor?.setBlockStyle(.body) }.keyboardShortcut("b", modifiers: [.command, .shift])
             Divider()
-            Button("Bold") { editor?.toggle(.bold) }.keyboardShortcut("b")
-            Button("Italic") { editor?.toggle(.italic) }.keyboardShortcut("i")
-            Button("Strikethrough") { editor?.toggle(.strikethrough) }.keyboardShortcut("x", modifiers: [.command, .shift])
-            Button("Code") { editor?.toggle(.code) }.keyboardShortcut("e")
+            Button("Bold", systemImage: "bold") { editor?.toggle(.bold) }.keyboardShortcut("b")
+            Button("Italic", systemImage: "italic") { editor?.toggle(.italic) }.keyboardShortcut("i")
+            Button("Strikethrough", systemImage: "strikethrough") { editor?.toggle(.strikethrough) }.keyboardShortcut("x", modifiers: [.command, .shift])
+            Button("Code", systemImage: "chevron.left.forwardslash.chevron.right") { editor?.toggle(.code) }.keyboardShortcut("e")
             Divider()
-            Button("Checklist") { editor?.setBlockStyle(.task) }.keyboardShortcut("l", modifiers: [.command, .shift])
-            Menu("Checklist Items") {
-                Button("Mark as Checked") { editor?.checklist(.toggleChecked) }.keyboardShortcut("u", modifiers: [.command, .shift])
-                Button("Check All") { editor?.checklist(.checkAll) }
-                Button("Uncheck All") { editor?.checklist(.uncheckAll) }
+            Button("Checklist", systemImage: "checklist") { editor?.setBlockStyle(.task) }.keyboardShortcut("l", modifiers: [.command, .shift])
+            Menu("Checklist Items", systemImage: "checklist") {
+                Button("Mark as Checked", systemImage: "checkmark.circle") { editor?.checklist(.toggleChecked) }.keyboardShortcut("u", modifiers: [.command, .shift])
+                Button("Check All", systemImage: "checklist.checked") { editor?.checklist(.checkAll) }
+                Button("Uncheck All", systemImage: "checklist.unchecked") { editor?.checklist(.uncheckAll) }
                 Divider()
-                Button("Move Checked to Bottom") { editor?.checklist(.moveCheckedToBottom) }
-                Button("Delete Checked") { editor?.checklist(.deleteChecked) }
+                Button("Move Checked to Bottom", systemImage: "arrow.down.to.line") { editor?.checklist(.moveCheckedToBottom) }
+                Button("Delete Checked", systemImage: "trash") { editor?.checklist(.deleteChecked) }
             }
-            Button("Bulleted List") { editor?.setBlockStyle(.bullet) }.keyboardShortcut("7", modifiers: [.command, .shift])
-            Button("Numbered List") { editor?.setBlockStyle(.numbered) }.keyboardShortcut("9", modifiers: [.command, .shift])
-            Button("Quote") { editor?.setBlockStyle(.quote) }.keyboardShortcut("'")
-            Button("Indent") { editor?.indent() }.keyboardShortcut("]")
-            Button("Outdent") { editor?.outdent() }.keyboardShortcut("[")
+            Button("Bulleted List", systemImage: "list.bullet") { editor?.setBlockStyle(.bullet) }.keyboardShortcut("7", modifiers: [.command, .shift])
+            Button("Numbered List", systemImage: "list.number") { editor?.setBlockStyle(.numbered) }.keyboardShortcut("9", modifiers: [.command, .shift])
+            Button("Quote", systemImage: "text.quote") { editor?.setBlockStyle(.quote) }.keyboardShortcut("'")
+            Button("Indent", systemImage: "increase.indent") { editor?.indent() }.keyboardShortcut("]")
+            Button("Outdent", systemImage: "decrease.indent") { editor?.outdent() }.keyboardShortcut("[")
             Divider()
-            Button("Table") { editor?.insertTable() }.keyboardShortcut("t", modifiers: [.command, .option])
+            Button("Table", systemImage: "tablecells") { editor?.insertTable() }.keyboardShortcut("t", modifiers: [.command, .option])
             Divider()
             // Act on the image or link at the caret; no-ops elsewhere.
-            Menu("Image Size") {
-                Button("Original") { _ = editor?.setImageSize(nil) }
+            Menu("Image Size", systemImage: "photo.badge.plus") {
+                Button("Original", systemImage: "photo") { _ = editor?.setImageSize(nil) }
                 Divider()
                 ForEach(Self.sizes, id: \.1) { size, title in
-                    Button(title) { _ = editor?.setImageSize(size) }
+                    Button(title, systemImage: Self.sizeIcon(size)) { _ = editor?.setImageSize(size) }
                 }
             }
-            Menu("Align") {
-                Button("Left") { _ = editor?.setAlignment(.left) }
-                Button("Center") { _ = editor?.setAlignment(.center) }
-                Button("Right") { _ = editor?.setAlignment(.right) }
+            Menu("Align", systemImage: "text.aligncenter") {
+                Button("Left", systemImage: "text.alignleft") { _ = editor?.setAlignment(.left) }
+                Button("Center", systemImage: "text.aligncenter") { _ = editor?.setAlignment(.center) }
+                Button("Right", systemImage: "text.alignright") { _ = editor?.setAlignment(.right) }
             }
             Divider()
-            Button("Show Link as Preview Card") { _ = editor?.setLinkPreview(true) }
+            Button("Show Link as Preview Card", systemImage: "text.below.photo") { _ = editor?.setLinkPreview(true) }
                 .keyboardShortcut("k", modifiers: [.command, .shift])
-            Button("Show Card as Link") { _ = editor?.setLinkPreview(false) }
+            Button("Show Card as Link", systemImage: "link") { _ = editor?.setLinkPreview(false) }
             }
             .disabled(editor == nil)
+        }
+    }
+
+    private static func sizeIcon(_ size: MarkdownAttributes.Size) -> String {
+        switch size {
+        case .icon: "app"
+        case .small: "s.square"
+        case .medium: "m.square"
+        case .large: "l.square"
+        case .full: "arrow.left.and.right.square"
         }
     }
 

@@ -22,9 +22,9 @@ struct TrashListView: View {
                 TrashRow(item: item)
                     .tag(item.id)
                     .contextMenu {
-                        Button("Restore") { restore(item) }
+                        Button("Restore", systemImage: "arrow.uturn.backward") { restore(item) }
                         Divider()
-                        Button("Delete Now…", role: .destructive) { deleting = item }
+                        Button("Delete Now…", systemImage: "trash.slash", role: .destructive) { deleting = item }
                     }
                     #if os(iOS)
                     .swipeActions(edge: .trailing) {
