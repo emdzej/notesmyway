@@ -21,38 +21,65 @@ struct NoteEditorView: View {
     let linkableNotes: (() -> [NoteSummary])?
     let onLink: (LinkAction) -> Void
     let onStoredFiles: @MainActor @Sendable ([URL]) -> Void
+    /// Notes linking here, for the inspector; nil for standalone files.
+    var backlinks: (() -> [NoteSummary])? = nil
+    var onOpenNote: (NotebookPath) -> Void = { _ in }
+    /// An extra bar above the text (e.g. the standalone folder-access prompt).
+    var banner: AnyView? = nil
 
     @State private var controller = MarkdownEditorController()
     @State private var showingLinkPicker = false
+    @AppStorage("nmy.showsInspector") private var showsInspector = false
 
     private var context: NoteContext { NoteContext(noteURL: model.url, root: root, previews: previews) }
 
+    private var configuration: MarkdownEditorConfiguration {
+        EditorSetup.configuration(for: context, version: version)
+    }
+
     var body: some View {
-        VStack(spacing: 0) {
-            if model.conflict != nil { ConflictBar(model: model) }
-            if let message = model.errorMessage {
-                Label(message, systemImage: "exclamationmark.triangle")
-                    .font(.callout)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(10)
-                    .background(.yellow.opacity(0.15))
+        NativeTextViewWrapper(
+            text: $model.text,
+            configuration: configuration,
+            documentId: model.url.path,
+            isEditable: model.isLoaded && model.errorMessage == nil,
+            controller: controller,
+            onDropFiles: EditorSetup.dropHandler(for: context, stored: onStoredFiles),
+            onLinkClick: { destination in onLink(LinkAction.classify(destination, in: context)) }
+        )
+        // Bars above the text (conflict, errors, folder access).
+        .safeAreaInset(edge: .top, spacing: 0) {
+            VStack(spacing: 0) {
+                if let banner { banner }
+                if model.conflict != nil { ConflictBar(model: model) }
+                if let message = model.errorMessage {
+                    Label(message, systemImage: "exclamationmark.triangle")
+                        .font(.callout)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(10)
+                        .background(.yellow.opacity(0.15))
+                }
             }
-            NativeTextViewWrapper(
-                text: $model.text,
-                configuration: EditorSetup.configuration(for: context, version: version),
-                documentId: model.url.path,
-                isEditable: model.isLoaded && model.errorMessage == nil,
-                controller: controller,
-                onDropFiles: EditorSetup.dropHandler(for: context, stored: onStoredFiles),
-                onLinkClick: { destination in onLink(LinkAction.classify(destination, in: context)) }
-            )
+            .background(.bar)
+        }
+        .inspector(isPresented: $showsInspector) {
+            NoteInspector(text: model.text, backlinks: backlinks?(), onHeading: { controller.reveal($0.range) },
+                          onOpenNote: onOpenNote)
+                .inspectorColumnWidth(min: 200, ideal: 240, max: 360)
+        }
+        .toolbar {
+            ToolbarItem {
+                Button { showsInspector.toggle() } label: { Label("Outline and Backlinks", systemImage: "sidebar.right") }
+                    .keyboardShortcut("i", modifiers: [.command, .option])
+                    .help("Outline and Backlinks (⌥⌘I)")
+            }
         }
         .task(id: model.url) { if !model.isLoaded { model.load() } }
         .onDisappear { model.flush() }
         .focusedSceneValue(\.linkToNote, linkableNotes == nil ? nil : LinkToNoteAction(noteURL: model.url) { showingLinkPicker = true })
         .sheet(isPresented: $showingLinkPicker) {
             if let linkableNotes {
-                NoteLinkPicker(notes: linkableNotes()) { note in
+                NotePicker(prompt: "Link to note…", notes: linkableNotes()) { note in
                     showingLinkPicker = false
                     insertLink(to: note)
                 }
@@ -67,6 +94,55 @@ struct NoteEditorView: View {
         let title = note.title.replacingOccurrences(of: "[", with: "\\[").replacingOccurrences(of: "]", with: "\\]")
         controller.insertText("[\(title)](\(destination))", actionName: "Link to Note")
         controller.focus()
+    }
+}
+
+/// Outline (click to jump) and the notes linking here.
+struct NoteInspector: View {
+    let text: String
+    /// nil hides the section (standalone files aren't indexed).
+    let backlinks: [NoteSummary]?
+    let onHeading: (NoteHeading) -> Void
+    let onOpenNote: (NotebookPath) -> Void
+
+    var body: some View {
+        List {
+            Section("Outline") {
+                let headings = NoteOutline.headings(in: text)
+                if headings.isEmpty {
+                    Text("No headings").foregroundStyle(.secondary)
+                }
+                ForEach(headings) { heading in
+                    Button { onHeading(heading) } label: {
+                        Text(heading.title)
+                            .font(heading.level == 1 ? .body.weight(.semibold) : .body)
+                            .padding(.leading, CGFloat(max(0, heading.level - 1)) * 12)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            if let backlinks {
+                Section("Backlinks") {
+                    if backlinks.isEmpty {
+                        Text("No notes link here").foregroundStyle(.secondary)
+                    }
+                    ForEach(backlinks) { note in
+                        Button { onOpenNote(note.path) } label: {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(note.title).lineLimit(1)
+                                Text(note.path.rawValue).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -90,8 +166,9 @@ struct ConflictBar: View {
     }
 }
 
-/// Fuzzy picker over the notebook's notes (Cmd-L).
-struct NoteLinkPicker: View {
+/// Fuzzy picker over the notebook's notes: "Link to Note" (⌘L) and the quick switcher (⌘O).
+struct NotePicker: View {
+    let prompt: String
     let notes: [NoteSummary]
     let onPick: (NoteSummary) -> Void
     @State private var query = ""
@@ -128,7 +205,7 @@ struct NoteLinkPicker: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TextField("Link to note…", text: $query)
+            TextField(prompt, text: $query)
                 .textFieldStyle(.plain)
                 .font(.title3)
                 .padding(12)

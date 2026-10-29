@@ -132,7 +132,7 @@ public actor NotebookIndexer {
 
 extension NotebookPath {
     /// True when `self` lies below `folder`.
-    func isInside(_ folder: NotebookPath) -> Bool { rawValue.hasPrefix(folder.rawValue + "/") }
+    public func isInside(_ folder: NotebookPath) -> Bool { rawValue.hasPrefix(folder.rawValue + "/") }
 }
 
 extension NotebookScanner {

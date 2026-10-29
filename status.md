@@ -41,12 +41,14 @@ Last updated 2026-10-29. See `spec.md` for the design.
   - `NoteEditorModel`: 500 ms autosave, outside edits adopted when nothing is unsaved, otherwise a conflict bar (Keep Mine / Use Disk Version / Keep Both, which saves a `(conflict …)` copy); non-UTF-8 files open read-only.
   - Editor wiring: images and preview cards resolve relative to the note, drops go to `AttachmentStore` (`![](…){.medium}` for images), link clicks open notes / files / URLs, "Link to Note…" (⌘L) fuzzy picker inserts `[Title](relative.md)`.
   - Views: three-column `NavigationSplitView` (notebook menu, All / Pinned, folder tree, tags with counts; note list with date, snippet, first-image thumbnail, context menu; editor), welcome screen, standalone-file windows (macOS) / sheet (iOS). Commands: New Note ⌘N, Link to Note ⌘L, Open File… ⇧⌘O, Add Notebook….
+  - Added since: quick switcher (⌘O), inspector (⌥⌘I) with the outline (click jumps to the heading) and backlinks, folder context menu (New Folder, Rename… with link fixing, Move to Trash), "create it?" for links to missing notes, undo of nmy's own rename / move (the banner's Undo moves the file back and restores links), trash entries older than 30 days purged on open, standalone folder-access bar (sandbox; grant kept as a bookmark).
   - macOS app is sandboxed (user-selected files, app-scope bookmarks, network client) and ad-hoc signed for local runs.
+  - Engine `38bc138`: `MarkdownEditorController.reveal(_:)`; `b746644`: macOS editor stays at the top when its viewport resizes (a bar appearing above it hid the first lines) and applies `safeAreaInsets` changes.
   - Engine `cd8ab36`: `MarkdownEditorController` (insert at the caret in one specific editor, `focus()`), and the UIKit wrapper takes `onDropFiles` before `onLinkClick` like AppKit.
 - **Tests**
   - Package (`swift test`, macOS): 144 pass, including end-to-end grid editing in a real window (cell edit, Tab, add row, Esc, undo/redo, context menu, Edit as Markdown, arrow into table).
-  - NmyCore (`swift test` in `apple/Packages/NmyCore`): 54 pass, on real temp folders (scan, sync, change detection, queries, file conflicts, BOM / CRLF, standalone files, link rewriting, rename and folder-move detection, FSEvents watcher end to end, attachments, HTML parsing, previews with a stubbed URLSession). Also builds for iOS.
-  - NmyUI (`xcodebuild test -scheme NmyUI -destination 'platform=macOS'` in `apple/Packages/NmyUI`; `swift test` can't link the engine's dynamic product there): 15 pass, covering autosave, conflicts, own-save vs outside-change, rename + link fix + undo, moves through an open editor, pin, trash, an FSEvents edit reaching an open editor, drops, link classification, the picker's ranking.
+  - NmyCore (`swift test` in `apple/Packages/NmyCore`): 57 pass (adds the outline), on real temp folders (scan, sync, change detection, queries, file conflicts, BOM / CRLF, standalone files, link rewriting, rename and folder-move detection, FSEvents watcher end to end, attachments, HTML parsing, previews with a stubbed URLSession). Also builds for iOS.
+  - NmyUI (`xcodebuild test -scheme NmyUI -destination 'platform=macOS'` in `apple/Packages/NmyUI`; `swift test` can't link the engine's dynamic product there): 18 pass (run from clean derived data; an incremental `build` then `test` can fail to link), covering folder create / rename / trash, missing-note creation, trash expiry, undo of a rename, and autosave, conflicts, own-save vs outside-change, rename + link fix + undo, moves through an open editor, pin, trash, an FSEvents edit reaching an open editor, drops, link classification, the picker's ranking.
   - Engine: 145 pass (the controller adds an AppKit insert-at-selection test).
   - Ran the real app: macOS (sandboxed) opened a standalone `.md` via `open -a`, with code highlighting; iOS simulator shows the welcome screen. A hosted snapshot of the three columns on a sample notebook looked right.
   - iOS (`xcodebuild test` on the `MarkdownEngineDemoiOS` scheme): 6 editor tests (grid + file drop) hosted by the demo app (package tests on iOS have no window scene).
@@ -75,12 +77,13 @@ Last updated 2026-10-29. See `spec.md` for the design.
 
 ## Known gaps (app)
 
-- Not built yet: quick switcher (⌘O, so Open File is ⇧⌘O), command palette, backlinks / outline inspector, creating or renaming folders, offering "create" for a link to a missing note, emptying the trash after 30 days, undo for the rename itself (only the link fix has undo), "Move to Notebook…" for standalone files, H1 auto-rename setting, iOS swipe actions and keyboard accessory bar, find & replace UI.
-- Standalone files in the sandbox can't show sibling images or store drops yet: the "grant the folder" prompt (spec §3.4) isn't built.
+- Not built yet: command palette (⌘K), "Move to Notebook…" for standalone files, H1 auto-rename setting, iOS swipe actions and keyboard accessory bar, find & replace UI, restoring from the trash, drag-to-move in the sidebar.
+- An image that can't be loaded shows as its file name (markers hidden) rather than as dimmed markdown; engine behaviour.
+- Verified in the running sandboxed macOS app: the folder-access bar appears for a standalone note whose folder isn't granted, and the text starts below it. Not clicked through: the Allow panel itself.
 - Not tried by hand: picking a folder, typing and autosave in the running app, drag and drop, renames from the context menu, preview cards fetching real pages, iPad layout, iOS notebook flow (only the welcome screen was looked at).
 
 ## Next
 
 1. Try the app by hand on macOS and iPad (list above), fix what turns up.
-2. M3 rest: quick switcher, backlinks / outline inspector, folder management, missing-note "create", standalone folder-access prompt, trash expiry.
+2. M3 leftovers: command palette, Move to Notebook…, iOS swipe actions and accessory bar, find & replace.
 3. M4 polish (size menu for images and cards), then M5 iCloud.

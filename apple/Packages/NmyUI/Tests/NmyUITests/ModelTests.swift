@@ -206,8 +206,11 @@ struct NotebookSessionTests {
         #expect(editor.url.lastPathComponent == "Ann Lee.md")
         #expect(s.editor(for: renamed) === editor)
 
-        s.undoLinkFix()
+        await s.undoLinkFix()
         #expect(try tmp.read("Inbox.md") == "# Inbox\nCall [Ann](People/Ann.md). #todo\n")
+        #expect(tmp.exists("People/Ann.md") && !tmp.exists("People/Ann Lee.md"))   // the rename is undone too
+        #expect(s.selection == p("People/Ann.md"))
+        #expect(editor.url.lastPathComponent == "Ann.md")
         #expect(s.linkFix == nil)
     }
 
@@ -238,6 +241,52 @@ struct NotebookSessionTests {
         #expect(try FileManager.default.contentsOfDirectory(atPath: tmp.url.appending(path: ".nmy/trash").path).count == 1)
         #expect(s.selection == nil)
         #expect(!s.notes.contains { $0.path == p("Inbox.md") })
+    }
+
+    @Test func foldersCanBeCreatedRenamedAndTrashed() async throws {
+        let (tmp, s) = try await session()
+        defer { s.stop(); tmp.delete() }
+        let made = try s.createFolder(in: p("Projects"))
+        let again = try s.createFolder(in: p("Projects"))
+        #expect(made == p("Projects/New Folder") && again == p("Projects/New Folder 2"))
+        #expect(s.folders.first { $0.path == p("Projects") }?.children?.count == 2)
+
+        s.scope = .folder(p("People"))
+        let renamed = try await s.renameFolder(p("People"), to: "Contacts")
+        #expect(renamed == p("Contacts"))
+        #expect(s.scope == .folder(p("Contacts")))
+        #expect(try tmp.read("Inbox.md") == "# Inbox\nCall [Ann](Contacts/Ann.md). #todo\n")
+        #expect(try tmp.read("Contacts/Ann.md") == "# Ann\nSee [the idea](../Projects/Idea.md).\n")   // same depth: unchanged
+        #expect(s.linkFix?.move?.to == p("Contacts"))
+
+        try await s.moveFolderToTrash(p("Contacts"))
+        #expect(!tmp.exists("Contacts"))
+        #expect(s.scope == .folder(nil))
+        #expect(!s.notes.contains { $0.path.rawValue.hasPrefix("Contacts/") })
+    }
+
+    @Test func missingNotesAreCreatedFromTheirLink() async throws {
+        let (tmp, s) = try await session()
+        defer { s.stop(); tmp.delete() }
+        let path = try await s.createMissingNote(at: p("Projects/Next Steps.md"))
+        #expect(try tmp.read("Projects/Next Steps.md") == "# Next Steps\n")
+        #expect(s.selection == path)
+        #expect(try s.index.note(at: path)?.title == "Next Steps")
+    }
+
+    @Test func trashOlderThan30DaysIsPurged() async throws {
+        let (tmp, s) = try await session()
+        defer { s.stop(); tmp.delete() }
+        let now = Date()
+        let old = Int(now.timeIntervalSince1970) - 31 * 86_400
+        let recent = Int(now.timeIntervalSince1970) - 2 * 86_400
+        try tmp.write(".nmy/trash/\(old) Old.md", "x")
+        try tmp.write(".nmy/trash/\(recent) Recent.md", "y")
+        try tmp.write(".nmy/trash/notes.txt", "kept: no timestamp")
+        s.purgeTrash(now: now)
+        #expect(!tmp.exists(".nmy/trash/\(old) Old.md"))
+        #expect(tmp.exists(".nmy/trash/\(recent) Recent.md"))
+        #expect(tmp.exists(".nmy/trash/notes.txt"))
     }
 
     #if os(macOS)
@@ -292,8 +341,8 @@ struct EditorServicesTests {
     }
 
     @Test func pickerRanksTitlePrefixesFirst() {
-        #expect(NoteLinkPicker.score("ide", "idea", "projects/idea.md")! > NoteLinkPicker.score("ide", "a wide road", "x.md")!)
-        #expect(NoteLinkPicker.score("xyz", "idea", "projects/idea.md") == nil)
-        #expect(NoteLinkPicker.score("proj", "idea", "projects/idea.md") != nil)   // path match
+        #expect(NotePicker.score("ide", "idea", "projects/idea.md")! > NotePicker.score("ide", "a wide road", "x.md")!)
+        #expect(NotePicker.score("xyz", "idea", "projects/idea.md") == nil)
+        #expect(NotePicker.score("proj", "idea", "projects/idea.md") != nil)   // path match
     }
 }

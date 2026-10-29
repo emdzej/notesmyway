@@ -91,8 +91,14 @@ public struct StandaloneNoteView: View {
     let url: URL
     @State private var model: NoteEditorModel
     @State private var previews = StandalonePreviews()
+    @State private var needsFolderAccess = false
+    #if !os(macOS)
+    @State private var pickingFolder = false
+    #endif
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
+
+    private var folder: URL { url.deletingLastPathComponent() }
 
     public init(url: URL) {
         self.url = url
@@ -101,8 +107,15 @@ public struct StandaloneNoteView: View {
 
     public var body: some View {
         NoteEditorView(model: model, root: nil, previews: previews.store, version: previews.version,
-                       linkableNotes: nil, onLink: handle, onStoredFiles: { _ in previews.version += 1 })
+                       linkableNotes: nil, onLink: handle, onStoredFiles: { _ in previews.version += 1 },
+                       banner: needsFolderAccess ? AnyView(folderAccessBar) : nil)
             .navigationTitle(model.fileName)
+            .onAppear { needsFolderAccess = !FolderGrants.restore(covering: folder) }
+            #if !os(macOS)
+            .fileImporter(isPresented: $pickingFolder, allowedContentTypes: [.folder]) { result in
+                if case .success(let granted) = result { FolderGrants.remember(granted); refreshAccess() }
+            }
+            #endif
             #if os(macOS)
             .navigationSubtitle(url.deletingLastPathComponent().path)
             #endif
@@ -117,6 +130,31 @@ public struct StandaloneNoteView: View {
         case .standalone(let url), .file(let url), .external(let url): openURL(url)
         case .note, .none: break
         }
+    }
+
+    private var folderAccessBar: some View {
+        HStack(spacing: 12) {
+            Label("Allow access to “\(folder.lastPathComponent)” to show this note’s images and save dropped files next to it.",
+                  systemImage: "folder.badge.questionmark")
+                .font(.callout)
+            Spacer()
+            Button("Allow…") {
+                #if os(macOS)
+                if FolderGrants.request(folder) { refreshAccess() }
+                #else
+                pickingFolder = true
+                #endif
+            }
+            Button { needsFolderAccess = false } label: { Image(systemName: "xmark") }.buttonStyle(.borderless)
+        }
+        .controlSize(.small)
+        .padding(10)
+        .background(.blue.opacity(0.08))
+    }
+
+    private func refreshAccess() {
+        needsFolderAccess = !FolderGrants.isAccessible(folder)
+        previews.version += 1   // images can load now
     }
 }
 
@@ -174,6 +212,11 @@ struct NmyCommands: Commands {
             Button("Open File…") { libraryActions?.openFile() }
                 .keyboardShortcut("o", modifiers: [.command, .shift])
             Button("Add Notebook…") { libraryActions?.addNotebook() }
+        }
+        CommandGroup(after: .newItem) {
+            Button("Open Quickly…") { session?.isShowingSwitcher = true }
+                .keyboardShortcut("o")
+                .disabled(session == nil)
         }
         CommandGroup(after: .textEditing) {
             Button("Link to Note…") { linkToNote?.run() }

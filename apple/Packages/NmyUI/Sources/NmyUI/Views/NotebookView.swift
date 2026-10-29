@@ -14,6 +14,7 @@ struct NotebookView: View {
     let library: Library
     let addNotebook: () -> Void
     @Environment(\.openURL) private var openURL
+    @State private var missingNote: NotebookPath?
 
     var body: some View {
         NavigationSplitView {
@@ -30,6 +31,21 @@ struct NotebookView: View {
             if let fix = session.linkFix { LinkFixBanner(session: session, fix: fix).padding() }
         }
         .onChange(of: session.selection) { _, new in session.closeEditors(except: new) }
+        .sheet(isPresented: $session.isShowingSwitcher) {
+            NotePicker(prompt: "Open note…", notes: (try? session.index.notes(sortedBy: .modified)) ?? []) { note in
+                session.isShowingSwitcher = false
+                session.scope = .all
+                session.selection = note.path
+            }
+        }
+        .alert("“\(missingNote?.stem ?? "")” doesn’t exist yet", isPresented: Binding(get: { missingNote != nil }, set: { if !$0 { missingNote = nil } })) {
+            Button("Create Note") {
+                if let path = missingNote { Task { try? await session.createMissingNote(at: path) } }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("The link points to \(missingNote?.rawValue ?? ""). Create it there?")
+        }
     }
 
     @ViewBuilder private var detail: some View {
@@ -41,7 +57,9 @@ struct NotebookView: View {
                 version: session.contentVersion,
                 linkableNotes: { (try? session.index.notes(sortedBy: .title)) ?? [] },
                 onLink: handle,
-                onStoredFiles: { _ in }
+                onStoredFiles: { _ in },
+                backlinks: { (try? session.index.backlinks(to: path)) ?? [] },
+                onOpenNote: { session.selection = $0 }
             )
             .id(path)
             .navigationTitle(session.notes.first { $0.path == path }?.title ?? path.stem)
@@ -56,6 +74,8 @@ struct NotebookView: View {
         case .note(let path):
             if FileManager.default.fileExists(atPath: session.notebook.url(for: path).path) {
                 session.selection = path
+            } else {
+                missingNote = path
             }
         case .standalone(let url): library.open(file: url)
         case .file(let url): openURL(url)
@@ -73,7 +93,7 @@ struct LinkFixBanner: View {
         HStack(spacing: 12) {
             Image(systemName: "link")
             Text(message).font(.callout)
-            if !fix.notes.isEmpty { Button("Undo") { session.undoLinkFix() } }
+            if !fix.notes.isEmpty || fix.move != nil { Button("Undo") { Task { await session.undoLinkFix() } } }
             Button { session.linkFix = nil } label: { Image(systemName: "xmark") }
                 .buttonStyle(.borderless)
         }
@@ -87,9 +107,16 @@ struct LinkFixBanner: View {
     }
 
     private var message: String {
-        let updated = fix.notes.count == 1 ? "Updated links in 1 note" : "Updated links in \(fix.notes.count) notes"
-        guard !fix.skipped.isEmpty else { return updated }
-        return updated + " · \(fix.skipped.count) changed meanwhile, left as is"
+        var parts: [String] = []
+        if let move = fix.move {
+            parts.append(move.from.parent == move.to.parent ? "Renamed to “\(move.to.stem)”" : "Moved to \(move.to.parent?.rawValue ?? session.name)")
+        }
+        if !fix.notes.isEmpty {
+            parts.append(fix.notes.count == 1 ? "updated links in 1 note" : "updated links in \(fix.notes.count) notes")
+        }
+        if !fix.skipped.isEmpty { parts.append("\(fix.skipped.count) changed meanwhile, left as is") }
+        let text = parts.joined(separator: " · ")
+        return text.prefix(1).uppercased() + text.dropFirst()
     }
 }
 
@@ -97,6 +124,9 @@ struct SidebarView: View {
     @Bindable var session: NotebookSession
     let library: Library
     let addNotebook: () -> Void
+    @State private var renamingFolder: NotebookPath?
+    @State private var folderName = ""
+    @State private var errorMessage: String?
 
     var body: some View {
         List(selection: Binding<NotebookSession.Scope?>(get: { session.scope }, set: { if let s = $0 { session.scope = s } })) {
@@ -106,8 +136,17 @@ struct SidebarView: View {
             }
             Section("Folders") {
                 Label(session.name, systemImage: "folder").tag(NotebookSession.Scope.folder(nil))
+                    .contextMenu { Button("New Folder") { newFolder(in: nil) } }
                 OutlineGroup(session.folders, children: \.children) { node in
                     Label(node.name, systemImage: "folder").tag(NotebookSession.Scope.folder(node.path))
+                        .contextMenu {
+                            Button("New Folder") { newFolder(in: node.path) }
+                            Button("Rename…") { folderName = node.name; renamingFolder = node.path }
+                            Divider()
+                            Button("Move to Trash", role: .destructive) {
+                                run { try await session.moveFolderToTrash(node.path) }
+                            }
+                        }
                 }
             }
             if !session.tags.isEmpty {
@@ -126,6 +165,36 @@ struct SidebarView: View {
         .safeAreaInset(edge: .top) { NotebookMenu(session: session, library: library, addNotebook: addNotebook).padding(.horizontal, 10).padding(.vertical, 6) }
         .overlay(alignment: .bottom) {
             if session.isIndexing { ProgressView("Indexing…").controlSize(.small).padding(8) }
+        }
+        .alert("Rename Folder", isPresented: Binding(get: { renamingFolder != nil }, set: { if !$0 { renamingFolder = nil } })) {
+            TextField("Name", text: $folderName)
+            Button("Rename") {
+                if let folder = renamingFolder {
+                    let name = folderName
+                    run { try await session.renameFolder(folder, to: name) }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: { Text("Links to notes inside it are updated.") }
+        .alert("Couldn’t Complete", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: { Text(errorMessage ?? "") }
+    }
+
+    private func newFolder(in parent: NotebookPath?) {
+        do {
+            let folder = try session.createFolder(in: parent)
+            session.scope = .folder(folder)
+            folderName = folder.name
+            renamingFolder = folder
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func run(_ action: @escaping @MainActor () async throws -> Void) {
+        Task { @MainActor in
+            do { try await action() } catch { errorMessage = error.localizedDescription }
         }
     }
 }
