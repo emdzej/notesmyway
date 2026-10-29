@@ -162,6 +162,14 @@ struct NotebookSettingsForm: View {
                     .foregroundStyle(.secondary)
             }
             Section {
+                Toggle("Rename files to match the first heading", isOn: binding(\.renameFilesToTitle))
+            } header: {
+                Text("File Names")
+            } footer: {
+                Text("When a note’s first heading changes, its file is renamed after it once you pause typing or leave the note. Links to it are updated. Notes without a heading, or named “Untitled…”, keep their name.")
+                    .foregroundStyle(.secondary)
+            }
+            Section {
                 Toggle("Load previews for web links", isOn: binding(\.webPreviews))
             } header: {
                 Text("Link Previews")

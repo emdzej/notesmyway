@@ -25,6 +25,13 @@ struct NoteEditorView: View {
     /// Notes linking here, for the inspector; nil for standalone files.
     var backlinks: (() -> [NoteSummary])? = nil
     var onOpenNote: (NotebookPath) -> Void = { _ in }
+    /// Shows the note without allowing edits (Recently Deleted).
+    var readOnly = false
+    /// Where links and images resolve from, when that isn't the file's own
+    /// place (a trashed note: where it was).
+    var linkBase: URL? = nil
+    /// Called with the editor's controller when it appears (the palette's format commands).
+    var onController: ((MarkdownEditorController) -> Void)? = nil
     /// An extra bar above the text (e.g. the standalone folder-access prompt).
     var banner: AnyView? = nil
 
@@ -37,7 +44,7 @@ struct NoteEditorView: View {
 
     private var effectiveMode: EditorMode { mode ?? defaultMode }
 
-    private var context: NoteContext { NoteContext(noteURL: model.url, root: root, previews: previews, attachments: attachments) }
+    private var context: NoteContext { NoteContext(noteURL: linkBase ?? model.url, root: root, previews: previews, attachments: attachments) }
 
     private var configuration: MarkdownEditorConfiguration {
         EditorSetup.configuration(for: context, version: version, mode: effectiveMode == .source ? .source : .formatted)
@@ -49,8 +56,8 @@ struct NoteEditorView: View {
             configuration: configuration,
             fontName: EditorAppearance.shared.fontName,
             fontSize: EditorAppearance.shared.fontSize,
-            documentId: model.url.path,
-            isEditable: model.isLoaded && model.errorMessage == nil,
+            documentId: model.documentID,
+            isEditable: model.isLoaded && model.errorMessage == nil && !readOnly,
             controller: controller,
             onDropFiles: EditorSetup.dropHandler(for: context, stored: onStoredFiles),
             onLinkClick: { destination in onLink(LinkAction.classify(destination, in: context)) }
@@ -102,6 +109,12 @@ struct NoteEditorView: View {
             }
         }
         .task(id: model.url) { if !model.isLoaded { model.load() } }
+        .onAppear { onController?(controller) }
+        .onReceive(NotificationCenter.default.publisher(for: .nmwToggleSource)) { note in
+            if note.object as? MarkdownEditorController === controller {
+                mode = effectiveMode == .source ? .formatted : .source
+            }
+        }
         .onDisappear { model.flush() }
         .focusedSceneValue(\.noteEditor, controller)
         .focusedSceneValue(\.linkToNote, linkableNotes == nil ? nil : LinkToNoteAction(noteURL: model.url) { showingLinkPicker = true })

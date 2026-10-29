@@ -238,7 +238,8 @@ struct NotebookSessionTests {
         s.selection = p("Inbox.md")
         try await s.moveToTrash(p("Inbox.md"))
         #expect(!tmp.exists("Inbox.md"))
-        #expect(try FileManager.default.contentsOfDirectory(atPath: tmp.url.appending(path: ".nmw/trash").path).count == 1)
+        #expect(try FileManager.default.contentsOfDirectory(atPath: tmp.url.appending(path: ".nmw/trash").path).filter { !$0.hasPrefix(".") }.count == 1)
+        #expect(s.trashItems.map(\.originalPath) == [p("Inbox.md")])
         #expect(s.selection == nil)
         #expect(!s.notes.contains { $0.path == p("Inbox.md") })
     }

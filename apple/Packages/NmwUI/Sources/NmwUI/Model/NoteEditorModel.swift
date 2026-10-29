@@ -27,6 +27,9 @@ public final class NoteEditorModel {
     }
 
     public private(set) var url: URL
+    /// Stays the same when the file is renamed or moved, so the editor view
+    /// (caret, scroll, keyboard) survives a rename.
+    public let documentID = UUID().uuidString
     /// The editor's text. Setting it schedules a save.
     public var text: String = "" {
         didSet { if text != oldValue, !isApplyingDisk { scheduleSave() } }
