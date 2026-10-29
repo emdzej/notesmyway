@@ -83,6 +83,11 @@ Last updated 2026-10-29. See `spec.md` for the design.
 - On macOS, the input handlers edit via `shouldChangeText` + `replaceCharacters` + `didChangeText` instead of `insertText(_:replacementRange:)`. Both are undoable, but LaTeX block auto-wrap deserves a manual check.
 
 - Roadmap 4 (branch `app-features`): command palette (⇧⌘P, notebook menu on iOS) over commands and notes; Recently Deleted in the sidebar (restore to the original path or "Name 2", delete now, empty, read-only preview; `.nmw/trash/.index.json` keeps exact original paths); Move to Notebook… (note + its attachment-folder files, links to those rewritten; warns with the backlink count); notebook setting "Rename files to match the first heading" (`renameFilesToTitle`, debounced 1.5 s or on leaving the note, undo remembered per heading). The editor view is keyed by the model's `documentID`, so a rename keeps caret and keyboard. Tests: NmwCore 71, NmwUI 34.
+## System integration (branch system-integration)
+
+- Spotlight, `notesmyway://` links, App Intents (Create / Append / Open / Search / Get Text), widgets (Pinned / Recent, iOS Lock Screen), share extension (new note or Inbox.md) through the App Group; spec §5.1. Package `NmwShared` (3 tests); NmwUI `Integration/` (5 tests).
+- Signing: App Groups need an Apple ID in Xcode › Settings › Accounts so `-allowProvisioningUpdates` can register the group and the extension App IDs. Until then iPhone builds pass `NMW_APP_GROUPS=NO` (signed with the wildcard profile; widgets and share can't see the app's data then). macOS uses the team-prefixed group with ad-hoc signing.
+- Not verified on a device or in a running app: Spotlight results, widget rendering, the share sheet, Siri phrases.
 
 ## Not yet verified (2026-10-29 batch)
 

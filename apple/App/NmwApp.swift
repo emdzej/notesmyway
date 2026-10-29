@@ -14,7 +14,7 @@ struct NmwApp: App {
     @NSApplicationDelegateAdaptor(NmwAppDelegate.self) private var delegate
     private var library: Library { delegate.library }
     #else
-    @State private var library = Library()
+    @State private var library = Library.shared
     #endif
 
     var body: some Scene {

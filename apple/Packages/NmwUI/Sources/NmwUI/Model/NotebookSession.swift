@@ -108,6 +108,8 @@ public final class NotebookSession {
     /// The move being made by nmw itself, so its banner can offer undoing it.
     @ObservationIgnored private var ownMove: (from: NotebookPath, to: NotebookPath)?
     @ObservationIgnored private var watchTask: Task<Void, Never>?
+    /// Told after every index change (`initial`: the scan on opening); system integration (Spotlight, widgets).
+    @ObservationIgnored var onIndexChange: ((IndexChanges, _ initial: Bool) -> Void)?
 
     public var name: String { notebook.name }
 
@@ -148,9 +150,11 @@ public final class NotebookSession {
         guard watchTask == nil else { return }
         purgeTrash()
         isIndexing = true
-        do { try await indexer.sync() } catch { errorMessage = error.localizedDescription }
+        var scanned: IndexChanges?
+        do { scanned = try await indexer.sync() } catch { errorMessage = error.localizedDescription }
         isIndexing = false
         refresh()
+        if let scanned { onIndexChange?(scanned, true) }
         let stream = NotebookWatcher.changes(of: indexer)
         watchTask = Task { [weak self] in
             for await changes in stream {
@@ -320,7 +324,11 @@ public final class NotebookSession {
         if let selected = selection, changes.removed.contains(selected) { selection = nil }
         contentVersion += 1
         refresh()
+        onIndexChange?(changes, false)
     }
+
+    /// The editor of `path` if the note is open.
+    func openEditor(for path: NotebookPath) -> NoteEditorModel? { editors[path] }
 
     /// Applies the index's link edits for `moves`, through open editors where there are any.
     func fixLinks(after moves: [NotebookPath: NotebookPath]) {

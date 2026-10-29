@@ -7,6 +7,8 @@ options:
 packages:
   NmwUI:
     path: Packages/NmwUI
+  NmwShared:
+    path: Packages/NmwShared
 targets:
   nmw:
     type: application
@@ -14,6 +16,8 @@ targets:
     sources: [App]
     dependencies:
       - package: NmwUI
+      - target: NmwWidgets
+      - target: NmwShare
     info:
       path: App/Info.plist
       properties:
@@ -25,6 +29,10 @@ targets:
         LSSupportsOpeningDocumentsInPlace: true
         # Documents (with the Themes folder) shows in Files › On My iPhone.
         UIFileSharingEnabled: true
+        # notesmyway://open?notebook=…&path=…, notesmyway://new?… (widgets, Shortcuts).
+        CFBundleURLTypes:
+          - CFBundleURLName: pl.emdzej.notesmyway
+            CFBundleURLSchemes: [notesmyway]
         CFBundleDocumentTypes:
           - CFBundleTypeName: Markdown Document
             CFBundleTypeRole: Editor
@@ -44,6 +52,8 @@ targets:
         com.apple.security.files.user-selected.read-write: true
         com.apple.security.files.bookmarks.app-scope: true
         com.apple.security.network.client: true
+        # Shared with the widgets and the share extension (snapshot, share inbox).
+        com.apple.security.application-groups: [group.pl.emdzej.notesmyway]
     settings:
       base:
         SWIFT_VERSION: "6.0"
@@ -52,6 +62,14 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         PRODUCT_MODULE_NAME: nmw
         PRODUCT_BUNDLE_IDENTIFIER: pl.emdzej.notesmyway
+        # iPhone builds signed without an Apple ID in Xcode (wildcard profile) can't use the
+        # App Group: pass NMW_APP_GROUPS=NO; widgets / share then can't see the app's data.
+        NMW_APP_GROUPS: "YES"
+        NMW_ENTITLEMENTS_YES: App/nmw.entitlements
+        NMW_ENTITLEMENTS_NO: App/nmw-nogroup.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": $(NMW_ENTITLEMENTS_$(NMW_APP_GROUPS))
+        # macOS: the team-prefixed App Group (no provisioning profile needed); iOS: group.… (above).
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": App/nmw-macOS.entitlements
         # A multiplatform target gets the iOS runpath; macOS bundles keep frameworks in Contents/Frameworks.
         "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]": "$(inherited) @executable_path/../Frameworks"
         "LD_RUNPATH_SEARCH_PATHS[sdk=iphone*]": "$(inherited) @executable_path/Frameworks"
@@ -59,3 +77,84 @@ targets:
         CODE_SIGN_STYLE: Manual
         TARGETED_DEVICE_FAMILY: "1,2"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+
+  # Pinned / Recent Notes widgets; read the App Group snapshot the app writes.
+  NmwWidgets:
+    type: app-extension
+    supportedDestinations: [macOS, iOS]
+    sources: [Widgets]
+    dependencies:
+      - package: NmwShared
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: Notes my Way
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Widgets/NmwWidgets.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups: [group.pl.emdzej.notesmyway]
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        PRODUCT_NAME: NmwWidgets
+        PRODUCT_BUNDLE_IDENTIFIER: pl.emdzej.notesmyway.widgets
+        # iPhone builds signed without an Apple ID in Xcode (wildcard profile) can't use the
+        # App Group: pass NMW_APP_GROUPS=NO; widgets / share then can't see the app's data.
+        NMW_APP_GROUPS: "YES"
+        NMW_ENTITLEMENTS_YES: Widgets/NmwWidgets.entitlements
+        NMW_ENTITLEMENTS_NO: App/nmw-nogroup.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": $(NMW_ENTITLEMENTS_$(NMW_APP_GROUPS))
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Widgets/NmwWidgets-macOS.entitlements
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: WidgetBackground
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SKIP_INSTALL: true
+
+  # Share sheet: queues a job in the App Group inbox; the app imports it.
+  NmwShare:
+    type: app-extension
+    supportedDestinations: [macOS, iOS]
+    sources: [ShareExtension]
+    dependencies:
+      - package: NmwShared
+    info:
+      path: ShareExtension/Info.plist
+      properties:
+        CFBundleDisplayName: Notes my Way
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+          NSExtensionAttributes:
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsText: true
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+              NSExtensionActivationSupportsImageWithMaxCount: 5
+    entitlements:
+      path: ShareExtension/NmwShare.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups: [group.pl.emdzej.notesmyway]
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        PRODUCT_NAME: NmwShare
+        PRODUCT_BUNDLE_IDENTIFIER: pl.emdzej.notesmyway.share
+        # iPhone builds signed without an Apple ID in Xcode (wildcard profile) can't use the
+        # App Group: pass NMW_APP_GROUPS=NO; widgets / share then can't see the app's data.
+        NMW_APP_GROUPS: "YES"
+        NMW_ENTITLEMENTS_YES: ShareExtension/NmwShare.entitlements
+        NMW_ENTITLEMENTS_NO: App/nmw-nogroup.entitlements
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphoneos*]": $(NMW_ENTITLEMENTS_$(NMW_APP_GROUPS))
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": ShareExtension/NmwShare-macOS.entitlements
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SKIP_INSTALL: true
