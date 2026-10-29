@@ -95,12 +95,11 @@ struct AppIconImage: View {
             .resizable()
             .interpolation(.high)
         #else
-        ZStack {
-            RoundedRectangle(cornerRadius: 22, style: .continuous).fill(
-                LinearGradient(colors: [Color(red: 0.01, green: 0.53, blue: 0.55), Color(red: 0.04, green: 0.11, blue: 0.25)],
-                               startPoint: .top, endPoint: .bottom))
-            NotePageMark(lineWidth: 0).fill(Color(white: 0.97)).padding(20).rotationEffect(.degrees(-6))
-        }
+        // iOS apps can't read their own icon; the app's catalog has a copy ("WelcomeIcon").
+        Image("WelcomeIcon", bundle: .main)
+            .resizable()
+            .interpolation(.high)
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         #endif
     }
 }
