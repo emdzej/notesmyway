@@ -1,0 +1,49 @@
+name: nmy
+options:
+  bundleIdPrefix: dev.emdzej
+  deploymentTarget:
+    macOS: "26.0"
+    iOS: "26.0"
+packages:
+  NmyCore:
+    path: Packages/NmyCore
+  MarkdownEngine:
+    path: ../../swift-markdown-engine
+targets:
+  nmy:
+    type: application
+    supportedDestinations: [macOS, iOS]
+    sources: [App]
+    dependencies:
+      - package: NmyCore
+      - package: MarkdownEngine
+        product: MarkdownEngine
+      - package: MarkdownEngine
+        product: MarkdownEngineCodeBlocks
+      - package: MarkdownEngine
+        product: MarkdownEngineLatex
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: nmy
+        LSApplicationCategoryType: public.app-category.productivity
+        UILaunchScreen: {}
+        # Standalone .md files open from Finder / Files (spec §3.5).
+        LSSupportsOpeningDocumentsInPlace: true
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Markdown Document
+            CFBundleTypeRole: Editor
+            LSHandlerRank: Alternate
+            LSItemContentTypes: [net.daringfireball.markdown]
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: net.daringfireball.markdown
+            UTTypeDescription: Markdown Document
+            UTTypeConformsTo: [public.plain-text]
+            UTTypeTagSpecification:
+              public.filename-extension: [md, markdown, mdown, mkd]
+              public.mime-type: [text/markdown]
+    settings:
+      base:
+        SWIFT_VERSION: "6.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"

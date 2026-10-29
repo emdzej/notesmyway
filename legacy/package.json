@@ -1,0 +1,21 @@
+{
+  "name": "nmy",
+  "private": true,
+  "version": "0.0.0",
+  "description": "nmy — Notes My Way. Local-first markdown notes.",
+  "packageManager": "pnpm@10.33.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check": "turbo run check",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean && rm -rf node_modules .turbo"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.10",
+    "typescript": "catalog:"
+  }
+}

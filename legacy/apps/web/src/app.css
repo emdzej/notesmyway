@@ -1,0 +1,62 @@
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces */
+  --bg:        light-dark(#fafafa, #0b0b0c);
+  --sidebar:   light-dark(#f3f3f5, #111114);
+  --hover:     light-dark(#eaeaee, #1a1a1f);
+  --border:    light-dark(#e4e4e8, #232327);
+
+  /* Text */
+  --fg:        light-dark(#1a1a1f, #e7e7e9);
+  --fg-muted:  light-dark(#6a6a72, #8a8a8f);
+
+  /* Accent + semantic */
+  --accent:    light-dark(#4f5dff, #7c8cff);
+  --error:     light-dark(#c93c3c, #ff7676);
+
+  /* Editor */
+  --code-bg:   light-dark(#f1f1f4, #161618);
+  --selection: light-dark(#cfd5ff, #2c3582);
+
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Manual overrides — useful once we add a theme toggle in settings. */
+:root[data-theme='light'] { color-scheme: only light; }
+:root[data-theme='dark']  { color-scheme: only dark; }
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

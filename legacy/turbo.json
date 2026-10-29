@@ -1,0 +1,26 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["tsconfig.base.json"],
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".svelte-kit/**", "build/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "check": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

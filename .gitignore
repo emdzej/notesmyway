@@ -1,0 +1,12 @@
+.DS_Store
+# Xcode / SwiftPM
+apple/*.xcodeproj/
+.build/
+.swiftpm/
+DerivedData/
+xcuserdata/
+# legacy web prototype
+legacy/node_modules/
+legacy/.turbo/
+node_modules/
+dist/
