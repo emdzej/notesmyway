@@ -219,7 +219,33 @@ A link marked `{.preview}` (or any size attribute) renders as a preview card in 
 - **Placement:** a card replaces a link that is alone on its line. A `{.preview}` link inside a sentence stays an ordinary link; `{.icon}` works anywhere.
 - **Engine** (done): the engine renders cards from data supplied by a `LinkPreviewProvider` service. Lookups are synchronous and return `LinkPreview` (`.ready`, `.loading`, `.unavailable`) or nil for a plain link; the provider changes its `fingerprint()` when a fetch completes, and the editor restyles. Fetching and caching live in the app (`NmwCore`), not in the engine.
 
-### 4.5 Engine work (in `swift-markdown-engine`)
+### 4.5 Themes
+The editor (formatted view and viewer) and the markdown source view are themed. A theme sets colors for light and dark mode, the body / heading / source fonts, and the code-block highlighting theme (a HighlighterSwift theme name). Settings › General › Theme picks the theme, a font (theme's, System, Serif, Monospaced), the text size, line spacing, and optionally a different theme for the source view. These are device settings (`nmw.theme`, `nmw.editorFont`, `nmw.editorFontSize`, `nmw.editorLineSpacing`, `nmw.sourceTheme`), not synced with notebooks.
+
+Built in: Notes my Way (default), Paper, GitHub, Solarized, Nord, Dracula, Mono. Custom themes are JSON files in the Themes folder: `Application Support/nmw/Themes` on macOS ("Open Themes Folder", "Duplicate as Custom Theme…"), `Files › On My iPhone › Notes my Way › Themes` on iOS. A file whose `id` matches a built-in replaces it.
+
+```json
+{
+  "id": "harbour",
+  "name": "Harbour",
+  "font": "serif",
+  "headingFont": "system",
+  "sourceFont": "Menlo-Regular",
+  "codeTheme": { "light": "github", "dark": "github-dark" },
+  "light": {
+    "background": "#FAFCFD", "text": "#1C2B33", "mutedText": "#6B7C85",
+    "heading": "#0B6E8E", "link": "#1A8FA8", "codeBackground": "#EEF4F6",
+    "quoteBar": "#C9DCE2", "tableBorder": "#C9DCE2", "tableHeader": "#EEF4F6",
+    "selection": "#CDE8EF", "tag": "#1A8FA8",
+    "source": { "heading": "#0B6E8E", "code": "#A33A5B", "key": "#9A6A00", "attribute": "#6E57B8" }
+  },
+  "dark": { "background": "#111A1F", "text": "#DCE6EA", "link": "#5CCFDB" }
+}
+```
+
+Every color is optional (`#RGB`, `#RRGGBB` or `#RRGGBBAA`); a missing one keeps the default, and a key set in only one palette is used for both. Fonts are `system`, `serif`, `mono`, `rounded` or a PostScript name. Palette keys: `background`, `text`, `mutedText`, `heading`, `headingMarker`, `link`, `inlineCode`, `codeBackground`, `quoteBar`, `quoteText`, `rule`, `tableBorder`, `tableHeader`, `selection`, `caret`, `chip` (frontmatter chips), `tag`, `cardBackground`, `cardBorder`, and `source` with `background`, `text`, `marker`, `heading`, `emphasis`, `link`, `url`, `code`, `key`, `attribute`, `listMarker`.
+
+### 4.6 Engine work (in `swift-markdown-engine`)
 1. **Multiplatform** (done): platform typealiases (`PlatformFont`, `PlatformColor`, `PlatformImage`, …) so Parser, Styling, Renderer, Configuration, Input, and Services compile for macOS and iOS. The TextView layer is split into `TextView/AppKit` (existing) and `TextView/UIKit` (new: a `UITextView` subclass, a `UIViewRepresentable` wrapper, and a coordinator).
 2. **No wikilinks** (done): `[[…]]` / `![[…]]` render as plain text, and images go through `ImageProvider` / `ImageRequest(source:)`.
 3. **Attributes** (done): `{…}` after images and links is parsed into `MarkdownAttributes` and hidden like other markers; images are sized and aligned by it, `.icon` renders inline.

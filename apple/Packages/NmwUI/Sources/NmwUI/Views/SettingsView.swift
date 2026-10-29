@@ -84,6 +84,7 @@ struct GeneralSettingsForm: View {
             } footer: {
                 Text("Switch the open note with the </> toolbar button (⇧⌘M).").foregroundStyle(.secondary)
             }
+            EditorThemeSection()
             #if os(macOS)
             MarkdownDefaultAppSection()
             #endif

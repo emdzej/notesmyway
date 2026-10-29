@@ -40,15 +40,15 @@ struct NoteEditorView: View {
     private var context: NoteContext { NoteContext(noteURL: model.url, root: root, previews: previews, attachments: attachments) }
 
     private var configuration: MarkdownEditorConfiguration {
-        var configuration = EditorSetup.configuration(for: context, version: version)
-        configuration.renderingMode = effectiveMode == .source ? .source : .formatted
-        return configuration
+        EditorSetup.configuration(for: context, version: version, mode: effectiveMode == .source ? .source : .formatted)
     }
 
     var body: some View {
         NativeTextViewWrapper(
             text: $model.text,
             configuration: configuration,
+            fontName: EditorAppearance.shared.fontName,
+            fontSize: EditorAppearance.shared.fontSize,
             documentId: model.url.path,
             isEditable: model.isLoaded && model.errorMessage == nil,
             controller: controller,

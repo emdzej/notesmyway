@@ -108,11 +108,14 @@ enum EditorSetup {
     /// The engine configuration for a note; `version` changes when images
     /// or previews it may show changed.
     @MainActor
-    static func configuration(for context: NoteContext, version: Int) -> MarkdownEditorConfiguration {
+    static func configuration(for context: NoteContext, version: Int, mode: RenderingMode = .formatted) -> MarkdownEditorConfiguration {
         var configuration = MarkdownEditorConfiguration.default
+        configuration.renderingMode = mode
         configuration.services.syntaxHighlighter = highlighter
         configuration.services.latex = latex
         configuration.theme.link = Palette.accent
+        // Theme, fonts and spacing from Settings › Editor.
+        EditorAppearance.shared.apply(to: &configuration, highlightsCode: highlightsCode)
         configuration.services.images = NoteImageProvider(context: context, version: version)
         configuration.services.linkPreviews = NotePreviewProvider(context: context, version: version)
         // No fixed reading width: the detail column is often narrower than one.

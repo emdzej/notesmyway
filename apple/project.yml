@@ -23,6 +23,8 @@ targets:
         UILaunchScreen: {}
         # Standalone .md files open from Finder / Files (spec §3.5).
         LSSupportsOpeningDocumentsInPlace: true
+        # Documents (with the Themes folder) shows in Files › On My iPhone.
+        UIFileSharingEnabled: true
         CFBundleDocumentTypes:
           - CFBundleTypeName: Markdown Document
             CFBundleTypeRole: Editor
