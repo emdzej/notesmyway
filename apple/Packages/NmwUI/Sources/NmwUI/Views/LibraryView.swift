@@ -312,8 +312,28 @@ struct NmwCommands: Commands {
                 .disabled(linkToNote == nil)
         }
         CommandMenu("Format") {
-            // Act on the image or link at the caret; no-ops elsewhere.
             Group {
+            // Paragraph and character styles (Apple Notes' shortcuts).
+            Button("Title") { editor?.setBlockStyle(.title) }.keyboardShortcut("t", modifiers: [.command, .shift])
+            Button("Heading") { editor?.setBlockStyle(.heading) }.keyboardShortcut("h", modifiers: [.command, .shift])
+            Button("Subheading") { editor?.setBlockStyle(.subheading) }.keyboardShortcut("j", modifiers: [.command, .shift])
+            Button("Body") { editor?.setBlockStyle(.body) }.keyboardShortcut("b", modifiers: [.command, .shift])
+            Divider()
+            Button("Bold") { editor?.toggle(.bold) }.keyboardShortcut("b")
+            Button("Italic") { editor?.toggle(.italic) }.keyboardShortcut("i")
+            Button("Strikethrough") { editor?.toggle(.strikethrough) }.keyboardShortcut("x", modifiers: [.command, .shift])
+            Button("Code") { editor?.toggle(.code) }.keyboardShortcut("e")
+            Divider()
+            Button("Checklist") { editor?.setBlockStyle(.task) }.keyboardShortcut("l", modifiers: [.command, .shift])
+            Button("Bulleted List") { editor?.setBlockStyle(.bullet) }.keyboardShortcut("7", modifiers: [.command, .shift])
+            Button("Numbered List") { editor?.setBlockStyle(.numbered) }.keyboardShortcut("9", modifiers: [.command, .shift])
+            Button("Quote") { editor?.setBlockStyle(.quote) }.keyboardShortcut("'")
+            Button("Indent") { editor?.indent() }.keyboardShortcut("]")
+            Button("Outdent") { editor?.outdent() }.keyboardShortcut("[")
+            Divider()
+            Button("Table") { editor?.insertTable() }.keyboardShortcut("t", modifiers: [.command, .option])
+            Divider()
+            // Act on the image or link at the caret; no-ops elsewhere.
             Menu("Image Size") {
                 Button("Original") { _ = editor?.setImageSize(nil) }
                 Divider()

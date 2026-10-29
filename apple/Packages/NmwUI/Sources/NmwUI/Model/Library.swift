@@ -49,6 +49,16 @@ public final class Library {
         }
         let saved = defaults.string(forKey: Keys.selected)
         selectedID = entries.contains { $0.id == saved } ? saved : entries.first?.id
+        #if DEBUG
+        // Screenshots (site, App Store): `-NmwOpenNotebook <path>` opens a
+        // folder without the folder picker. A path relative to the app's
+        // Documents folder works in the simulator.
+        if let path = defaults.string(forKey: "NmwOpenNotebook") {
+            let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            let url = path.hasPrefix("/") ? URL(filePath: path) : documents?.appending(path: path)
+            if let url { _ = add(folder: url) }
+        }
+        #endif
     }
 
     public nonisolated static var defaultStorage: URL? {
