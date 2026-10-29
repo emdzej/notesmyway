@@ -2,7 +2,7 @@
 
 I like Apple Notes. It's fast, it's always there, and it never asks me to think about where a note goes. What I don't like is that my notes live inside it. I can't grep them, I can't put them in git, and the day I want to leave, I get an export, not my notes.
 
-Obsidian solves that — the notes are plain files — but I wanted something that feels like a native Apple app. So I built it: Apple Notes on the outside, a folder of Markdown files on the inside.
+Obsidian solves that — the notes are plain files. But I wanted a native app: fast, and built for the system it runs on, not a web page in a window. So I built it: Apple Notes on the outside, a folder of Markdown files on the inside.
 
 ## Files are the truth
 
