@@ -38,6 +38,10 @@ jobs:
         working-directory: apple
         run: xcodegen generate
 
+      - name: NmwShared tests
+        working-directory: apple/Packages/NmwShared
+        run: swift test
+
       - name: NmwCore tests
         working-directory: apple/Packages/NmwCore
         run: swift test
