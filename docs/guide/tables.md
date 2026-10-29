@@ -1,5 +1,9 @@
 # Tables and formulas
 
+<div class="nmw-shot">
+  <img src="/screenshots/ipad-budget.webp" alt="iPad: a kitchen budget table with quantities, prices and computed totals" />
+</div>
+
 ## Editing tables
 
 GFM tables render as a grid you can type into. Click a cell to edit it; **Tab** and **Shift-Tab** move between cells, **Return** moves down, and both add a row when you go past the last one. The arrow keys leave the grid above or below it. Right-click a cell for the table commands, including **Edit as Markdown**, which shows the table's source while the caret is in it.
@@ -14,7 +18,7 @@ On disk it stays a regular pipe table:
 
 ### Markers
 
-Hover over a table (on iPhone and iPad: edit a cell) and its markers appear:
+Hover over a table on the Mac — or edit a cell on iPhone and iPad — and its markers appear:
 
 - **Column handles** above each column: insert left or right, move left or right, align left / center / right, fit to content, fit all columns, delete.
 - **Row handles** left of each row: insert above or below, move up or down, delete. The header row can't be moved or deleted.
@@ -35,7 +39,7 @@ Columns fit their content by default. Drag a column border to set a width; doubl
 `auto` fits the content, a number is a width in points, and `%` is a share of the width available to the table. Cells in a fixed-width column wrap, and their row grows to fit. The line is hidden while the grid is shown. Inserting, moving or deleting columns keeps the widths with their columns.
 
 ::: warning Other renderers
-Most Markdown renderers show the `{cols=…}` line as a plain line of text under the table. GitHub may show it as an extra row.
+Most Markdown renderers show the `{cols=…}` line as a plain line of text under the table; some show it as an extra row.
 :::
 
 Rows have no fixed heights: they size to their content.

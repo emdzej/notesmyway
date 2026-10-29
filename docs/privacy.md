@@ -10,4 +10,4 @@ Notes my Way collects nothing about you.
 - **Sync** is whatever you use for the folder (iCloud Drive, Dropbox, …); their own policies apply.
 - **Links** in notes open in your browser, where those sites' policies apply. This site is hosted on GitHub Pages; see [GitHub's privacy statement](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement).
 
-Questions: open an issue on [GitHub](https://github.com/emdzej/notesmyway/issues).
+Questions: see [Support](/support).

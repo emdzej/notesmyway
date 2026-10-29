@@ -6,8 +6,6 @@ import { defineConfig } from 'vitepress'
 // site off a root domain, base stays '/' and no baseURL rewriting is
 // needed.
 
-const repo = 'https://github.com/emdzej/notesmyway'
-
 export default defineConfig({
   title: 'Notes my Way',
   titleTemplate: ':title · Notes my Way',
@@ -38,18 +36,16 @@ export default defineConfig({
     logo: '/logo.png',
 
     nav: [
-      { text: 'Overview', link: '/overview' },
-      { text: 'Install', link: '/install' },
-      { text: 'Guide', link: '/guide' },
-      { text: 'Writing', link: '/markdown' },
+      { text: 'Feature guide', link: '/guide/' },
+      { text: 'Why Notes my Way', link: '/overview' },
+      { text: 'Get the app', link: '/get-the-app' },
       {
-        text: 'Reference',
+        text: 'More',
         items: [
-          { text: 'Tables and formulas', link: '/tables' },
-          { text: 'Themes', link: '/themes' },
           { text: 'Files and compatibility', link: '/compatibility' },
           { text: 'Roadmap', link: '/backlog' },
-          { text: 'Source (GitHub)', link: repo },
+          { text: 'Support', link: '/support' },
+          { text: 'Privacy', link: '/privacy' },
         ],
       },
     ],
@@ -57,64 +53,40 @@ export default defineConfig({
     sidebar: [
       {
         text: 'Introduction',
-        collapsed: false,
         items: [
-          { text: 'What is Notes my Way?', link: '/overview' },
-          { text: 'Installation', link: '/install' },
+          { text: 'Why Notes my Way?', link: '/overview' },
+          { text: 'Get the app', link: '/get-the-app' },
         ],
       },
       {
-        text: 'Using the app',
-        collapsed: false,
+        text: 'Feature guide',
         items: [
-          { text: 'Notebooks and folders', link: '/guide#notebooks' },
-          { text: 'Notes', link: '/guide#notes' },
-          { text: 'Attachments', link: '/guide#attachments' },
-          { text: 'Single files', link: '/guide#standalone-files' },
-          { text: 'Settings', link: '/guide#settings' },
-          { text: 'Keyboard shortcuts', link: '/guide#keyboard-shortcuts' },
-        ],
-      },
-      {
-        text: 'Writing',
-        collapsed: false,
-        items: [
-          { text: 'Markdown in the editor', link: '/markdown' },
-          { text: 'Source mode', link: '/markdown#source-mode' },
-          { text: 'Frontmatter and tags', link: '/markdown#frontmatter' },
-          { text: 'Links between notes', link: '/markdown#links' },
-          { text: 'Image and link sizes', link: '/markdown#attributes' },
-          { text: 'Tables', link: '/tables' },
-          { text: 'Formulas in tables', link: '/tables#formulas' },
-          { text: 'Themes', link: '/themes' },
+          { text: 'Getting started', link: '/guide/' },
+          { text: 'Notebooks and folders', link: '/guide/notebooks' },
+          { text: 'Writing', link: '/guide/writing' },
+          { text: 'Images and previews', link: '/guide/images' },
+          { text: 'Tables and formulas', link: '/guide/tables' },
+          { text: 'Themes and appearance', link: '/guide/themes' },
+          { text: 'Settings and shortcuts', link: '/guide/settings' },
         ],
       },
       {
         text: 'Reference',
-        collapsed: false,
         items: [
           { text: 'Files and compatibility', link: '/compatibility' },
           { text: 'Roadmap', link: '/backlog' },
           { text: 'Support', link: '/support' },
           { text: 'Privacy', link: '/privacy' },
-          { text: 'Source on GitHub', link: repo },
         ],
       },
     ],
-
-    socialLinks: [{ icon: 'github', link: repo }],
-
-    editLink: {
-      pattern: `${repo}/edit/main/docs/:path`,
-      text: 'Suggest an edit on GitHub',
-    },
 
     search: {
       provider: 'local',
     },
 
     footer: {
-      // TODO: add the license link once the repo has a LICENSE file.
+      message: 'Coming soon to the App Store for iPhone, iPad and Mac.',
       copyright: 'Copyright © 2026 <a href="https://emdzej.pl">Michał Jaskólski</a>',
     },
 

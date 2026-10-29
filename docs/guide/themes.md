@@ -1,4 +1,14 @@
-# Themes
+# Themes and appearance
+
+<div class="nmw-shot">
+  <img src="/screenshots/ipad-paper.webp" alt="iPad: the Paper theme with a serif note and the My Way sidebar" />
+</div>
+
+## Appearance and sidebar
+
+**Settings › General** has **Appearance** — System, Light or Dark — and **Sidebar**: System Default, or **My Way**, the icon's teal-to-navy gradient with light text.
+
+## Editor themes
 
 Notes my Way comes with built-in themes for the formatted editor, the Markdown source view and code blocks. Each has a light and a dark variant that follows **Settings › General › Appearance**.
 
@@ -6,7 +16,7 @@ Notes my Way comes with built-in themes for the formatted editor, the Markdown s
 | --- | --- |
 | Notes my Way | The default: system font, the app's teal accent |
 | Paper | Serif (New York) on a warm page |
-| GitHub | GitHub's colors |
+| GitHub | The colours of GitHub's Markdown |
 | Solarized | Ethan Schoonover's palette |
 | Nord | Cool arctic blues |
 | Dracula | Dark-leaning, vivid accents |
@@ -27,7 +37,7 @@ Table headers use a light tint of the theme's accent unless the theme sets its o
 
 A theme is a JSON file in the Themes folder:
 
-- **macOS**: `Settings › General › Theme › Open Themes Folder`. **Duplicate as Custom Theme…** writes the current theme there as a starting point; **Reload** picks up edits.
+- **Mac**: **Settings › General › Theme › Open Themes Folder**. **Duplicate as Custom Theme…** writes the current theme there as a starting point; **Reload** picks up edits.
 - **iPhone and iPad**: the app's `Themes` folder in the Files app (On My iPhone › Notes my Way).
 
 A file whose `id` matches a built-in theme replaces it.

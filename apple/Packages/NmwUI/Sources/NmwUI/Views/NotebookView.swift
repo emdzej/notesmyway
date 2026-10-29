@@ -15,9 +15,12 @@ struct NotebookView: View {
     let addNotebook: () -> Void
     @Environment(\.openURL) private var openURL
     @State private var missingNote: NotebookPath?
+    /// iPhone: which column shows (the sidebar unless a DEBUG launch option says otherwise).
+    @State private var compactColumn: NavigationSplitViewColumn = Self.launchCompactColumn
+    @State private var columnVisibility: NavigationSplitViewVisibility = Self.launchColumnVisibility
 
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $compactColumn) {
             SidebarView(session: session, library: library, addNotebook: addNotebook)
                 .navigationSplitViewColumnWidth(min: 180, ideal: 220)
         } content: {
@@ -27,6 +30,9 @@ struct NotebookView: View {
             detail
         }
         .focusedSceneValue(\.notebookSession, session)
+        #if DEBUG
+        .task { await applyLaunchOptions() }
+        #endif
         .overlay(alignment: .bottom) {
             if let fix = session.linkFix { LinkFixBanner(session: session, fix: fix).padding() }
         }
@@ -47,6 +53,46 @@ struct NotebookView: View {
             Text("The link points to \(missingNote?.rawValue ?? ""). Create it there?")
         }
     }
+
+    private static var launchCompactColumn: NavigationSplitViewColumn {
+        #if DEBUG
+        switch UserDefaults.standard.string(forKey: "NmwCompactColumn") {
+        case "content": return .content
+        case "detail": return .detail
+        default: return .sidebar
+        }
+        #else
+        return .sidebar
+        #endif
+    }
+
+    private static var launchColumnVisibility: NavigationSplitViewVisibility {
+        #if DEBUG
+        if UserDefaults.standard.string(forKey: "NmwColumnVisibility") == "doubleColumn" { return .doubleColumn }
+        #endif
+        return .automatic
+    }
+
+    #if DEBUG
+    /// Screenshots: `-NmwScope all|pinned|folder:<path>|tag:<tag>` and
+    /// `-NmwOpenNote <path in the notebook>`, applied once indexing is done.
+    /// (Settings such as `-nmw.theme paper` or `-nmw.showsInspector YES`
+    /// work as launch arguments already.)
+    private func applyLaunchOptions() async {
+        let defaults = UserDefaults.standard
+        guard defaults.string(forKey: "NmwScope") != nil || defaults.string(forKey: "NmwOpenNote") != nil else { return }
+        for _ in 0..<50 where session.isIndexing || session.notes.isEmpty {
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+        if let scope = defaults.string(forKey: "NmwScope") {
+            if scope == "pinned" { session.scope = .pinned }
+            else if scope.hasPrefix("folder:") { session.scope = .folder(NotebookPath(String(scope.dropFirst(7)))) }
+            else if scope.hasPrefix("tag:") { session.scope = .tag(String(scope.dropFirst(4))) }
+            else { session.scope = .all }
+        }
+        if let note = defaults.string(forKey: "NmwOpenNote") { session.selection = NotebookPath(note) }
+    }
+    #endif
 
     @ViewBuilder private var detail: some View {
         if let path = session.selection {

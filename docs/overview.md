@@ -18,9 +18,9 @@ When you'd rather see everything, ⇧⌘M switches the note to source mode — m
 
 ## What's there and what isn't
 
-Today the app opens folders as notebooks, with nested folders, tags, pinned notes, full-text search, backlinks, an outline, attachment handling, link preview cards and editable tables. It runs on macOS 26 and iOS / iPadOS 26.
+Today the app opens folders as notebooks, with nested folders, tags, pinned notes, full-text search, backlinks, an outline, attachment handling, link preview cards, editable tables with formulas, and themes. It runs on macOS 26 and iOS / iPadOS 26, and it's [coming soon to the App Store](/get-the-app).
 
-What's missing? Sync, for one. Notes my Way works with any folder, so Dropbox, Syncthing or a git repo already do the job, but built-in iCloud sync and a small self-hosted sync server are on the [roadmap](/backlog). So are formulas in tables and themes for the editor.
+What's missing? Sync, for one. Notes my Way works with any folder, so Dropbox, Syncthing or a git repo already do the job, but built-in iCloud sync and a small self-hosted sync server are on the [roadmap](/backlog).
 
 ## Why bother?
 

@@ -2,8 +2,8 @@
 
 Something not working, or an idea for the app?
 
-- **Read the guide first:** [User guide](/guide) and [Markdown in the editor](/markdown).
-- **Report a bug or ask a question:** [open an issue on GitHub](https://github.com/emdzej/notesmyway/issues). Mention the device, the system version and what you expected to happen.
+- **Read the guide first:** the [feature guide](/guide/) covers every part of the app.
+- **Contact:** a support address will be listed here when the app is on the App Store.
 
 ## Common questions
 
