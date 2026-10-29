@@ -77,9 +77,13 @@ public enum NotebookScanner {
     /// Every visible file in the notebook. Hidden names (leading `.`) are skipped,
     /// and so is everything inside hidden folders.
     public static func scan(_ notebook: Notebook) throws -> [ScannedFile] {
+        try scan(notebook, startingAt: notebook.root)
+    }
+
+    static func scan(_ notebook: Notebook, startingAt start: URL) throws -> [ScannedFile] {
         let keys: [URLResourceKey] = [.isRegularFileKey, .fileSizeKey, .contentModificationDateKey]
         guard let enumerator = FileManager.default.enumerator(
-            at: notebook.root, includingPropertiesForKeys: keys,
+            at: start, includingPropertiesForKeys: keys,
             options: [.skipsHiddenFiles, .skipsPackageDescendants]
         ) else { throw CocoaError(.fileReadNoSuchFile) }
 

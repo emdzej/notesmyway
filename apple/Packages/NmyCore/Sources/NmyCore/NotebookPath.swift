@@ -31,11 +31,29 @@ public struct NotebookPath: Hashable, Comparable, Sendable, CustomStringConverti
 
     /// The path of `url` inside `root`, or nil if it lies outside.
     public init?(url: URL, root: URL) {
-        let rootComponents = root.standardizedFileURL.resolvingSymlinksInPath().pathComponents
-        let components = url.standardizedFileURL.resolvingSymlinksInPath().pathComponents
+        let rootComponents = Self.canonicalComponents(root)
+        let components = Self.canonicalComponents(url)
         guard components.count > rootComponents.count,
               Array(components.prefix(rootComponents.count)) == rootComponents else { return nil }
         self.init(components.dropFirst(rootComponents.count).joined(separator: "/"))
+    }
+
+    /// Path components with symlinks resolved, also for paths that no longer
+    /// exist (a deleted or renamed file): the nearest existing ancestor is
+    /// resolved with `realpath` and the rest appended. `resolvingSymlinksInPath`
+    /// can't do this, so `/var/…` (a symlink) and `/private/var/…` wouldn't match.
+    static func canonicalComponents(_ url: URL) -> [String] {
+        var existing = url.standardizedFileURL
+        var rest: [String] = []
+        while existing.pathComponents.count > 1 {
+            if let resolved = realpath(existing.path, nil) {
+                defer { free(resolved) }
+                return URL(fileURLWithPath: String(cString: resolved)).pathComponents + rest.reversed()
+            }
+            rest.append(existing.lastPathComponent)
+            existing.deleteLastPathComponent()
+        }
+        return url.standardizedFileURL.pathComponents
     }
 
     public var description: String { rawValue }

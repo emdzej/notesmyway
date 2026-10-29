@@ -112,6 +112,9 @@ public final class NotebookIndex: Sendable {
                 CREATE VIRTUAL TABLE notes_fts USING fts5(title, body, tokenize = 'unicode61 remove_diacritics 2');
                 """)
         }
+        migrator.registerMigration("v2-preview-subtitle") { db in
+            try db.execute(sql: "ALTER TABLE link_previews ADD COLUMN subtitle TEXT")
+        }
         return migrator
     }
 

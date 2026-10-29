@@ -64,37 +64,22 @@ struct MarkdownScan {
 
     init(_ body: Substring) {
         let lines = body.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)
-        var fence: (char: Character, count: Int)?
+        var fence = FenceTracker()
         var titleLine: Int?
         var snippetParts: [String] = []
         var snippetLength = 0
         var search: [String] = []
 
         for (index, rawLine) in lines.enumerated() {
+            if fence.isCode(rawLine) { continue }
             let line = String(rawLine)
             let trimmed = line.drop(while: { $0 == " " })
 
-            if let open = fence {
-                let run = trimmed.prefix(while: { $0 == open.char })
-                if run.count >= open.count, trimmed.dropFirst(run.count).allSatisfy(\.isWhitespace) { fence = nil }
-                continue
-            }
-            if line.prefix(while: { $0 == " " }).count <= 3, let c = trimmed.first, c == "`" || c == "~" {
-                let run = trimmed.prefix(while: { $0 == c }).count
-                if run >= 3, !(c == "`" && trimmed.dropFirst(run).contains("`")) {
-                    fence = (c, run)
-                    continue
-                }
-            }
-
-            // Reference definitions: `[id]: destination "title"`.
-            if let definition = Self.referenceDefinition(trimmed) {
-                links.append(NoteLink(destination: definition, kind: .link))
-                continue
-            }
+            let found = LinkScanner.occurrences(inLine: rawLine)
+            links += found.map { NoteLink(destination: $0.destination, kind: $0.kind) }
+            if LinkScanner.referenceDefinition(rawLine) != nil { continue }
 
             let prose = Self.removingCodeSpans(line)
-            links += Self.inlineLinks(in: prose)
             tags.formUnion(Self.inlineTags(in: prose))
 
             if title == nil, titleLine == nil {
@@ -145,17 +130,6 @@ struct MarkdownScan {
         return !t.isEmpty && t.allSatisfy { $0 == "=" }
     }
 
-    static func referenceDefinition(_ line: Substring) -> String? {
-        guard line.hasPrefix("["), let close = line.firstIndex(of: "]"),
-              line.index(after: close) < line.endIndex, line[line.index(after: close)] == ":" else { return nil }
-        let label = line[line.index(after: line.startIndex)..<close]
-        guard !label.isEmpty, !label.hasPrefix("^") else { return nil }   // `[^1]:` is a footnote
-        let rest = line[line.index(close, offsetBy: 2)...].trimmingCharacters(in: .whitespaces)
-        guard !rest.isEmpty else { return nil }
-        if rest.hasPrefix("<"), let end = rest.firstIndex(of: ">") { return String(rest[rest.index(after: rest.startIndex)..<end]) }
-        return String(rest.prefix(while: { !$0.isWhitespace }))
-    }
-
     /// Drops heading hashes, quote markers, list bullets and task boxes.
     static func strippingBlockMarkers(_ line: String) -> String {
         var s = Substring(line).drop(while: { $0 == " " || $0 == "\t" })
@@ -202,71 +176,6 @@ struct MarkdownScan {
             i = line.index(after: i)
         }
         return out
-    }
-
-    /// `[text](dest)` and `![alt](dest)`, including images nested in link text.
-    static func inlineLinks(in line: String) -> [NoteLink] {
-        let chars = Array(line)
-        var links: [NoteLink] = []
-        var i = 0
-        while i < chars.count {
-            guard chars[i] == "[", i == 0 || chars[i - 1] != "\\" else { i += 1; continue }
-            let isImage = i > 0 && chars[i - 1] == "!"
-            // Matching `]`, allowing nested brackets.
-            var depth = 0
-            var j = i
-            var close: Int?
-            while j < chars.count {
-                if chars[j] == "\\" { j += 2; continue }
-                if chars[j] == "[" { depth += 1 }
-                if chars[j] == "]" { depth -= 1; if depth == 0 { close = j; break } }
-                j += 1
-            }
-            guard let close, close + 1 < chars.count, chars[close + 1] == "(" else { i += 1; continue }
-            if let (destination, _) = destination(in: chars, from: close + 2) {
-                links.append(NoteLink(destination: destination, kind: isImage ? .image : .link))
-                // Images inside the link text (`[![](a.png)](b)`).
-                links += inlineLinks(in: String(chars[(i + 1)..<close]))
-            }
-            i = close + 1
-        }
-        return links
-    }
-
-    /// Destination starting at `start` (just after `(`) and the index of the closing `)`.
-    private static func destination(in chars: [Character], from start: Int) -> (String, Int)? {
-        var k = start
-        while k < chars.count, chars[k] == " " { k += 1 }
-        guard k < chars.count else { return nil }
-        var dest = ""
-        if chars[k] == "<" {
-            k += 1
-            while k < chars.count, chars[k] != ">" { dest.append(chars[k]); k += 1 }
-            guard k < chars.count else { return nil }
-            k += 1
-        } else {
-            var depth = 0
-            while k < chars.count {
-                let c = chars[k]
-                if c == "\\", k + 1 < chars.count { dest.append(chars[k + 1]); k += 2; continue }
-                if c.isWhitespace { break }
-                if c == "(" { depth += 1 }
-                if c == ")" { if depth == 0 { break }; depth -= 1 }
-                dest.append(c)
-                k += 1
-            }
-        }
-        // Optional title, then `)`.
-        while k < chars.count, chars[k] != ")" {
-            if chars[k] == "\"" || chars[k] == "'" {
-                let quote = chars[k]
-                k += 1
-                while k < chars.count, chars[k] != quote { k += 1 }
-            }
-            k += 1
-        }
-        guard k < chars.count, !dest.isEmpty else { return nil }
-        return (dest, k)
     }
 
     /// `#tag` and `#nested/tag` after whitespace or at line start; must contain a non-digit.

@@ -193,7 +193,7 @@ A link marked `{.preview}` (or any size attribute) renders as a preview card in 
 
 | Target | Preview source |
 |---|---|
-| Web page (`http`, `https`) | `LinkPresentation` (`LPMetadataProvider`): title, description, icon, hero image |
+| Web page (`http`, `https`) | One GET of the page; OpenGraph / Twitter / `<meta>` / `<link rel=icon>` tags give title, description, site name, hero image, icon (`LinkPresentation` exposes no description, so it isn't used) |
 | Note in the notebook (`Other.md`) | From the index: title, first lines of the note, first image |
 | File in the notebook (PDF, image, office doc, …) | `QuickLookThumbnailing` (`QLThumbnailGenerator`) thumbnail, file name, size |
 | Unreachable / missing | Plain link styling with a muted "unavailable" badge |
@@ -265,16 +265,17 @@ CREATE TABLE link_previews (
   summary   TEXT,
   icon_path TEXT,                   -- cached image files (derived)
   image_path TEXT,
+  subtitle  TEXT,                   -- site name / host
   fetched   INTEGER,
-  status    TEXT                    -- ok | unavailable
+  status    TEXT                    -- ready | unavailable
 );
 -- rowid = files.id. Stores its text (not contentless) so a changed note's row can be replaced.
 CREATE VIRTUAL TABLE notes_fts USING fts5(title, body, tokenize='unicode61 remove_diacritics 2');
 ```
 
-- **Indexing:** a full scan on first open. After that, the indexer is driven by file events (`NSFilePresenter` / `NSMetadataQuery` / FSEvents), and an mtime+size check on launch.
+- **Indexing:** a full scan on first open; later scans (launch) only re-read files whose size or mtime changed. While open, file events drive it: FSEvents on macOS (it also sees uncoordinated writers such as vim, git, and Syncthing), an `NSFilePresenter` on the notebook folder on iOS, and `NSMetadataQuery` for iCloud (M5). Events are coalesced (~0.3 s); a folder event covers everything inside it, and a dropped-events signal triggers a full scan.
 - **Resolution:** a link destination is percent-decoded and resolved against the folder of the source note at index time, giving `target_path`. Backlinks are `SELECT src_id FROM links WHERE target_path = ?`.
-- **Renames:** when a delete and a create share the same hash within a short window, they are treated as a rename. The app then rewrites the relative links to it in other notes (default on, with an undoable summary), so links never silently break.
+- **Renames:** when one batch of changes (or a launch scan) has a file gone and a new file with the same sha256, and the match is unique, it is a move. The app then rewrites links (default on, with an undoable summary) so they never silently break: links *to* the moved file in other notes, and the moved note's *own* relative links when it changed folders. Only changed destinations are rewritten; `/`-rooted links stay rooted, `<…>` stay angled, fragments and titles are kept. Saves use the text the edit was computed from, so a concurrent change is never overwritten.
 
 ---
 
