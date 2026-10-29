@@ -40,7 +40,7 @@ Most Markdown renderers show the `{cols=…}` line as a plain line of text under
 
 Rows have no fixed heights: they size to their content.
 
-## Formulas <span class="nmw-coming">coming</span> {#formulas}
+## Formulas {#formulas}
 
 Formulas in tables use the syntax of [vitepress-plugin-markdownformula](https://github.com/emdzej/vitepress-plugin-markdownformula), so a note that computes something in the app shows the same numbers when it's published with VitePress.
 
@@ -61,4 +61,8 @@ A formula is a link whose target is the formula prefixed with `#` — the `#` st
 - `<!-- name -->` directly above a table names its sheet; otherwise sheets are `Sheet0`, `Sheet1`, … in document order.
 - `table1!C3` reads cell `C3` from the sheet named `table1`.
 
-In the app the cell shows the result, and the formula comes back when you edit the cell.
+In the app the cell shows the result in the accent color (errors such as `#DIV/0!` in red). On the Mac, hover a cell to see its formula. Editing a cell shows it as `=SUM(B1:B2)`; type a value starting with `=` and it's stored as `[?](#…)` when you leave the cell. On iPhone and iPad the bar above the keyboard shows the cell's address and buttons for `=`, common functions and `:`.
+
+**Functions:** SUM, AVERAGE, MIN, MAX, COUNT, COUNTA, PRODUCT, ROUND, ROUNDUP, ROUNDDOWN, ABS, SQRT, POWER, MOD, INT, IF, AND, OR, NOT, IFERROR, COUNTIF, SUMIF, AVERAGEIF, CONCAT, CONCATENATE, LEN, UPPER, LOWER, TRIM, LEFT, RIGHT, MID. Operators: `+ - * / ^ & %` and comparisons. Not supported: TODAY, NOW and named ranges.
+
+Links to headings such as `[see](#intro)` stay ordinary links.
