@@ -87,6 +87,19 @@ struct NoteEditorView: View {
                 .inspectorColumnWidth(min: 200, ideal: 240, max: 360)
         }
         .toolbar {
+            #if os(iOS)
+            // Mac: Edit › Find (⌘F, ⌥⌘F) reaches the text view directly.
+            ToolbarItem {
+                Menu {
+                    Button("Find in Note", systemImage: "magnifyingglass") { controller.showFind() }
+                    Button("Find and Replace", systemImage: "arrow.left.arrow.right") { controller.showFind(replacing: true) }
+                } label: {
+                    Label("Find", systemImage: "magnifyingglass")
+                } primaryAction: {
+                    controller.showFind()
+                }
+            }
+            #endif
             ToolbarItem {
                 Button { mode = effectiveMode == .source ? .formatted : .source } label: {
                     Label(effectiveMode == .source ? "Show Formatted" : "Show Markdown Source",
