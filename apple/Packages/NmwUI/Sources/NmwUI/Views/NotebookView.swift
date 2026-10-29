@@ -189,13 +189,22 @@ struct SidebarView: View {
                 }
             }
         }
+        #if os(macOS)
         .safeAreaInset(edge: .top) { NotebookMenu(session: session, library: library, addNotebook: addNotebook).padding(.horizontal, 10).padding(.vertical, 6) }
+        #endif
         .overlay(alignment: .bottom) {
             if session.isIndexing { ProgressView("Indexing…").controlSize(.small).padding(8) }
         }
         .sidebarStyle(sidebarStyle)
         #if os(iOS)
+        // The notebook menu sits in the navigation bar, not in a row of its own below an empty title.
+        .navigationTitle("")
+        .toolbarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                NotebookMenu(session: session, library: library, addNotebook: addNotebook)
+                    .fixedSize()
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button { showingSettings = true } label: { Label("Settings", systemImage: "gearshape") }
             }
@@ -319,7 +328,16 @@ struct NotebookMenu: View {
                 Button("Remove “\(current.name)” from Notes my Way") { library.remove(current) }
             }
         } label: {
-            Label(session.name, systemImage: "books.vertical").font(.headline)
+            // Not a Label: toolbars (iOS) would show only its icon.
+            HStack(spacing: 6) {
+                Image(systemName: "books.vertical")
+                Text(session.name)
+                #if os(iOS)
+                Image(systemName: "chevron.down").font(.caption.weight(.semibold))
+                #endif
+            }
+            .font(.headline)
+            .padding(.horizontal, 4)
         }
         .menuStyle(.borderlessButton)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -357,13 +375,31 @@ extension View {
     @ViewBuilder func sidebarStyle(_ style: SidebarStyle) -> some View {
         switch style {
         case .system:
+            #if os(iOS)
+            // On iPhone and iPad the sidebar is a whole screen: the welcome watermark fills it.
             self
+                .scrollContentBackground(.hidden)
+                .background {
+                    ZStack {
+                        Color(uiColor: .systemGroupedBackground)
+                        WelcomeBackground()
+                    }
+                    .ignoresSafeArea()
+                }
+            #else
+            self
+            #endif
         case .myWay:
             self
                 .scrollContentBackground(.hidden)
                 .background {
-                    LinearGradient(colors: [Palette.sidebarTop, Palette.sidebarBottom], startPoint: .top, endPoint: .bottom)
-                        .ignoresSafeArea()
+                    ZStack {
+                        LinearGradient(colors: [Palette.sidebarTop, Palette.sidebarBottom], startPoint: .top, endPoint: .bottom)
+                        #if os(iOS)
+                        WelcomeBackground(tint: .white, glow: false)
+                        #endif
+                    }
+                    .ignoresSafeArea()
                 }
                 .environment(\.colorScheme, .dark)
                 .tint(.white)

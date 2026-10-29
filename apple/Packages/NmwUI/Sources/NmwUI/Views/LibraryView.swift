@@ -106,17 +106,22 @@ struct AppIconImage: View {
 
 /// A soft accent glow and, as a watermark, the icon's page with a `#`, very faint.
 struct WelcomeBackground: View {
+    /// The mark's color; nil uses the accent. ("My Way" sidebar: white.)
+    var tint: Color? = nil
+    var glow = true
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         GeometryReader { proxy in
             let side = min(proxy.size.width, proxy.size.height) * 0.95
             ZStack {
-                RadialGradient(colors: [Palette.accentColor.opacity(colorScheme == .dark ? 0.16 : 0.10), .clear],
-                               center: .top, startRadius: 0, endRadius: max(proxy.size.width, proxy.size.height) * 0.8)
+                if glow {
+                    RadialGradient(colors: [Palette.accentColor.opacity(colorScheme == .dark ? 0.16 : 0.10), .clear],
+                                   center: .top, startRadius: 0, endRadius: max(proxy.size.width, proxy.size.height) * 0.8)
+                }
                 // Bottom right, partly off the edge, clear of the centred content.
                 NotePageMark(lineWidth: side * 0.016)
-                    .stroke(Palette.accentColor.opacity(colorScheme == .dark ? 0.11 : 0.08),
+                    .stroke((tint ?? Palette.accentColor).opacity(colorScheme == .dark ? 0.11 : 0.08),
                             style: StrokeStyle(lineWidth: side * 0.016, lineCap: .round, lineJoin: .round))
                     .frame(width: side * 0.62, height: side * 0.78)
                     .rotationEffect(.degrees(-10))
