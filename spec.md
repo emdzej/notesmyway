@@ -40,6 +40,7 @@ nmy/
     App/                        app sources
     Packages/
       NmyCore/                  notebook, file watching, frontmatter, markdown extensions, index (GRDB)
+      NmyUI/                    app models and SwiftUI views (library, sessions, editor wiring)
       NmySync/                  SyncProvider protocol, iCloud + server providers, 3-way merge
   server/                       Go module: nmy-server
   spec/
@@ -223,7 +224,8 @@ Apple Notes structure, Obsidian power:
 - **Note list:** sort by modified, created, or title. Pinned notes on top. Swipe actions on iOS: pin, move, delete.
 - **New note:** Cmd-N, or a toolbar button that creates `Untitled.md` and focuses it. The file name follows the H1, debounced.
 - **Search:** a toolbar search field. FTS over titles and bodies, plus `tag:` and `path:` filters.
-- **Quick switcher** (Cmd-O) and command palette (Cmd-K) on macOS.
+- **Quick switcher** (Cmd-O) and command palette (Cmd-K) on macOS. "Open File…" is Shift-Cmd-O.
+- **Conflicts while editing:** an outside change is adopted silently when the editor has no unsaved text; otherwise a bar offers Keep Mine, Use Disk Version, or Keep Both (saves the other version as `Note (conflict <date>).md`).
 - **Panels:** backlinks and outline, as an inspector on macOS and iPad, or a sheet on iPhone.
 - **System integration:** Spotlight (CoreSpotlight), a Share extension that appends to Inbox or creates a note, widgets (pinned or recent notes), App Intents / Shortcuts, Quick Note on macOS.
 - **Saving:** autosave 500 ms after the last keystroke, with coordinated writes. There is no save button.

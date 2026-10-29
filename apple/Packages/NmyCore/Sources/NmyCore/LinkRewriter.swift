@@ -18,6 +18,12 @@ public struct NoteEdit: Equatable, Sendable {
     /// against a snapshot of it so a concurrent change isn't overwritten.
     public let oldText: String
     public let newText: String
+
+    public init(path: NotebookPath, oldText: String, newText: String) {
+        self.path = path
+        self.oldText = oldText
+        self.newText = newText
+    }
 }
 
 public enum LinkRewriter {

@@ -2,19 +2,22 @@
 //  NmyApp.swift
 //  nmy
 //
-//  App skeleton. The notebook UI (three columns) and the standalone-file
-//  window come in M3; this target exists so both packages build into one
-//  multiplatform app and `.md` is registered as a document type.
+//  Entry point; the app itself lives in the NmyUI package.
 //
 
-import NmyCore
+import NmyUI
 import SwiftUI
 
 @main
 struct NmyApp: App {
+    #if os(macOS)
+    @NSApplicationDelegateAdaptor(NmyAppDelegate.self) private var delegate
+    private var library: Library { delegate.library }
+    #else
+    @State private var library = Library()
+    #endif
+
     var body: some Scene {
-        WindowGroup {
-            ContentUnavailableView("nmy", systemImage: "note.text", description: Text("Notebooks arrive in M3."))
-        }
+        NmyScenes(library: library)
     }
 }
