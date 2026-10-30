@@ -21,7 +21,9 @@ when a feature lands.
 
 ## The editor engine
 
-The editor lives in `../swift-markdown-engine` (a fork, public; committing on its `main` is fine).
+The editor is [MarkdownKit](https://github.com/emdzej/markdownkit) in `../markdownkit` (public, our own
+engine, derived from `nodes-app/swift-markdown-engine`; committing on its `main` is fine). Its `upstream`
+remote is the original: port fixes from it selectively, never merge it wholesale (the code bases diverged).
 NmwUI depends on it by relative path. When the app needs new engine commits, push the engine first:
 CI clones it next to this repository.
 

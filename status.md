@@ -5,7 +5,7 @@ Last updated 2026-10-29. See `spec.md` for the design.
 ## Done
 
 - **Spec rewritten** for the native Apple + Go server architecture. The old web prototype is archived in `legacy/` (`legacy/spec-web.md`, `legacy/status-web.md`).
-- **M0: engine multiplatform** (in `../swift-markdown-engine`, branch `main`)
+- **M0: engine multiplatform** (in the engine, now `../markdownkit`, branch `main`)
   - `b418c7f`: committed the pending Core/dynamic-wrapper split.
   - `7926d88`: parser, styler, renderer and both bridges compile for iOS (`Platform/Platform.swift` holds the aliases and shims; the AppKit view layer is behind `#if os(macOS)`).
   - `e3e63e0`: UIKit editor (`TextView/UIKit/`) and an iOS demo app (`Demo/iOS`, run `xcodegen` there).

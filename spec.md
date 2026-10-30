@@ -26,7 +26,7 @@
 |---|---|
 | Targets | macOS 26+, iOS/iPadOS 26+, one multiplatform SwiftUI app target |
 | Language | Swift 6 (strict concurrency) |
-| Editor | `MarkdownEngine` (our fork of `nodes-app/swift-markdown-engine`), extended to UIKit |
+| Editor | MarkdownKit (`emdzej/markdownkit`, modules `MarkdownEngine*`), derived from `nodes-app/swift-markdown-engine` and extended to UIKit |
 | Index | SQLite via GRDB.swift with FTS5 |
 | Sync server | Go, standard library `net/http`, `modernc.org/sqlite`, content-addressed blob store |
 | Code highlighting / math | `MarkdownEngineCodeBlocks` (HighlighterSwift) / `MarkdownEngineLatex` (SwiftMath) |
@@ -47,7 +47,7 @@ nmw/
     format.md                   nmw markdown dialect (normative)
     sync-protocol.md            server sync protocol (normative)
   legacy/                       archived Svelte/web prototype
-../swift-markdown-engine        editor package (separate repo, consumed as a local SPM dependency)
+../markdownkit                  editor package (separate repo, consumed as a local SPM dependency)
 ```
 
 ---
@@ -263,7 +263,7 @@ Installing: `.nmwtheme` (UTType `pl.emdzej.notesmyway.theme`, conforming to `pub
 
 Every color is optional (`#RGB`, `#RRGGBB` or `#RRGGBBAA`); a missing one keeps the default, and a key set in only one palette is used for both. Fonts are `system`, `serif`, `mono`, `rounded` or a PostScript name. Palette keys: `background`, `text`, `mutedText`, `heading`, `headingMarker`, `link`, `accent`, `inlineCode`, `codeBackground`, `quoteBar`, `quoteText`, `rule`, `tableBorder`, `tableHeader`, `selection`, `caret`, `chip` (frontmatter chips), `tag`, `cardBackground`, `cardBorder`, and `source` with `background`, `text`, `marker`, `heading`, `emphasis`, `link`, `url`, `code`, `key`, `attribute`, `listMarker`.
 
-### 4.6 Engine work (in `swift-markdown-engine`)
+### 4.6 Engine work (in MarkdownKit)
 1. **Multiplatform** (done): platform typealiases (`PlatformFont`, `PlatformColor`, `PlatformImage`, …) so Parser, Styling, Renderer, Configuration, Input, and Services compile for macOS and iOS. The TextView layer is split into `TextView/AppKit` (existing) and `TextView/UIKit` (new: a `UITextView` subclass, a `UIViewRepresentable` wrapper, and a coordinator).
 2. **No wikilinks** (done): `[[…]]` / `![[…]]` render as plain text, and images go through `ImageProvider` / `ImageRequest(source:)`.
 3. **Attributes** (done): `{…}` after images and links is parsed into `MarkdownAttributes` and hidden like other markers; images are sized and aligned by it, `.icon` renders inline.

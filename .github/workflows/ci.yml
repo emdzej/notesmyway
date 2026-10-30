@@ -22,9 +22,9 @@ jobs:
         uses: actions/checkout@v5
 
       # NmwUI uses the editor engine from a sibling folder
-      # (`../swift-markdown-engine` next to this repo), as in local checkouts.
+      # (`../markdownkit` next to this repo), as in local checkouts.
       - name: Check out the editor engine
-        run: git clone --depth 1 https://github.com/emdzej/swift-markdown-engine.git "$GITHUB_WORKSPACE/../swift-markdown-engine"
+        run: git clone --depth 1 https://github.com/emdzej/markdownkit.git "$GITHUB_WORKSPACE/../markdownkit"
 
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1

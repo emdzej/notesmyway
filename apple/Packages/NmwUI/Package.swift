@@ -10,7 +10,7 @@ let package = Package(
     dependencies: [
         .package(path: "../NmwCore"),
         .package(path: "../NmwShared"),
-        .package(path: "../../../../swift-markdown-engine"),
+        .package(path: "../../../../markdownkit"),
     ],
     targets: [
         .target(
@@ -18,9 +18,9 @@ let package = Package(
             dependencies: [
                 "NmwCore",
                 "NmwShared",
-                .product(name: "MarkdownEngine", package: "swift-markdown-engine"),
-                .product(name: "MarkdownEngineCodeBlocks", package: "swift-markdown-engine"),
-                .product(name: "MarkdownEngineLatex", package: "swift-markdown-engine"),
+                .product(name: "MarkdownEngine", package: "markdownkit"),
+                .product(name: "MarkdownEngineCodeBlocks", package: "markdownkit"),
+                .product(name: "MarkdownEngineLatex", package: "markdownkit"),
             ]
         ),
         .testTarget(name: "NmwUITests", dependencies: ["NmwUI"]),

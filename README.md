@@ -12,9 +12,9 @@ line you're editing; tables are an editable grid with formulas; themes color the
 
 A notebook is any folder of `.md` files: folders are real folders, attachments are files next to the
 notes. A small SQLite index (GRDB) in Application Support holds search, tags, backlinks and task
-counts, and only what can be rebuilt from the files. The editor is the
-[swift-markdown-engine](https://github.com/emdzej/swift-markdown-engine) fork, a TextKit 2 engine that
-blends source and rendering, checked out next to this repository.
+counts, and only what can be rebuilt from the files. The editor is
+[MarkdownKit](https://github.com/emdzej/markdownkit), a TextKit 2 engine that blends source and
+rendering, checked out next to this repository.
 
 ## Layout
 
@@ -33,10 +33,10 @@ blends source and rendering, checked out next to this repository.
 ## Building
 
 Requirements: Xcode 26 (macOS 26 / iOS 26 SDKs), [XcodeGen](https://github.com/yonaskolb/XcodeGen),
-and the engine at `../swift-markdown-engine`:
+and the engine at `../markdownkit`:
 
 ```sh
-git clone git@github.com:emdzej/swift-markdown-engine.git ../swift-markdown-engine
+git clone git@github.com:emdzej/markdownkit.git ../markdownkit
 cd apple
 xcodegen generate
 xcodebuild build -project nmw.xcodeproj -scheme nmw -destination 'platform=macOS'
