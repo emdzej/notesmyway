@@ -15,6 +15,9 @@ hero:
       text: Coming soon to the App Store
       link: /get-the-app
     - theme: alt
+      text: Download for Mac
+      link: https://github.com/emdzej/notesmyway/releases/latest
+    - theme: alt
       text: Feature guide
       link: /guide/
     - theme: alt

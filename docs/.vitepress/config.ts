@@ -46,8 +46,14 @@ export default defineConfig({
           { text: 'Roadmap', link: '/backlog' },
           { text: 'Support', link: '/support' },
           { text: 'Privacy', link: '/privacy' },
+          { text: 'Source (GitHub)', link: 'https://github.com/emdzej/notesmyway' },
+          { text: 'Licence (GPLv3)', link: 'https://github.com/emdzej/notesmyway/blob/main/LICENSE' },
         ],
       },
+    ],
+
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/emdzej/notesmyway' },
     ],
 
     sidebar: [
@@ -87,7 +93,7 @@ export default defineConfig({
     },
 
     footer: {
-      message: 'Coming soon to the App Store for iPhone, iPad and Mac.',
+      message: 'Free software under the <a href="https://github.com/emdzej/notesmyway/blob/main/LICENSE">GPLv3</a>. Coming soon to the App Store for iPhone, iPad and Mac.',
       copyright: 'Copyright © 2026 <a href="https://emdzej.pl">Michał Jaskólski</a>',
     },
 

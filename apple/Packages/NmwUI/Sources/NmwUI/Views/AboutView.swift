@@ -21,7 +21,7 @@ struct Acknowledgement: Identifiable {
     /// Notes my Way's own licence.
     static let app = Acknowledgement(id: "notesmyway", name: "Notes my Way",
                                      detail: "Free software: you may share and change it under the GPL.",
-                                     license: "GPLv3 or later", url: URL(string: "https://notesmyway.emdzej.pl")!,
+                                     license: "GPLv3 or later", url: URL(string: "https://github.com/emdzej/notesmyway")!,
                                      files: ["GPL-3.0"])
 
     static let all: [Acknowledgement] = [
@@ -74,8 +74,11 @@ struct AboutView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Notes my Way").font(.headline)
                         Text("Version \(version)").foregroundStyle(.secondary)
-                        Link("notesmyway.emdzej.pl", destination: URL(string: "https://notesmyway.emdzej.pl")!)
-                            .font(.callout)
+                        HStack(spacing: 12) {
+                            Link("notesmyway.emdzej.pl", destination: URL(string: "https://notesmyway.emdzej.pl")!)
+                            Link("Source code", destination: URL(string: "https://github.com/emdzej/notesmyway")!)
+                        }
+                        .font(.callout)
                     }
                 }
                 .padding(.vertical, 4)
