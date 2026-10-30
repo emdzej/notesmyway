@@ -6,7 +6,7 @@
 
 ## Look
 
-**Settings › General › Look** has:
+**Settings › Appearance** has:
 
 - **Theme**: it colors the whole app, not just the editor. You get the note page, the note list, a wash over the iPhone and iPad sidebar, and the accent (buttons, selection, checkboxes), which is the theme's link color.
 - **Appearance**: System, Light or Dark. A theme made for only one mode switches the app to that mode while it's on, and Appearance then shows "Dark (set by theme)" or "Light (set by theme)".
@@ -30,7 +30,7 @@ Notes my Way comes with built-in themes for the formatted editor, the Markdown s
 
 ## Text
 
-In **Settings › General › Text**:
+In **Settings › Appearance › Text**:
 
 - **Font**: the theme's font, or System, Serif or Mono.
 - **Text size** and **Line spacing**.
@@ -43,7 +43,7 @@ Table headers use a light tint of the theme's accent unless the theme sets its o
 A theme travels as a `.nmwtheme` file, which is JSON inside.
 
 - **Open the file**: tap it in Files, Mail or Messages, or double-click it in Finder. Notes my Way checks it and asks whether to **Install and Use** it or just **Install** it.
-- **Settings › General › Themes › Install Theme…** picks a `.nmwtheme` or `.json` file. On the Mac you can also drop a file onto the Themes section.
+- **Settings › Themes › Install Theme…** picks a `.nmwtheme` or `.json` file. On the Mac you can also drop a file onto the Themes section.
 - **If a theme with the same id already exists** (built-in or installed), choose **Replace** or **Keep Both**. Keep Both installs it as "Name 2".
 - **If the file has a problem**, the app says what's wrong, for example "These colors aren't hex colors like #1A8FA8: light.link."
 
@@ -53,7 +53,7 @@ Installed themes are listed under **Themes**, each with a menu: **Use**, **Share
 
 A theme is a JSON file in the Themes folder:
 
-- **Mac**: **Settings › General › Themes › Open Themes Folder**. **Duplicate** writes the current theme there as a starting point, and **Reload** picks up your edits.
+- **Mac**: **Settings › Themes › Open Themes Folder**. **Duplicate** writes the current theme there as a starting point, and **Reload** picks up your edits.
 - **iPhone and iPad**: the app's `Themes` folder in the Files app (On My iPhone › Notes my Way).
 
 A file whose `id` matches a built-in theme replaces it.

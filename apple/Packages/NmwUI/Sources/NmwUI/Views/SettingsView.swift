@@ -28,10 +28,17 @@ public struct SettingsView: View {
             Tab("General", systemImage: "gearshape") {
                 GeneralSettingsForm()
             }
+            Tab("Appearance", systemImage: "paintpalette") {
+                AppearanceSettingsForm()
+            }
+            Tab("Themes", systemImage: "swatchpalette") {
+                ThemesSettingsForm()
+            }
             Tab("Notebook", systemImage: "books.vertical") {
                 notebook
             }
         }
+        .themeInstallAlerts(inSettings: true)
         .frame(width: 480)
         .fixedSize(horizontal: false, vertical: true)
     }
@@ -59,14 +66,36 @@ public struct SettingsView: View {
     }
 }
 
-/// Settings for the app on this device (not synced with notebooks).
+/// Settings for the app on this device (not synced with notebooks): the editor, and Markdown files.
 struct GeneralSettingsForm: View {
-    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
     @AppStorage(EditorMode.key) private var editorMode = EditorMode.formatted
     @AppStorage(ChecklistSettings.movesCheckedKey) private var movesCheckedToBottom = false
 
     var body: some View {
-        ScrollViewReader { proxy in
+        Form {
+            Section {
+                Picker("Notes open as", selection: $editorMode) {
+                    ForEach(EditorMode.allCases) { Text($0.title).tag($0) }
+                }
+                Toggle("Move checked items to the bottom", isOn: $movesCheckedToBottom)
+            } header: {
+                Text("Editor")
+            } footer: {
+                Text("Switch the open note with the </> toolbar button (⇧⌘M).").foregroundStyle(.secondary)
+            }
+            #if os(macOS)
+            MarkdownDefaultAppSection()
+            #endif
+        }
+        .formStyle(.grouped)
+    }
+}
+
+/// The theme, light / dark, the sidebar, and the editor's text.
+struct AppearanceSettingsForm: View {
+    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
+
+    var body: some View {
         Form {
             Section {
                 ThemePicker()
@@ -79,33 +108,17 @@ struct GeneralSettingsForm: View {
             } footer: {
                 Text("The theme colors the notes, the note list and the app’s accent.").foregroundStyle(.secondary)
             }
-            Section {
-                Picker("Notes open as", selection: $editorMode) {
-                    ForEach(EditorMode.allCases) { Text($0.title).tag($0) }
-                }
-                Toggle("Move checked items to the bottom", isOn: $movesCheckedToBottom)
-            } header: {
-                Text("Editor")
-            } footer: {
-                Text("Switch the open note with the </> toolbar button (⇧⌘M).").foregroundStyle(.secondary)
-            }
             EditorTextSection()
-            ThemeLibrarySection().id("themes")
-            #if os(macOS)
-            MarkdownDefaultAppSection()
-            #endif
         }
         .formStyle(.grouped)
-        #if DEBUG
-        // Screenshots: `-NmwSettingsSection themes`.
-        .task {
-            guard let section = UserDefaults.standard.string(forKey: "NmwSettingsSection") else { return }
-            try? await Task.sleep(for: .milliseconds(300))
-            proxy.scrollTo(section, anchor: .top)
-        }
-        #endif
-        }
-        .themeInstallAlerts(inSettings: true)
+    }
+}
+
+/// Installed themes: install, duplicate, share, delete.
+struct ThemesSettingsForm: View {
+    var body: some View {
+        Form { ThemeLibrarySection() }
+            .formStyle(.grouped)
     }
 }
 

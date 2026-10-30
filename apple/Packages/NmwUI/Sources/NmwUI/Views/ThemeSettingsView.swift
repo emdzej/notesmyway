@@ -2,7 +2,7 @@
 //  ThemeSettingsView.swift
 //  NmwUI
 //
-//  Settings › General: the theme picker (it colors the whole app), the
+//  Settings › Appearance and › Themes: the theme picker (it colors the whole app), the
 //  editor's text (font, size, line spacing, the source view's theme), and
 //  the installed themes: install from a file, duplicate, share, delete.
 //  `ThemeInstaller` handles theme files opened from Files, Finder or Mail.
@@ -28,7 +28,7 @@ extension EditorTheme: Transferable {
     }
 }
 
-/// The theme picker, for Settings › General › Look.
+/// The theme picker, for Settings › Appearance.
 struct ThemePicker: View {
     @Bindable var appearance = EditorAppearance.shared
 
