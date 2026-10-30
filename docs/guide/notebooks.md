@@ -8,7 +8,7 @@ The app watches the folder, so a note or folder added, edited or moved in anothe
 
 ## Folders
 
-The sidebar shows the notebook's folder with its subfolders nested under it. Selecting a folder lists its notes and the notes of its subfolders; a caption shows which subfolder a note is in. To show or hide a folder's subfolders, use the arrow next to it (on iPhone and iPad, the chevron at the right of the row; tapping the folder's name opens it).
+The sidebar shows the notebook's folder with its subfolders nested under it. Selecting a folder lists the notes in that folder, not those in its subfolders; All Notes lists every note in the notebook. In All Notes, Pinned and a tag's list, a caption shows each note's folder. To show or hide a folder's subfolders, use the arrow next to it (on iPhone and iPad, the chevron at the right of the row; tapping the folder's name opens it).
 
 - **New folder:** right-click (long-press on iPhone and iPad) a folder › **New Folder…**, and give it a name.
 - **Rename:** **Rename…** — every link that points into the folder is updated.

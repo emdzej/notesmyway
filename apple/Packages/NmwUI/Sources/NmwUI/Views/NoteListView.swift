@@ -272,11 +272,11 @@ struct NoteListView: View {
         run { try await library.move(move.path, from: session, toNotebook: move.entryID) }
     }
 
-    /// Where a note sits below the selected folder ("2026/Q4"), nil when directly in it.
+    /// The note's folder in lists that span folders (All Notes, Pinned, a tag);
+    /// the notebook's name for notes at its root. A folder lists only its own notes.
     private func subfolder(of note: NoteSummary) -> String? {
-        guard case .folder(let folder?) = session.scope, let parent = note.path.parent, parent != folder,
-              parent.isInside(folder) else { return nil }
-        return String(parent.rawValue.dropFirst(folder.rawValue.count + 1))
+        if case .folder = session.scope { return nil }
+        return note.path.parent?.name ?? session.name
     }
 
     private var title: String {

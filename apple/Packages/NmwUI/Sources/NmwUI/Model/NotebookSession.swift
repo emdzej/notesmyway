@@ -221,12 +221,14 @@ public final class NotebookSession {
                 }
                 notes = try index.search(query)
                 if scope == .pinned { notes = notes.filter(\.pinned) }
+                // path: matches subfolders too; a folder lists only its own notes.
+                if case .folder(let folder?) = scope { notes = notes.filter { $0.path.parent == folder } }
             } else {
                 switch scope {
                 case .all: notes = try index.notes(sortedBy: sort)
                 case .pinned: notes = try index.notes(sortedBy: sort).filter(\.pinned)
-                // A folder lists its notes and its subfolders' notes; the notebook root only its own.
-                case .folder(let folder): notes = try index.notes(in: folder, recursive: folder != nil, sortedBy: sort)
+                // A folder lists only its own notes, like the notebook root; All Notes lists everything.
+                case .folder(let folder): notes = try index.notes(in: folder, recursive: false, sortedBy: sort)
                 case .tag(let tag): notes = try index.notes(taggedWith: tag, sortedBy: sort)
                 case .trash: notes = []
                 }

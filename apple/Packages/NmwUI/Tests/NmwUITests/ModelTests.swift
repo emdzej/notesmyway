@@ -196,6 +196,20 @@ struct NotebookSessionTests {
         #expect(s.notes.map(\.title) == ["Idea"])
     }
 
+    @Test func aFolderListsOnlyItsOwnNotes() async throws {
+        let (tmp, s) = try await session()
+        defer { s.stop(); tmp.delete() }
+        try tmp.write("People/Family/Bob.md", "# Bob\n\nidea")
+        #expect(await eventually { s.notes.contains { $0.title == "Bob" } })   // the watcher indexes it
+        s.scope = .folder(p("People"))
+        #expect(s.notes.map(\.title) == ["Ann"])
+        s.searchText = "idea"
+        #expect(s.notes.map(\.title).contains("Bob") == false)
+        s.searchText = ""
+        s.scope = .all
+        #expect(s.notes.map(\.title).contains("Bob"))
+    }
+
     @Test func newNotesGetUniqueNamesAndAreSelected() async throws {
         let (tmp, s) = try await session()
         defer { s.stop(); tmp.delete() }

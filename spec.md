@@ -278,7 +278,7 @@ Every color is optional (`#RGB`, `#RRGGBB` or `#RRGGBBAA`); a missing one keeps 
 
 Apple Notes structure, Obsidian power:
 
-- **Folders:** the notebook's own folder is the top row of the tree, with its subfolders nested under it, all expanded; a folder lists its own notes and those in its subfolders (captioned with the subfolder). The notebook root lists only its own notes (All Notes lists everything).
+- **Folders:** the notebook's own folder is the top row of the tree, with its subfolders nested under it, all expanded; a folder, like the notebook root, lists only its own notes, not its subfolders' (All Notes lists everything).
 - **Three columns** (`NavigationSplitView`): sidebar with notebooks, folders, tags, and Pinned / Recent / Trash; note list with title, date, two-line snippet, and thumbnail of the first image; editor. iPhone collapses to a stack.
 - **Note list:** sort by modified, created, or title. Pinned notes on top. Swipe actions on iOS: pin, move, delete.
 - **New note:** Cmd-N, or a toolbar button that creates `Untitled.md` and focuses it. The file name follows the H1 (debounced) when the notebook's `renameFilesToTitle` is on.
