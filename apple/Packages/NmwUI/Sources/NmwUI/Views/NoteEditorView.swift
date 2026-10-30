@@ -102,6 +102,12 @@ struct NoteEditorView: View {
         }
         .animation(.snappy(duration: 0.2), value: controller.isEditingAnything)
         #endif
+        // The theme's page color fills the whole pane, under the toolbar and bars too.
+        .background {
+            if let page = EditorAppearance.shared.background(forSource: effectiveMode == .source) {
+                page.ignoresSafeArea()
+            }
+        }
         .inspector(isPresented: $showsInspector) {
             NoteInspector(text: model.text, backlinks: backlinks?(), onHeading: { controller.reveal($0.range) },
                           onOpenNote: onOpenNote)

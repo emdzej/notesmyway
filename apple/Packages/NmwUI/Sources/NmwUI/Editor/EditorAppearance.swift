@@ -89,6 +89,15 @@ public final class EditorAppearance {
         sourceThemeID.isEmpty ? theme : (themes.first { $0.id == sourceThemeID } ?? theme)
     }
 
+    /// The theme's page color for a mode, for the whole editor pane (behind
+    /// the bars and toolbar too); nil leaves the system background.
+    func background(forSource source: Bool) -> Color? {
+        let theme = source ? sourceTheme : self.theme
+        let light = source ? (theme.light.source?.background ?? theme.light.background) : theme.light.background
+        let dark = source ? (theme.dark.source?.background ?? theme.dark.background) : theme.dark.background
+        return EditorTheme.color(light, dark).map { Color($0) }
+    }
+
     /// The engine font name for the body text.
     var fontName: String {
         switch font {
