@@ -4,6 +4,10 @@
   <img src="/screenshots/ipad-budget.webp" alt="iPad: a kitchen budget table with quantities, prices and computed totals" />
 </div>
 
+<div class="nmw-shot">
+  <img src="/screenshots/mac-budget.webp" alt="Mac: the same kitchen budget table" />
+</div>
+
 ## Editing tables
 
 GFM tables render as a grid you can type into. Click a cell to edit it; **Tab** and **Shift-Tab** move between cells, **Return** moves down, and both add a row when you go past the last one. The arrow keys leave the grid above or below it. Right-click a cell for the table commands, including **Edit as Markdown**, which shows the table's source while the caret is in it.

@@ -153,8 +153,12 @@ struct NoteEditorView: View {
                     .help("Outline and Backlinks (⌥⌘I)")
             }
             ToolbarItem {
-                ShareToolbarButton(enabled: model.isLoaded) { anchor in share(anchor: anchor) }
-                    .help("Share")
+                ShareLink(item: NoteShareItem(title: shareTitle, makeExporter: { makeExporter() }),
+                          preview: SharePreview(shareTitle)) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+                .disabled(!model.isLoaded)
+                .help("Share")
             }
             #endif
         }
@@ -186,10 +190,12 @@ struct NoteEditorView: View {
 
     // MARK: Print, PDF, Share
 
+    private var shareTitle: String {
+        NoteMetadata(markdown: model.text, fileName: model.url.deletingPathExtension().lastPathComponent).title
+    }
+
     private func makeExporter() -> NoteExporter {
-        let fileName = model.url.deletingPathExtension().lastPathComponent
-        let title = NoteMetadata(markdown: model.text, fileName: fileName).title
-        return NoteExporter(markdown: model.text, title: title, context: context)
+        NoteExporter(markdown: model.text, title: shareTitle, context: context)
     }
 
     private func share(anchor: ShareAnchorView? = nil) {

@@ -1,10 +1,16 @@
 # Themes and appearance
 
 <div class="nmw-shot">
-  <img src="/screenshots/ipad-paper.webp" alt="iPad: the Paper theme with a serif note and the My Way sidebar" />
+  <img src="/screenshots/mac-paper.webp" alt="Mac: the Paper theme on the sidebar, the note list and a serif recipe note" />
 </div>
 
 ## Look
+
+<div class="nmw-shot-row">
+  <img src="/screenshots/iphone-paper-list.webp" alt="iPhone: the note list in the Paper theme" />
+  <img src="/screenshots/iphone-appearance.webp" alt="iPhone: Settings › Appearance with the theme, appearance and sidebar" />
+  <img src="/screenshots/iphone-themes.webp" alt="iPhone: Settings › Themes with an installed theme and Install Theme…" />
+</div>
 
 **Settings › Appearance** has:
 

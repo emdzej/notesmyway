@@ -73,7 +73,11 @@ struct NotebookView: View {
 
     private static var launchColumnVisibility: NavigationSplitViewVisibility {
         #if DEBUG
-        if UserDefaults.standard.string(forKey: "NmwColumnVisibility") == "doubleColumn" { return .doubleColumn }
+        switch UserDefaults.standard.string(forKey: "NmwColumnVisibility") {
+        case "doubleColumn": return .doubleColumn
+        case "all": return .all
+        default: break
+        }
         #endif
         return .automatic
     }

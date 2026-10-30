@@ -28,6 +28,10 @@ On iPhone the three appear one after another; on iPad and Mac side by side.
   <img src="/screenshots/ipad-lisbon-light.webp" alt="iPad: sidebar, note list and a note side by side" />
 </div>
 
+<div class="nmw-shot">
+  <img src="/screenshots/mac-dark.webp" alt="Mac in dark mode: sidebar, note list and a note about Lisbon" />
+</div>
+
 ## Your first note
 
 Press **⌘N** on the Mac, or tap the compose button. The note is created in the selected folder as `Untitled.md`; its first `# heading` becomes its title in the list. Notes save themselves half a second after you stop typing.

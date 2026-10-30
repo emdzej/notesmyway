@@ -2,18 +2,29 @@
 
 **Settings** opens with **⌘,** on the Mac. On iPhone and iPad, tap the gear at the top of the sidebar, or **Settings…** in the notebook menu.
 
-## General
+Settings has four tabs on the Mac, and the same four pages on iPhone and iPad. The first three apply to the app on this device.
 
-Applies to the app on this device.
+## General
 
 | Setting | Options |
 | --- | --- |
-| Appearance | System, Light, Dark |
-| Sidebar | System Default, My Way |
 | Notes open as | Formatted, Markdown Source |
-| Theme | the editor's [theme](/guide/themes), font, text size and line spacing |
-| Markdown source theme | the same as the editor, or another theme |
+| Move checked items to the bottom | off |
 | Markdown files (Mac) | which app opens `.md` files, and a button to make it Notes my Way |
+
+## Appearance
+
+| Setting | Options |
+| --- | --- |
+| Theme | the [theme](/guide/themes), which colors the whole app |
+| Appearance | System, Light, Dark (fixed by themes made for one mode) |
+| Sidebar | System Default, My Way |
+| Font, Text size, Line spacing | the editor's text |
+| Markdown source | the same theme as the editor, or another one |
+
+## Themes
+
+Installed themes, with **Install Theme…**, **Duplicate**, **Share** and **Delete**. See [Installing themes](/guide/themes#installing-themes).
 
 ## Notebook
 

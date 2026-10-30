@@ -32,6 +32,7 @@ typealias ShareAnchorView = UIView
 
 @MainActor
 enum NoteExport {
+    nonisolated static let markdownType = UTType("net.daringfireball.markdown") ?? .plainText
 
     /// The whole page: theme CSS and the note's body.
     static func document(markdown: String, title: String, context: NoteContext, highlightsCode: Bool = EditorSetup.highlightsCode) -> String {
@@ -494,31 +495,20 @@ struct NoteExportCommands: Equatable {
 }
 
 #if os(macOS)
-/// A toolbar Share button that gives the sharing picker its view to anchor to.
-struct ShareToolbarButton: NSViewRepresentable {
-    var enabled: Bool
-    let action: (NSView) -> Void
+/// A note for `ShareLink`: its Markdown file first, then a PDF (rendered
+/// only if the destination wants one) and plain text.
+struct NoteShareItem: Transferable {
+    let title: String
+    let makeExporter: @MainActor @Sendable () -> NoteExporter
 
-    func makeNSView(context: Context) -> NSButton {
-        let button = NSButton(image: NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: "Share") ?? NSImage(),
-                              target: context.coordinator, action: #selector(Coordinator.clicked(_:)))
-        button.bezelStyle = .toolbar
-        button.isBordered = false
-        button.setAccessibilityLabel("Share")
-        return button
-    }
-
-    func updateNSView(_ button: NSButton, context: Context) {
-        button.isEnabled = enabled
-        context.coordinator.action = action
-    }
-
-    func makeCoordinator() -> Coordinator { Coordinator(action: action) }
-
-    @MainActor final class Coordinator: NSObject {
-        var action: (NSView) -> Void
-        init(action: @escaping (NSView) -> Void) { self.action = action }
-        @objc func clicked(_ sender: NSButton) { action(sender) }
+    static var transferRepresentation: some TransferRepresentation {
+        FileRepresentation(exportedContentType: NoteExport.markdownType) { item in
+            SentTransferredFile(try await item.makeExporter().markdownFile())
+        }
+        FileRepresentation(exportedContentType: .pdf) { item in
+            SentTransferredFile(try await item.makeExporter().pdfFile())
+        }
+        ProxyRepresentation { item in await MarkdownPlainText.text(of: item.makeExporter().markdown) }
     }
 }
 #endif

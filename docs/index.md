@@ -73,17 +73,18 @@ Tables are an editable grid: add rows and columns from the markers on the edges,
 
 ## Make it yours
 
-Seven themes for the editor, source view and code — from the teal default to a serif Paper — in light and dark, plus your own as JSON files. The sidebar can follow the system or wear the icon's colours.
+Seven themes, from the teal default to a serif Paper. Each one colors the whole app: the note page, the note list, the sidebar and the accent, in light and dark. Install new themes by opening a `.nmwtheme` file, or make your own from a JSON file.
 
 [Themes and appearance →](/guide/themes)
 
 </div>
-<img class="nmw-shot" src="/screenshots/ipad-paper.webp" alt="iPad: the Paper theme with a serif recipe note and the teal My Way sidebar" />
+<img class="nmw-shot" src="/screenshots/ipad-paper.webp" alt="iPad: the Paper theme on the sidebar, the note list and a serif recipe note" />
 </div>
 
 <div class="nmw-phones">
   <img src="/screenshots/iphone-sidebar.webp" alt="iPhone: notebook sidebar with folders and tags" />
   <img src="/screenshots/iphone-note.webp" alt="iPhone: a recipe note with a photo and an ingredients table" />
+  <img src="/screenshots/iphone-paper-list.webp" alt="iPhone: the note list in the Paper theme" />
   <img src="/screenshots/iphone-note-dark.webp" alt="iPhone in dark mode: a travel note" />
 </div>
 
