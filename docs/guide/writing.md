@@ -23,6 +23,14 @@ While you edit, a bar floats above the keyboard:
 
 In a table cell the bar changes: it shows the cell's address (such as `B3`) and buttons for `=`, common functions and `:`. See [formulas](/guide/tables#formulas).
 
+## The formatting toolbar (Mac)
+
+The note's toolbar has the same controls as the bar on iPhone and iPad:
+
+- **Aa** opens the text styles: Title, Heading, Subheading and Body; bold, italic, strikethrough and code; bulleted, numbered and checklist items, quotes, and indent.
+- **Checklist** turns the line into a checklist item. Its arrow has **Mark as Checked**, **Check All**, **Uncheck All**, **Move Checked to Bottom** and **Delete Checked**.
+- **Table** inserts a table, and the **paperclip** attaches files, which are stored with the note like dropped ones.
+
 ## The Format menu (Mac)
 
 The same commands, with the shortcuts Apple Notes uses. They're also in the command palette (**⇧⌘P**): type "bold", "check", "table"…

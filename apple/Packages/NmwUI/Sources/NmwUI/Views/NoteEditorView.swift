@@ -46,6 +46,8 @@ struct NoteEditorView: View {
     @State private var mode: EditorMode?
 
     private var effectiveMode: EditorMode { mode ?? defaultMode }
+    /// Formatting needs an editable, loaded note.
+    private var canFormat: Bool { model.isLoaded && model.errorMessage == nil && !readOnly }
 
     private var context: NoteContext { NoteContext(noteURL: linkBase ?? model.url, root: root, previews: previews, attachments: attachments) }
 
@@ -139,6 +141,11 @@ struct NoteEditorView: View {
                 }
             }
             #else
+            // Formatting, as in Notes' toolbar: Aa, checklist, table, attachments.
+            ToolbarItemGroup {
+                MacFormatControls(controller: controller, canEdit: canFormat,
+                                  attach: EditorSetup.dropHandler(for: context, stored: onStoredFiles))
+            }
             ToolbarItem {
                 Button { mode = effectiveMode == .source ? .formatted : .source } label: {
                     Label(effectiveMode == .source ? "Show Formatted" : "Show Markdown Source",

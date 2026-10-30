@@ -231,13 +231,23 @@ struct SidebarView: View {
             Section("Folders") {
                 // The notebook's own folder is the parent of its subfolders.
                 if session.folders.isEmpty {
-                    rootRow
+                    rootRow(nil)
                 } else {
+                    #if os(iOS)
+                    // A tap on a row opens the folder; only the chevron expands it
+                    // (a DisclosureGroup on iOS gives the whole row to expanding).
+                    let rootOpen = Binding(get: { !session.isRootCollapsed }, set: { session.isRootCollapsed = !$0 })
+                    rootRow(AnyView(DisclosureChevron(isExpanded: rootOpen)))
+                    if rootOpen.wrappedValue {
+                        FolderRows(nodes: session.folders, session: session, row: folderRow, depth: 1)
+                    }
+                    #else
                     DisclosureGroup(isExpanded: Binding(get: { !session.isRootCollapsed }, set: { session.isRootCollapsed = !$0 })) {
                         FolderRows(nodes: session.folders, session: session, row: folderRow)
                     } label: {
-                        rootRow
+                        rootRow(nil)
                     }
+                    #endif
                 }
             }
             if !session.tags.isEmpty {
@@ -309,15 +319,15 @@ struct SidebarView: View {
         } message: { Text(errorMessage ?? "") }
     }
 
-    private var rootRow: some View {
-        Label(session.name, systemImage: "folder")
+    private func rootRow(_ accessory: AnyView?) -> some View {
+        FolderLabel(name: session.name, depth: 0, accessory: accessory)
             .tag(NotebookSession.Scope.folder(nil))
             .contextMenu { Button("New Folder", systemImage: "folder.badge.plus") { newFolder(in: nil) } }
     }
 
-    private func folderRow(_ node: FolderNode) -> AnyView {
+    private func folderRow(_ node: FolderNode, accessory: AnyView?, depth: Int) -> AnyView {
         AnyView(
-            Label(node.name, systemImage: "folder")
+            FolderLabel(name: node.name, depth: depth, accessory: accessory)
                 .tag(NotebookSession.Scope.folder(node.path))
                 .contextMenu {
                     Button("New Folder", systemImage: "folder.badge.plus") { newFolder(in: node.path) }
@@ -350,18 +360,28 @@ struct SidebarView: View {
 struct FolderRows: View {
     let nodes: [FolderNode]
     let session: NotebookSession
-    let row: (FolderNode) -> AnyView
+    /// A folder's row, with its chevron (iOS) and nesting depth.
+    let row: (FolderNode, AnyView?, Int) -> AnyView
+    var depth = 0
 
     var body: some View {
         ForEach(nodes) { node in
             if let children = node.children {
-                DisclosureGroup(isExpanded: expanded(node.path)) {
-                    AnyView(FolderRows(nodes: children, session: session, row: row))
-                } label: {
-                    row(node)
+                #if os(iOS)
+                let open = expanded(node.path)
+                row(node, AnyView(DisclosureChevron(isExpanded: open)), depth)
+                if open.wrappedValue {
+                    AnyView(FolderRows(nodes: children, session: session, row: row, depth: depth + 1))
                 }
+                #else
+                DisclosureGroup(isExpanded: expanded(node.path)) {
+                    AnyView(FolderRows(nodes: children, session: session, row: row, depth: depth + 1))
+                } label: {
+                    row(node, nil, depth)
+                }
+                #endif
             } else {
-                row(node)
+                row(node, nil, depth)
             }
         }
     }
@@ -375,6 +395,51 @@ struct FolderRows: View {
         )
     }
 }
+
+/// A folder's name and icon. On iOS, nested folders are indented by hand
+/// (no DisclosureGroup there), and a folder with subfolders has its chevron.
+struct FolderLabel: View {
+    let name: String
+    let depth: Int
+    let accessory: AnyView?
+
+    var body: some View {
+        #if os(iOS)
+        HStack(spacing: 0) {
+            Label(name, systemImage: "folder")
+                .padding(.leading, CGFloat(depth) * 18)
+            Spacer(minLength: 0)
+            if let accessory { accessory }
+        }
+        #else
+        Label(name, systemImage: "folder")
+        #endif
+    }
+}
+
+#if os(iOS)
+/// The expand / collapse control for a folder row, apart from the row's own tap.
+struct DisclosureChevron: View {
+    @Binding var isExpanded: Bool
+
+    var body: some View {
+        Button {
+            withAnimation(.snappy(duration: 0.2)) { isExpanded.toggle() }
+        } label: {
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.borderless)
+        // A 44 pt target that doesn't make the row taller than its neighbours.
+        .padding(.vertical, -10)
+        .accessibilityLabel(isExpanded ? "Collapse" : "Expand")
+    }
+}
+#endif
 
 /// Switch notebooks, add one, or remove the current one from the library.
 struct NotebookMenu: View {

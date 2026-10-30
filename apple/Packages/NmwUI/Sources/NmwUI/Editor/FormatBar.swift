@@ -46,11 +46,7 @@ struct FormatBar: View {
                 }
             // Tap: make a checklist; hold: the checklist commands.
             Menu {
-                Button("Mark as Checked", systemImage: "checkmark.circle") { controller.checklist(.toggleChecked) }
-                Button("Check All", systemImage: "checklist.checked") { controller.checklist(.checkAll) }
-                Button("Uncheck All", systemImage: "checklist.unchecked") { controller.checklist(.uncheckAll) }
-                Button("Move Checked to Bottom", systemImage: "arrow.down.to.line") { controller.checklist(.moveCheckedToBottom) }
-                Button("Delete Checked", systemImage: "trash", role: .destructive) { controller.checklist(.deleteChecked) }
+                ChecklistCommands(controller: controller)
             } label: {
                 icon("checklist")
             } primaryAction: {
@@ -190,65 +186,4 @@ private struct TableCellBar: View {
     }
 }
 
-/// The Aa panel: paragraph styles, inline styles, lists and indentation.
-private struct StylePanel: View {
-    let controller: MarkdownEditorController
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 8) {
-                style("Title", .title, font: .title3.bold())
-                style("Heading", .heading, font: .headline)
-                style("Subheading", .subheading, font: .subheadline.bold())
-                style("Body", .body, font: .subheadline)
-            }
-            HStack(spacing: 8) {
-                inline("bold", .bold)
-                inline("italic", .italic)
-                inline("strikethrough", .strikethrough)
-                inline("chevron.left.forwardslash.chevron.right", .code)
-            }
-            HStack(spacing: 8) {
-                block("list.bullet", .bullet)
-                block("list.number", .numbered)
-                block("checklist", .task)
-                block("text.quote", .quote)
-                tile("decrease.indent", selected: false) { controller.outdent() }
-                tile("increase.indent", selected: false) { controller.indent() }
-            }
-        }
-        .padding(16)
-        .frame(width: 340)
-    }
-
-    private func style(_ title: String, _ style: MarkdownFormatting.BlockStyle, font: Font) -> some View {
-        let selected = controller.currentBlockStyle == style
-        return Button { controller.setBlockStyle(style) } label: {
-            Text(title).font(font).lineLimit(1).minimumScaleFactor(0.7)
-                .frame(maxWidth: .infinity, minHeight: 38)
-                .foregroundStyle(selected ? Color.white : .primary)
-                .background(selected ? Palette.accentColor : Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: 9))
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func inline(_ systemImage: String, _ style: MarkdownFormatting.InlineStyle) -> some View {
-        tile(systemImage, selected: false) { controller.toggle(style) }
-    }
-
-    private func block(_ systemImage: String, _ style: MarkdownFormatting.BlockStyle) -> some View {
-        tile(systemImage, selected: controller.currentBlockStyle == style) { controller.setBlockStyle(style) }
-    }
-
-    private func tile(_ systemImage: String, selected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 17, weight: .medium))
-                .frame(maxWidth: .infinity, minHeight: 38)
-                .foregroundStyle(selected ? Color.white : .primary)
-                .background(selected ? Palette.accentColor : Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: 9))
-        }
-        .buttonStyle(.plain)
-    }
-}
 #endif
