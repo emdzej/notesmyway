@@ -598,6 +598,9 @@ struct MobileSettings: View {
 extension View {
     /// A list on the theme's page color (the note list), when the theme sets one.
     @ViewBuilder func themePage() -> some View {
+        #if os(iOS)
+        modifier(ThemedInsetPage())
+        #else
         if let page = EditorAppearance.shared.pageColor {
             self
                 .scrollContentBackground(.hidden)
@@ -605,6 +608,7 @@ extension View {
         } else {
             self
         }
+        #endif
     }
 
     #if os(iOS)
@@ -663,3 +667,25 @@ extension View {
         }
     }
 }
+
+#if os(iOS)
+/// The note list as a rounded card on a background, like Notes. With a theme
+/// the card is the page color and the background a shade darker (light and
+/// dark alike: in dark mode Notes' cards are lighter than the page behind them).
+private struct ThemedInsetPage: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+
+    func body(content: Content) -> some View {
+        let styled = content.listStyle(.insetGrouped)
+        if let page = EditorAppearance.shared.pageColor {
+            styled
+                .scrollContentBackground(.hidden)
+                .background {
+                    page.overlay(Color.black.opacity(colorScheme == .dark ? 0.35 : 0.06)).ignoresSafeArea()
+                }
+        } else {
+            styled
+        }
+    }
+}
+#endif
