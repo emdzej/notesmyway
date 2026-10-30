@@ -77,6 +77,11 @@ struct AppleNoteBody: Equatable {
         let raw = Gzip.isGzip(data) ? try Gzip.decompress(data) : data
         let root = try ProtoReader.fields(of: raw)
         guard let note = root.first(2)?.message.first(3)?.message else { throw ProtoReader.Malformed() }
+        self.init(note: note)
+    }
+
+    /// From a `Note` message (a note body, or a table cell).
+    init(note: [ProtoField]) {
         text = note.first(2)?.string ?? ""
         runs = note.all(5).map { Self.run($0.message) }
     }

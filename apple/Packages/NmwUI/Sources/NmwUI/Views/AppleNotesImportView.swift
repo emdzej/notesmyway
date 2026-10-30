@@ -68,7 +68,7 @@ struct AppleNotesImportView: View {
             LabeledContent("Into the folder") {
                 TextField("Folder", text: $folderName).frame(width: 200)
             }
-            Text("Notes keep their folders, dates, pinned state, checklists and attachments. Tables aren’t converted yet: a line marks where each was.")
+            Text("Notes keep their folders, dates, pinned state, checklists, tables and attachments.")
                 .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         case .importing(let done, let total):
             ProgressView(value: Double(done), total: Double(max(total, 1))) {
@@ -109,7 +109,7 @@ struct AppleNotesImportView: View {
     private func summary(_ report: AppleNotesImporter.Report) -> String {
         var parts: [String] = []
         if report.locked > 0 { parts.append("\(report.locked) locked notes were skipped.") }
-        if report.tables > 0 { parts.append("\(report.tables) tables weren’t converted; their notes say where they were.") }
+        if report.tables > 0 { parts.append("\(report.tables) tables couldn’t be converted; their notes say where they were.") }
         if report.missingAttachments > 0 { parts.append("\(report.missingAttachments) attachments weren’t found (not downloaded from iCloud yet?).") }
         if !report.failures.isEmpty { parts.append("Couldn’t read: \(report.failures.prefix(5).joined(separator: ", ")).") }
         return parts.joined(separator: " ")

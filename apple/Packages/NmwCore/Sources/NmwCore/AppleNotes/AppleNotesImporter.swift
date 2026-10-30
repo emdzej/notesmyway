@@ -17,7 +17,7 @@ public struct AppleNotesImporter: Sendable {
     public struct Report: Sendable, Equatable {
         public var imported = 0
         public var locked = 0
-        /// Tables, kept as a note in the text until they can be converted.
+        /// Tables that couldn't be converted (a line in the note marks each).
         public var tables = 0
         public var missingAttachments = 0
         public var failures: [String] = []
@@ -189,8 +189,11 @@ public struct AppleNotesImporter: Sendable {
             let title = attachment?.title.flatMap { $0.isEmpty ? nil : $0 } ?? url
             return "[\(AppleNoteMarkdown.escape(title))](\(url))"
         case "com.apple.notes.table":
+            if let data = attachment?.mergeableData, let table = try? AppleNoteTable(data: data), !table.cells.isEmpty {
+                return table.markdown()
+            }
             tables += 1
-            return "*(A table from Apple Notes: not imported yet.)*"
+            return "*(A table from Apple Notes that couldn’t be converted.)*"
         default:
             break
         }

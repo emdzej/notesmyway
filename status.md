@@ -70,8 +70,8 @@ Last updated 2026-10-29. See `spec.md` for the design.
 - **Import from Apple Notes** (macOS, File › Import from Apple Notes…, also in the palette)
   - NmwCore `AppleNotes/`: `ProtoReader` (minimal protobuf), `Gzip`, `AppleNoteBody` (note_text plus attribute runs; field numbers from the community `notestore.proto`), `AppleNoteMarkdown`, `AppleNotesLibrary` (copies NoteStore.sqlite with its WAL to /tmp and reads it with GRDB; columns are looked up since their suffixes vary by macOS version), and `AppleNotesImporter`.
   - Writes one `.md` per note, in folders mirroring Notes' folders (account folders only with more than one account). `created` and `pinned` go in frontmatter, and the file dates are set. Attachments go through `AttachmentStore`: media files, and the fallback images of drawings and scans. `#tags` and inline note links (resolved to the imported file) are kept. Locked notes, Recently Deleted and deleted notes are skipped.
-  - Tables (`com.apple.notes.table`, CRDT data in `ZMERGEABLEDATA1`) aren't converted yet; the note gets a visible line where each was.
-  - Tests: 9 in NmwCore on synthetic data (bodies encoded like Notes, a NoteStore.sqlite with the same tables).
+  - Tables (`com.apple.notes.table`): `AppleNoteTable` decodes the gzipped CRDT document in `ZMERGEABLEDATA1`. It finds the `com.apple.notes.ICTable` map, orders rows and columns from the `crRows` / `crColumns` ordered sets (UUID positions, with the contents dictionary's aliases), and reads cells from `cellColumns` (column → row → Note). The result is a GFM table with the first row as header; cell formatting is kept, `|` is escaped and line breaks become `<br>`. A table that doesn't decode leaves a visible line and is counted in the report.
+  - Tests: 10 in NmwCore on synthetic data (bodies and tables encoded like Notes, a NoteStore.sqlite with the same tables).
   - **Not yet run on a real Notes library.** The schema and protobuf fields follow community documentation; expect column or style fixes on first contact.
 
 ## Not yet verified

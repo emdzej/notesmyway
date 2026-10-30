@@ -113,6 +113,69 @@ private func markdown(_ runs: [R]) throws -> String {
     AppleNoteMarkdown.convert(try AppleNoteBody(data: noteData(runs)))
 }
 
+/// A `com.apple.notes.table` document: `rows` and `columns` are UUID
+/// indices in display order; `cells[row][column]` are the cell runs.
+private func tableData(rowsInDisplayOrder rows: [Int], columns: [Int], cells: [Int: [Int: [R]]]) -> Data {
+    let uuids = (0..<4).map { i in Data((0..<16).map { UInt8($0 + i * 16) }) }   // rowA, rowB, colA, colB
+    var entries: [ProtoWriter] = []
+    func add(_ build: (inout ProtoWriter) -> Void) -> Int {
+        var w = ProtoWriter(); build(&w); entries.append(w); return entries.count - 1
+    }
+    func objectID(_ w: inout ProtoWriter, field: Int, index: Int) { w.message(field) { $0.varint(6, index) } }
+    // Index 0 is the table; filled in last.
+    entries.append(ProtoWriter())
+    // An entry standing for each UUID: a map whose first value is the UUID index.
+    let uuidRefs = (0..<4).map { u in add { e in e.message(13) { m in m.varint(1, 1); m.message(3) { me in me.varint(1, 3); me.message(2) { $0.varint(2, u) } } } } }
+    func orderedSet(_ order: [Int]) -> Int {
+        add { e in e.message(16) { set in set.message(1) { ordering in
+            ordering.message(1) { array in for u in order { array.message(2) { a in a.varint(1, 0); a.bytes(2, uuids[u]) } } }
+            ordering.message(2) { dict in for u in order { dict.message(1) { el in objectID(&el, field: 1, index: uuidRefs[u]); objectID(&el, field: 2, index: uuidRefs[u]) } } }
+        } } }
+    }
+    let rowSet = orderedSet(rows)
+    let columnSet = orderedSet(columns)
+    var columnDicts: [(Int, Int)] = []
+    for column in columns {
+        var rowCells: [(Int, Int)] = []
+        for row in rows {
+            guard let runs = cells[row]?[column] else { continue }
+            let note = add { e in e.message(10) { n in
+                n.string(2, runs.map(\.text).joined())
+                for r in runs { n.message(5) { run in run.varint(1, r.text.utf16.count); if r.weight != 0 { run.varint(5, r.weight) } } }
+            } }
+            rowCells.append((uuidRefs[row], note))
+        }
+        let dict = add { e in e.message(6) { d in for (key, value) in rowCells { d.message(1) { el in objectID(&el, field: 1, index: key); objectID(&el, field: 2, index: value) } } } }
+        columnDicts.append((uuidRefs[column], dict))
+    }
+    let cellColumns = add { e in e.message(6) { d in for (key, value) in columnDicts { d.message(1) { el in objectID(&el, field: 1, index: key); objectID(&el, field: 2, index: value) } } } }
+    var table = ProtoWriter()
+    table.message(13) { m in
+        m.varint(1, 0)
+        for (key, target) in [(0, rowSet), (1, columnSet), (2, cellColumns)] {
+            m.message(3) { me in me.varint(1, key); me.message(2) { $0.varint(6, target) } }
+        }
+    }
+    entries[0] = table
+
+    var root = ProtoWriter()
+    root.message(2) { object in
+        object.varint(2, 0)
+        object.message(3) { data in
+            for e in entries { data.bytes(3, e.data) }
+            for key in ["crRows", "crColumns", "cellColumns", "self"] { data.string(4, key) }
+            for type in ["com.apple.notes.ICTable", "com.apple.CRDT.NSUUID"] { data.string(5, type) }
+            for u in uuids { data.bytes(6, u) }
+        }
+    }
+    return gzipped(root.data)
+}
+
+private let sampleTable = tableData(rowsInDisplayOrder: [1, 0], columns: [2, 3], cells: [
+    1: [2: [R(text: "Item")], 3: [R(text: "Price")]],
+    0: [2: [R(text: "Tap | mixer\nchrome")], 3: [R(text: "189", weight: 1)]],
+])
+
 // MARK: - Bodies
 
 @Suite("Apple Notes bodies")
@@ -199,6 +262,18 @@ struct AppleNoteBodyTests {
         #expect(md == "# Photo\n\n![](img.jpg)\n\nAfter\n")
     }
 
+    @Test func tablesFollowTheirRowAndColumnOrder() throws {
+        let table = try AppleNoteTable(data: sampleTable)
+        #expect(table.cells.count == 2)
+        #expect(table.cells[0].map(\.text) == ["Item", "Price"])
+        #expect(table.markdown() == """
+        | Item | Price |
+        | --- | --- |
+        | Tap \\| mixer<br>chrome | **189** |
+        """)
+        #expect(throws: (any Error).self) { try AppleNoteTable(data: noteData([R(text: "not a table")])) }
+    }
+
     @Test func emojiCountsInUTF16() throws {
         let md = try markdown([R(text: "😀 "), R(text: "bold", weight: 1), R(text: " end")])
         #expect(md == "😀 **bold** end\n")
@@ -250,7 +325,8 @@ struct AppleNotesImportTests {
                 R(text: "Ideas\n"),
                 R(text: "See "), R(text: "\u{FFFC}", attachment: ("ATT-LINK", "com.apple.notes.inlinetextattachment.link")), R(text: "\n"),
                 R(text: "\u{FFFC}", attachment: ("ATT-DRAW", "com.apple.drawing.2")), R(text: "\n"),
-                R(text: "\u{FFFC}", attachment: ("ATT-URL", "public.url")),
+                R(text: "\u{FFFC}", attachment: ("ATT-URL", "public.url")), R(text: "\n"),
+                R(text: "\u{FFFC}", attachment: ("ATT-BROKEN", "com.apple.notes.table")),
             ])
             try note(12, "NOTE-3", "Secret", folder: 2, locked: true, [R(text: "x")])
             try note(13, "NOTE-4", "Old", folder: 4, [R(text: "Old")])
@@ -260,11 +336,13 @@ struct AppleNotesImportTests {
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZFILENAME) VALUES (30, 16, 'MEDIA-1', 'tram.jpg');
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZTYPEUTI, ZALTTEXT) VALUES (21, 14, 'ATT-TAG', 'com.apple.notes.inlinetextattachment.hashtag', '#travel');
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZTYPEUTI) VALUES (22, 5, 'ATT-TABLE', 'com.apple.notes.table');
+                INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZTYPEUTI) VALUES (26, 5, 'ATT-BROKEN', 'com.apple.notes.table');
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZTYPEUTI, ZALTTEXT, ZTOKENCONTENTIDENTIFIER) VALUES
                     (23, 14, 'ATT-LINK', 'com.apple.notes.inlinetextattachment.link', 'Lisbon', 'applenotes:note/11111111-2222-3333-4444-555555555555?ownerIdentifier=x');
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZTYPEUTI) VALUES (24, 5, 'ATT-DRAW', 'com.apple.drawing.2');
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZTYPEUTI, ZURLSTRING, ZTITLE) VALUES (25, 5, 'ATT-URL', 'public.url', 'https://example.com', 'Example');
                 """)
+            try db.execute(sql: "UPDATE ZICCLOUDSYNCINGOBJECT SET ZMERGEABLEDATA1 = ? WHERE Z_PK = 22", arguments: [sampleTable])
         }
         try queue.close()
         let media = folder.appending(path: "Accounts/ACC-1/Media/MEDIA-1/1_ABC", directoryHint: .isDirectory)
@@ -322,7 +400,9 @@ struct AppleNotesImportTests {
 
         Tram 28 #travel
 
-        *(A table from Apple Notes: not imported yet.)*
+        | Item | Price |
+        | --- | --- |
+        | Tap \\| mixer<br>chrome | **189** |
 
         """)
         #expect(FileManager.default.fileExists(atPath: destination.appending(path: "Notes/Trips/.attachments/tram.jpg").path))
@@ -334,6 +414,7 @@ struct AppleNotesImportTests {
         #expect(ideas.contains("See [Lisbon](Trips/Lisbon.md)"))
         #expect(ideas.contains("![](.attachments/ATT-DRAW.png)"))
         #expect(ideas.contains("[Example](https://example.com)"))
+        #expect(ideas.contains("*(A table from Apple Notes that couldn’t be converted.)*"))
         // Same title twice: the second gets a number.
         let second = try String(contentsOf: destination.appending(path: "Notes/Ideas 2.md"), encoding: .utf8)
         #expect(second.hasPrefix("---\ncreated: 2026-05-09T06:13:20Z\n---\n# Ideas\n\nsecond one\n"))

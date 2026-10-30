@@ -77,12 +77,12 @@ The printed page looks like the formatted note, on a white page in your theme's 
 1. Notes my Way asks for access to Apple Notes' data folder, `group.com.apple.notes`. The window that opens has it selected already, so click **Open**.
 2. It shows how many notes it found. Pick the folder name ("Apple Notes" by default) and click **Import**.
 
-Notes keep their folders, their creation and modification dates, and whether they're pinned. Their first line becomes the title. Headings, bold, italic, strikethrough, links, bulleted and numbered lists, checklists, quotes and monospaced blocks become Markdown. Photos, files, drawings and scans are copied into the attachment folder. Tags stay `#tags`, and links between notes point at the imported files.
+Notes keep their folders, their creation and modification dates, and whether they're pinned. Their first line becomes the title. Headings, bold, italic, strikethrough, links, bulleted and numbered lists, checklists, quotes, monospaced blocks and tables become Markdown. A table's first row becomes its header, since Markdown tables need one. Photos, files, drawings and scans are copied into the attachment folder. Tags stay `#tags`, and links between notes point at the imported files.
 
 A few things don't come across yet:
 
 - **Locked notes** are skipped. Unlock them in Apple Notes first to import them.
-- **Tables** aren't converted yet. A line in the note marks where each one was.
+- **A table that can't be read** is left out, and a line in the note marks where it was.
 - **Attachments that are only in iCloud** can't be found until Apple Notes has downloaded them. Open those notes in Apple Notes, then import again.
 - **Recently Deleted** isn't imported.
 
