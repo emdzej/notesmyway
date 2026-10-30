@@ -168,7 +168,7 @@ struct NoteEditorView: View {
                   let raw = note.userInfo?["action"] as? String, let action = NoteExportAction(rawValue: raw) else { return }
             run(action)
         }
-        .task(id: model.url) { if !model.isLoaded { model.load() } }
+        .task(id: model.url) { if !model.isLoaded { await model.loadInBackground() } }
         .onAppear { onController?(controller) }
         .onReceive(NotificationCenter.default.publisher(for: .nmwToggleSource)) { note in
             if note.object as? MarkdownEditorController === controller {

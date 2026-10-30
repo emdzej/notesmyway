@@ -57,6 +57,26 @@ struct NoteEditorModelTests {
         return model
     }
 
+    @Test func loadsInTheBackground() async throws {
+        let tmp = try TempFolder()
+        defer { tmp.delete() }
+        let model = NoteEditorModel(url: try tmp.write("Note.md", "# Hello\n"))
+        #expect(!model.isLoaded)
+        await model.loadInBackground()
+        #expect(model.isLoaded)
+        #expect(model.text == "# Hello\n")
+        #expect(!model.isDirty)
+        // A second call doesn't read again or reset edits.
+        model.text = "# Hello, edited\n"
+        await model.loadInBackground()
+        #expect(model.text == "# Hello, edited\n")
+
+        let missing = NoteEditorModel(url: tmp.url.appending(path: "Gone.md"))
+        await missing.loadInBackground()
+        #expect(missing.isLoaded)
+        #expect(missing.errorMessage != nil)
+    }
+
     @Test func autosavesShortlyAfterTyping() async throws {
         let tmp = try TempFolder()
         defer { tmp.delete() }

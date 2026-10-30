@@ -40,6 +40,7 @@ public final class NoteEditorModel {
     public private(set) var conflict: NoteFile.Snapshot?
     public private(set) var errorMessage: String?
     public private(set) var isLoaded = false
+    @ObservationIgnored private var isLoading = false
 
     @ObservationIgnored public var saveDelay: Duration = .milliseconds(500)
     /// Called after every successful save (the session reindexes the note).
@@ -57,8 +58,32 @@ public final class NoteEditorModel {
     public var isDirty: Bool { snapshot.map { $0.text != text } ?? !text.isEmpty }
 
     public func load() {
+        apply(Result { try NoteFile(url: url).read() })
+    }
+
+    /// `load()`, with the read off the main thread. A coordinated read in
+    /// iCloud Drive waits for the file provider, about a second the first
+    /// time per file, and on the main thread that froze the window on every
+    /// first open of a note.
+    public func loadInBackground() async {
+        guard !isLoaded, !isLoading else { return }
+        // Downloaded files: read now, without waiting for coordination.
+        if let local = try? NoteFile(url: url).readIfLocal() {
+            apply(.success(local))
+            return
+        }
+        isLoading = true
+        let url = url
+        let result = await Task.detached(priority: .userInitiated) { Result { try NoteFile(url: url).read() } }.value
+        isLoading = false
+        guard !isLoaded else { return }
+        // Renamed meanwhile: read it where it is now.
+        if url != self.url { load() } else { apply(result) }
+    }
+
+    private func apply(_ result: Result<NoteFile.Snapshot, Swift.Error>) {
         do {
-            let snapshot = try NoteFile(url: url).read()
+            let snapshot = try result.get()
             self.snapshot = snapshot
             setTextFromDisk(snapshot.text)
             errorMessage = nil

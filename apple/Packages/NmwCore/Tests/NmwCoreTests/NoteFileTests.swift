@@ -25,6 +25,18 @@ struct NoteFileTests {
         #expect(try Data(contentsOf: url) == Data(original.utf8))
     }
 
+    @Test func localFilesReadWithoutCoordinationTheSameWay() throws {
+        let tmp = try TempFolder()
+        defer { tmp.delete() }
+        let url = try tmp.write("a.md", "\u{FEFF}# Title\nbody\n")
+        let file = NoteFile(url: url)
+        let quick = try #require(try file.readIfLocal())
+        #expect(quick == (try file.read()))
+        // Something that isn't a regular file: nil, so the caller coordinates.
+        #expect(try NoteFile(url: tmp.url).readIfLocal() == nil)
+        #expect(try NoteFile(url: tmp.url.appending(path: "missing.md")).readIfLocal() == nil)
+    }
+
     @Test func refusesToOverwriteAnExternalChange() throws {
         let tmp = try TempFolder()
         defer { tmp.delete() }

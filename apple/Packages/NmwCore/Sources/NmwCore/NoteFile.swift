@@ -71,6 +71,24 @@ public struct NoteFile: Sendable, Hashable {
         return try result.get()
     }
 
+    /// Reads without file coordination when the contents are on this device;
+    /// nil for an iCloud item that isn't downloaded and current, or a
+    /// dataless file-provider placeholder (use `read()` for those). A
+    /// coordinated read in iCloud Drive waits for the file provider, about a
+    /// second the first time per file; reading a local file directly is safe,
+    /// since writers (ours, iCloud's) replace files atomically.
+    public func readIfLocal() throws -> Snapshot? {
+        var url = url
+        url.removeAllCachedResourceValues()
+        let values = try? url.resourceValues(forKeys: [.isRegularFileKey, .isUbiquitousItemKey, .ubiquitousItemDownloadingStatusKey])
+        guard values?.isRegularFile == true else { return nil }
+        if values?.isUbiquitousItem == true, values?.ubiquitousItemDownloadingStatus != .current { return nil }
+        var info = stat()
+        // SF_DATALESS: contents not materialized; reading would block on the download.
+        guard lstat(url.path, &info) == 0, info.st_flags & 0x4000_0000 == 0 else { return nil }
+        return try Self.uncoordinatedSnapshot(url)
+    }
+
     private static let byteOrderMark = Data([0xEF, 0xBB, 0xBF])
 
     static func attributes(of url: URL) -> (modified: Date?, size: Int?) {
