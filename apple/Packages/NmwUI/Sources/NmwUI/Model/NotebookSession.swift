@@ -79,6 +79,8 @@ public final class NotebookSession {
     public var isShowingSwitcher = false
     /// The command palette (⇧⌘P) is showing.
     public var isShowingPalette = false
+    /// File › Import from Apple Notes (macOS).
+    public var isShowingAppleNotesImport = false
     /// iPhone / iPad Settings sheet (the Mac has its Settings window).
     public var isShowingSettings = false
     /// Asks the note list to show its Rename alert for this note (palette).

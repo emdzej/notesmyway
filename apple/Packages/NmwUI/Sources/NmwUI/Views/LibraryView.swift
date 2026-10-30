@@ -316,6 +316,13 @@ struct NmwCommands: Commands {
             Button("Open File…", systemImage: "doc") { libraryActions?.openFile() }
                 .keyboardShortcut("o", modifiers: [.command, .shift])
             Button("Add Notebook…", systemImage: "plus") { libraryActions?.addNotebook() }
+            #if os(macOS)
+            Divider()
+            Button("Import from Apple Notes…", systemImage: "square.and.arrow.down.on.square") {
+                session?.isShowingAppleNotesImport = true
+            }
+            .disabled(session == nil)
+            #endif
         }
         CommandGroup(replacing: .printItem) {
             Button("Print…", systemImage: "printer") { export?.run(.print) }

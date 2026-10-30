@@ -39,6 +39,9 @@ struct NotebookView: View {
             if let fix = session.linkFix { LinkFixBanner(session: session, fix: fix).padding() }
         }
         .onChange(of: session.selection) { _, new in session.closeEditors(except: new) }
+        #if os(macOS)
+        .sheet(isPresented: $session.isShowingAppleNotesImport) { AppleNotesImportView(session: session) }
+        #endif
         .sheet(isPresented: $session.isShowingPalette) {
             CommandPalette(session: session, library: library)
         }

@@ -290,6 +290,12 @@ struct CommandPalette: View {
             session.isShowingSettings = true
         })
         #endif
+        #if os(macOS)
+        items.append(PaletteItem(id: "import-apple-notes", title: "Import from Apple Notes…", systemImage: "square.and.arrow.down.on.square",
+                                 keywords: "migrate notes app", presents: true) {
+            session.isShowingAppleNotesImport = true
+        })
+        #endif
         return items
     }
 

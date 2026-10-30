@@ -70,6 +70,22 @@ If other notes in the current notebook link to the note, the app tells you how m
 
 The printed page looks like the formatted note, on a white page in your theme's light colors and font. Frontmatter prints as a line of chips (pinned, tags). Images print at their `{.small}` / `{.medium}` / `{.large}` sizes and alignment. Tables print with their column widths, formula cells show their values, and checklists show their boxes with checked items struck through. `{.preview}` links print as cards when their preview is loaded. `<!-- -->` lines don't print. Pages are A4, or Letter where that's the local paper size.
 
+## Import from Apple Notes (Mac)
+
+**File › Import from Apple Notes…** copies your Apple Notes into a folder of the current notebook, one Markdown file per note. Apple Notes isn't changed.
+
+1. Notes my Way asks for access to Apple Notes' data folder, `group.com.apple.notes`. The window that opens has it selected already, so click **Open**.
+2. It shows how many notes it found. Pick the folder name ("Apple Notes" by default) and click **Import**.
+
+Notes keep their folders, their creation and modification dates, and whether they're pinned. Their first line becomes the title. Headings, bold, italic, strikethrough, links, bulleted and numbered lists, checklists, quotes and monospaced blocks become Markdown. Photos, files, drawings and scans are copied into the attachment folder. Tags stay `#tags`, and links between notes point at the imported files.
+
+A few things don't come across yet:
+
+- **Locked notes** are skipped. Unlock them in Apple Notes first to import them.
+- **Tables** aren't converted yet. A line in the note marks where each one was.
+- **Attachments that are only in iCloud** can't be found until Apple Notes has downloaded them. Open those notes in Apple Notes, then import again.
+- **Recently Deleted** isn't imported.
+
 ## Changes made elsewhere
 
 If a note changes on disk while you have unsaved edits — another app, another device — a bar above it offers **Keep Mine**, **Use Disk Version** or **Keep Both**, which saves your version as a separate `(conflict …)` copy. Without unsaved edits, the new version is simply loaded.

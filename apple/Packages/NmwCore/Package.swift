@@ -15,6 +15,6 @@ let package = Package(
             name: "NmwCore",
             dependencies: [.product(name: "GRDB", package: "GRDB.swift")]
         ),
-        .testTarget(name: "NmwCoreTests", dependencies: ["NmwCore"]),
+        .testTarget(name: "NmwCoreTests", dependencies: ["NmwCore", .product(name: "GRDB", package: "GRDB.swift")]),
     ]
 )
