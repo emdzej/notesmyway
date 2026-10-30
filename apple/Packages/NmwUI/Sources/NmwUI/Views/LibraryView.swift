@@ -18,9 +18,22 @@ import AppKit
 
 public struct LibraryView: View {
     @Bindable var library: Library
-    @State private var pickingFolder = false
-    @State private var pickingFile = false
+    /// What the file picker is open for. One picker for both: SwiftUI shows
+    /// only one `.fileImporter` per view, so with two the folder picker never
+    /// appeared and "Open a Folder as Notebook…" did nothing.
+    @State private var picking: Picking?
     @Environment(\.scenePhase) private var scenePhase
+
+    private enum Picking {
+        case folder, file
+
+        var types: [UTType] {
+            switch self {
+            case .folder: [.folder]
+            case .file: [UTType("net.daringfireball.markdown") ?? .plainText, .plainText]
+            }
+        }
+    }
     #if os(macOS)
     @Environment(\.openWindow) private var openWindow
     #endif
@@ -32,19 +45,22 @@ public struct LibraryView: View {
     public var body: some View {
         Group {
             if let session = library.selectedSession {
-                NotebookView(session: session, library: library, addNotebook: { pickingFolder = true })
+                NotebookView(session: session, library: library, addNotebook: { picking = .folder })
                     .id(session.notebook.localID)
             } else {
-                WelcomeView(addNotebook: { pickingFolder = true }, openFile: { pickingFile = true })
+                WelcomeView(addNotebook: { picking = .folder }, openFile: { picking = .file })
             }
         }
-        .fileImporter(isPresented: $pickingFolder, allowedContentTypes: [.folder]) { result in
-            if case .success(let url) = result { library.add(folder: url) }
+        .fileImporter(isPresented: Binding(get: { picking != nil }, set: { if !$0 { picking = nil } }),
+                      allowedContentTypes: picking?.types ?? [.item]) { [picking] result in
+            guard case .success(let url) = result else { return }
+            switch picking {
+            case .folder: library.add(folder: url)
+            case .file: library.open(file: url)
+            case nil: break
+            }
         }
-        .fileImporter(isPresented: $pickingFile, allowedContentTypes: [UTType("net.daringfireball.markdown") ?? .plainText, .plainText]) { result in
-            if case .success(let url) = result { library.open(file: url) }
-        }
-        .focusedSceneValue(\.libraryActions, LibraryActions(addNotebook: { pickingFolder = true }, openFile: { pickingFile = true }))
+        .focusedSceneValue(\.libraryActions, LibraryActions(addNotebook: { picking = .folder }, openFile: { picking = .file }))
         // `notesmyway://` links (widgets, Shortcuts), a theme file, else a Markdown file.
         .onOpenURL { url in
             if ThemeInstaller.isTheme(url) { ThemeInstaller.shared.open(url) }

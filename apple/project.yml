@@ -12,8 +12,8 @@ packages:
 # One version for the app and its extensions (they must match).
 settings:
   base:
-    MARKETING_VERSION: "0.1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.1.1"
+    CURRENT_PROJECT_VERSION: "2"
 targets:
   nmw:
     type: application
