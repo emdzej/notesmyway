@@ -37,6 +37,9 @@ public struct SettingsView: View {
             Tab("Notebook", systemImage: "books.vertical") {
                 notebook
             }
+            Tab("About", systemImage: "info.circle") {
+                AboutView()
+            }
         }
         .themeInstallAlerts(inSettings: true)
         .frame(width: 480)

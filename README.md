@@ -6,7 +6,7 @@ line you're editing; tables are an editable grid with formulas; themes color the
 
 - **Site and user guide:** <https://notesmyway.emdzej.pl> (built from `docs/`)
 - **Design:** [`spec.md`](spec.md). **Progress:** [`status.md`](status.md). **Roadmap:** [`docs/backlog.md`](docs/backlog.md).
-- **Notes for coding agents:** [`AGENTS.md`](AGENTS.md).
+- **Contributing:** [`CONTRIBUTING.md`](CONTRIBUTING.md). **Notes for coding agents:** [`AGENTS.md`](AGENTS.md).
 
 ## How it works
 
@@ -63,3 +63,17 @@ cd docs
 npm ci
 npm run dev     # or: npm run build
 ```
+
+## Licence
+
+Notes my Way is free software: you can redistribute it and modify it under the terms of the
+[GNU General Public License](LICENSE), version 3 or (at your option) any later version. It comes with no
+warranty. Contributions are accepted under the [Contributor Licence Agreement](CLA.md), so the app can also
+be published on the App Store.
+
+The editor, [MarkdownKit](https://github.com/emdzej/markdownkit), is a separate project under the Apache
+License 2.0. The other open-source components and their licences are listed in
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) and in the app under Settings › About.
+
+"Notes my Way" and the app icon identify the official app. Forks are welcome under the GPL, but please give
+yours a different name and icon.

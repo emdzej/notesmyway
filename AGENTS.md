@@ -42,27 +42,27 @@ CI clones it next to this repository.
   user-selected files, bookmarks, network client, printing (`com.apple.security.print`; without it
   ⌘P says "This application does not support printing") and the team-prefixed App Group.
 
-## Shipping to the developer's iPhone
+## Signing and devices
 
-After each update, install on **<device>** (iPhone 15 Pro, UDID `<device UDID>`) and
-refresh the Mac build.
-
-```sh
-cd apple
-xcodebuild build -project nmw.xcodeproj -scheme nmw -configuration Release \
-  -destination 'id=<device UDID>' -derivedDataPath /tmp/nmw-dev-dd -allowProvisioningUpdates \
-  CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=A2WT9CD8P3 CODE_SIGN_IDENTITY="Apple Development"
-xcrun devicectl device install app --device <device UDID> \
-  "/tmp/nmw-dev-dd/Build/Products/Release-iphoneos/Notes my Way.app"
-```
-
-- **App Group:** the app, `NmwWidgets` and `NmwShare` share `group.pl.emdzej.notesmyway`. All three App
-  IDs have it on the developer portal. `NMW_APP_GROUPS=NO` builds without it (for signing without an
+- **App Group:** the app, `NmwWidgets` and `NmwShare` share `group.pl.emdzej.notesmyway`. On macOS it's
+  team-prefixed (`<TEAM ID>.group.pl.emdzej.notesmyway`) in `App/nmw-macOS.entitlements`, the extensions'
+  macOS entitlements and `NmwShared/AppGroup.swift`. To build under your own team, change the team ID there
+  and the bundle IDs in `project.yml`. `NMW_APP_GROUPS=NO` builds without the group (for signing without an
   Apple ID); the widgets and the share extension then can't see the app's data.
-- **"Profile doesn't match the entitlements… application-groups":** delete the stale profile in
-  `~/Library/Developer/Xcode/UserData/Provisioning Profiles` and build again. If it persists, the App ID
-  lacks the group on the portal.
-- **`IXRemoteErrorDomain` 6 / "Connection interrupted" on install:** retry.
+- **Device builds:** pass `CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=<team> CODE_SIGN_IDENTITY="Apple Development" -allowProvisioningUpdates`.
+  If a build fails with "Profile doesn't match the entitlements… application-groups", delete the stale
+  profile in `~/Library/Developer/Xcode/UserData/Provisioning Profiles` and build again; if it persists,
+  the App ID lacks the group on the developer portal. `IXRemoteErrorDomain` 6 on install: retry.
+- **This Mac's own device and deploy routine**, if any, is in `AGENTS.local.md` (git-ignored). Read it when
+  it exists.
+
+## Releases
+
+- **Version:** `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `apple/project.yml` (one setting for the app
+  and both extensions). Tags are the bare version, without a "v": `0.1.0`.
+- **Mac DMG:** `NMW_TEAM=<team> NMW_NOTARY_PROFILE=<notarytool profile> apple/scripts/release-mac.sh` builds
+  with a Developer ID, makes the DMG, signs, notarises and staples it, and checks it with `spctl`. The DMG is
+  attached to the GitHub release by hand for now.
 
 ## Pushing
 
@@ -96,6 +96,12 @@ DEBUG builds take launch arguments (see `Library.swift` and `NotebookView.swift`
   captures over `SiteScreenshotTests`.
 - **Site sizes:** Mac 1600 px wide (keep the alpha and window shadow), iPad 1200 × 1600, iPhone 600 px
   wide, all WebP in `docs/public/screenshots/`.
+
+## Licences
+
+Every dependency's licence ships in the app: `Settings › About` (`Views/AboutView.swift`) reads the texts in
+`NmwUI/Sources/NmwUI/Resources/Acknowledgements/`. Adding a dependency means adding its licence file, an
+`Acknowledgement.all` entry and a row in [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md).
 
 ## Conventions
 

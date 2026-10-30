@@ -21,7 +21,8 @@ let package = Package(
                 .product(name: "MarkdownEngine", package: "markdownkit"),
                 .product(name: "MarkdownEngineCodeBlocks", package: "markdownkit"),
                 .product(name: "MarkdownEngineLatex", package: "markdownkit"),
-            ]
+            ],
+            resources: [.copy("Resources/Acknowledgements")]
         ),
         .testTarget(name: "NmwUITests", dependencies: ["NmwUI"]),
     ]

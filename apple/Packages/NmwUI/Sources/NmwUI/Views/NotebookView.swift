@@ -442,12 +442,14 @@ struct MobileSettings: View {
                 NavigationLink { NotebookSettingsForm(session: session).navigationTitle(session.name) } label: {
                     Label("“\(session.name)” Notebook", systemImage: "books.vertical")
                 }
+                NavigationLink(value: "about") { Label("About", systemImage: "info.circle") }
             }
             .navigationTitle("Settings")
             .navigationDestination(for: String.self) { page in
                 switch page {
                 case "appearance": AppearanceSettingsForm().navigationTitle("Appearance")
                 case "themes": ThemesSettingsForm().navigationTitle("Themes")
+                case "about": AboutView().navigationTitle("About")
                 default: GeneralSettingsForm().navigationTitle("General")
                 }
             }

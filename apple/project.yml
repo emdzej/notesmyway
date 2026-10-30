@@ -9,6 +9,11 @@ packages:
     path: Packages/NmwUI
   NmwShared:
     path: Packages/NmwShared
+# One version for the app and its extensions (they must match).
+settings:
+  base:
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
 targets:
   nmw:
     type: application
@@ -21,6 +26,8 @@ targets:
     info:
       path: App/Info.plist
       properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDisplayName: Notes my Way
         CFBundleName: Notes my Way
         LSApplicationCategoryType: public.app-category.productivity
@@ -101,6 +108,8 @@ targets:
     info:
       path: Widgets/Info.plist
       properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDisplayName: Notes my Way
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
@@ -138,6 +147,8 @@ targets:
     info:
       path: ShareExtension/Info.plist
       properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDisplayName: Notes my Way
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services

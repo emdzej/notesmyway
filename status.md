@@ -58,7 +58,7 @@ Last updated 2026-10-29. See `spec.md` for the design.
 
 - Look & settings (nmw 1024458, 1cf759e): lighter accent `#1A8FA8` / `#5CCFDB`; Settings › General: appearance (System / Light / Dark via NSApp.appearance), sidebar style (System Default / My Way gradient), notes open as Formatted / Markdown Source. Delete key trashes the selected note (selects the next) or folder (asks first); iOS swipe to trash / pin. Note list takes focus on click (selection stayed gray after editing).
 - Editor (engine d7f389d…3ccfdc6, 186 tests): links use the theme color on macOS; markdown source mode (`configuration.renderingMode`, toolbar </> ⇧⌘M) with syntax colors; frontmatter parsed as a block and shown as chips (pin, #tags, key: value) until the caret enters; tables: hover "+" markers, row / column handle menus (insert, move, align, delete, fit), drag column borders → `{cols="30%,auto,120"}` line after the table; image / link marker menus (Size, Align, Preview Card), floating marker bar, Format menu using `MarkdownEditorController.setImageSize / setAlignment / setLinkPreview`.
-- Shipped to iPhone (<device>) as a Release build signed with team A2WT9CD8P3.
+- Shipped to a device as a Release build (development signing).
 
 - Share / Print / PDF (branch `print`):
   - The engine's `MarkdownHTML` renders the note, and `NoteExport` styles and paginates it.
@@ -73,6 +73,15 @@ Last updated 2026-10-29. See `spec.md` for the design.
   - Tables (`com.apple.notes.table`): `AppleNoteTable` decodes the gzipped CRDT document in `ZMERGEABLEDATA1`. It finds the `com.apple.notes.ICTable` map, orders rows and columns from the `crRows` / `crColumns` ordered sets (UUID positions, with the contents dictionary's aliases), and reads cells from `cellColumns` (column → row → Note). The result is a GFM table with the first row as header; cell formatting is kept, `|` is escaped and line breaks become `<br>`. A table that doesn't decode leaves a visible line and is counted in the report.
   - Tests: 10 in NmwCore on synthetic data (bodies and tables encoded like Notes, a NoteStore.sqlite with the same tables).
   - **Not yet run on a real Notes library.** The schema and protobuf fields follow community documentation; expect column or style fixes on first contact.
+
+- **Engine is MarkdownKit** (`emdzej/markdownkit`, `../markdownkit`), its own project derived from nodes-app/swift-markdown-engine (README "Origins", NOTICE). Upstream fixes ported selectively:
+  - `f470581`, `ba83618`: crash fixes for stale code-block ranges after a document swap (#151, #162).
+  - `818de43` (#107, partial): styled text built off-screen and applied at once; indexed wide restyles; no second styling pass on rebuild; cached regexes and widths; on-disk SwiftMath cache (with an iOS version). A 340k-character note opens in ~1.6 s instead of ~2.3 s. Includes a fix for upstream's caret jump on unchanged rebuilds.
+  - `38dfd72` (#140): inline parsing linear in spans per region.
+  - `eab1f1b` (#149): list restyles scoped to the affected items (one line in a 2,000-item list: 78 ms → 0.6 ms).
+  - `38ac6c3` (#96, partial): the parse cache is invalidated from text-storage edits; restyles scoped for formulas, tables, images and frontmatter. A keystroke in a 340k note takes 77 ms instead of 233 ms; a note with 60 tables takes 2.7 ms instead of 54 ms. Applied on iOS too.
+  - Follow-ups: off-screen rebuild on iOS, the iOS selection handler's full marker scan, a table image cache, passing parsed blocks to the styler. Not typed through by hand on iOS yet.
+- **Open-source prep:** GPLv3 `LICENSE`, `CONTRIBUTING.md`, `CLA.md`, `THIRD-PARTY-NOTICES.md`; Settings › About with every licence's full text (NmwUI resources, tested); device details moved to the git-ignored `AGENTS.local.md`. Version 0.1.0 (1) for all targets; `apple/scripts/release-mac.sh` builds the Developer ID-signed, notarised DMG.
 
 ## Not yet verified
 
