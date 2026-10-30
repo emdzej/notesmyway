@@ -4,7 +4,7 @@
 //
 //  The editor for one note (notebook or standalone): the engine view bound
 //  to a `NoteEditorModel`, plus the conflict and error bars and the
-//  "Link to Note" picker.
+//  "Link to Note" picker (⌘L, or typing `[[`).
 //
 
 import MarkdownEngine
@@ -40,6 +40,8 @@ struct NoteEditorView: View {
 
     @State private var controller = MarkdownEditorController()
     @State private var showingLinkPicker = false
+    /// A typed `[[` whose note picker is showing.
+    @State private var linkCompletion: LinkCompletion?
     @AppStorage("nmw.showsInspector") private var showsInspector = false
     @AppStorage(EditorMode.key) private var defaultMode = EditorMode.formatted
     /// This note's mode while it's open; nil follows the setting.
@@ -75,9 +77,23 @@ struct NoteEditorView: View {
             documentId: model.documentID,
             isEditable: model.isLoaded && model.errorMessage == nil && !readOnly,
             controller: controller,
+            onPasteImage: EditorSetup.pasteHandler(for: context, stored: onStoredFiles),
             onDropFiles: EditorSetup.dropHandler(for: context, stored: onStoredFiles),
             onLinkClick: { destination in onLink(LinkAction.classify(destination, in: context)) }
         )
+        // Here, before the bars: the caret rect is in the editor view's own coordinates.
+        .popover(isPresented: linkCompletionShown,
+                 attachmentAnchor: .rect(.rect(linkCompletion?.caretRect ?? .zero)), arrowEdge: .bottom) {
+            if let linkableNotes {
+                NotePicker(prompt: "Link to note…", notes: linkableNotes(), onTypedClose: { completeLink(typed: $0) }) { note in
+                    completeLink(with: note)
+                }
+                #if os(iOS)
+                .presentationDetents([.medium, .large])
+                #endif
+            }
+        }
+        .onChange(of: model.text) { old, new in offerLinkCompletion(old: old, new: new) }
         // Bars above the text (conflict, errors, folder access).
         .safeAreaInset(edge: .top, spacing: 0) {
             VStack(spacing: 0) {
@@ -112,7 +128,7 @@ struct NoteEditorView: View {
         }
         .inspector(isPresented: $showsInspector) {
             NoteInspector(text: model.text, backlinks: backlinks?(), onHeading: { controller.reveal($0.range) },
-                          onOpenNote: onOpenNote)
+                          onOpenNote: onOpenNote, controller: controller)
                 .inspectorColumnWidth(min: 200, ideal: 240, max: 360)
         }
         .toolbar {
@@ -224,12 +240,75 @@ struct NoteEditorView: View {
     }
 
     private func insertLink(to note: NoteSummary) {
-        guard let root else { return }
-        let target = note.path.url(in: root)
-        let destination = LinkPath.encode(LinkPath.relative(from: model.url, to: target))
-        let title = note.title.replacingOccurrences(of: "[", with: "\\[").replacingOccurrences(of: "]", with: "\\]")
-        controller.insertText("[\(title)](\(destination))", actionName: "Link to Note")
+        guard let link = link(to: note) else { return }
+        controller.insertText(link, actionName: "Link to Note")
         controller.focus()
+    }
+
+    private func link(to note: NoteSummary) -> String? {
+        guard let root else { return nil }
+        return NoteLinkCompletion.markdownLink(title: note.title, from: model.url, to: note.path.url(in: root))
+    }
+
+    // MARK: `[[` completion
+
+    struct LinkCompletion: Equatable {
+        /// Where the `[[` starts (UTF-16).
+        let anchor: Int
+        /// The caret when it was typed, for the popover's arrow.
+        let caretRect: CGRect
+    }
+
+    private var linkCompletionShown: Binding<Bool> {
+        Binding(get: { linkCompletion != nil }, set: { shown in
+            // Dismissed (Escape, a click outside): the `[[` stays as typed.
+            if !shown, linkCompletion != nil {
+                linkCompletion = nil
+                refocusEditor()
+            }
+        })
+    }
+
+    /// Opens the note picker when the edit just made typed `[[` (text grows by
+    /// typing; loads, undo and deletions don't open it).
+    private func offerLinkCompletion(old: String, new: String) {
+        guard linkableNotes != nil, root != nil, !readOnly, linkCompletion == nil, !showingLinkPicker,
+              controller.isEditing, new.utf16.count > old.utf16.count,
+              let selection = controller.selectedRange, selection.length == 0,
+              let anchor = NoteLinkCompletion.trigger(in: new, caret: selection.location) else { return }
+        linkCompletion = LinkCompletion(anchor: anchor, caretRect: controller.caretRect ?? CGRect(x: 40, y: 40, width: 1, height: 16))
+    }
+
+    /// Replaces the typed `[[` (and its auto-closed `]]`) with a link to `note`.
+    private func completeLink(with note: NoteSummary) {
+        guard let completion = linkCompletion else { return }
+        linkCompletion = nil
+        if let link = link(to: note), let range = completionRange(completion) {
+            controller.replace(range, with: link, actionName: "Link to Note")
+        }
+        refocusEditor()
+    }
+
+    /// `]]` typed in the picker: no link, the text stays as typed (`[[query]]`).
+    private func completeLink(typed query: String) {
+        guard let completion = linkCompletion else { return }
+        linkCompletion = nil
+        if let range = completionRange(completion) {
+            controller.replace(range, with: "[[\(query)]]", actionName: "Typing")
+        }
+        refocusEditor()
+    }
+
+    private func completionRange(_ completion: LinkCompletion) -> NSRange? {
+        let caret = max(controller.selectedRange?.location ?? 0, completion.anchor + 2)
+        return NoteLinkCompletion.replacementRange(in: model.text, anchor: completion.anchor, caret: caret)
+            ?? NoteLinkCompletion.replacementRange(in: model.text, anchor: completion.anchor, caret: completion.anchor + 2)
+    }
+
+    /// After the popover has gone, or the window keeps the picker's field focused.
+    private func refocusEditor() {
+        let controller = controller
+        Task { @MainActor in controller.focus() }
     }
 }
 
@@ -240,6 +319,8 @@ struct NoteInspector: View {
     let backlinks: [NoteSummary]?
     let onHeading: (NoteHeading) -> Void
     let onOpenNote: (NotebookPath) -> Void
+    /// For the selection's word count; nil shows the note's only.
+    var controller: MarkdownEditorController? = nil
 
     var body: some View {
         List {
@@ -279,6 +360,44 @@ struct NoteInspector: View {
                 }
             }
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            WordCountFooter(text: text, controller: controller)
+        }
+    }
+}
+
+/// Words and characters in the note, and in the selection when there is one.
+/// Its own view: the selection changes with every caret move, and only this
+/// should redraw for it.
+struct WordCountFooter: View {
+    let text: String
+    let controller: MarkdownEditorController?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(Self.summary(TextStatistics(markdown: text)))
+            if let selected {
+                Text("Selection: " + Self.summary(TextStatistics(markdown: selected)))
+            }
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .monospacedDigit()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+    }
+
+    private var selected: String? {
+        guard let range = controller?.selection, range.length > 0 else { return nil }
+        let ns = text as NSString
+        guard NSMaxRange(range) <= ns.length else { return nil }
+        return ns.substring(with: range)
+    }
+
+    static func summary(_ stats: TextStatistics) -> String {
+        func count(_ n: Int, _ unit: String) -> String { "\(n.formatted()) \(unit)\(n == 1 ? "" : "s")" }
+        return count(stats.words, "word") + " · " + count(stats.characters, "character")
     }
 }
 
@@ -306,8 +425,12 @@ struct ConflictBar: View {
 struct NotePicker: View {
     let prompt: String
     let notes: [NoteSummary]
+    /// Typing `]]` closes the picker with what was typed (the `[[` picker:
+    /// the text stays a plain `[[…]]`).
+    var onTypedClose: ((String) -> Void)? = nil
     let onPick: (NoteSummary) -> Void
     @State private var query = ""
+    @FocusState private var fieldFocused: Bool
     @Environment(\.dismiss) private var dismiss
 
     private var matches: [NoteSummary] {
@@ -345,7 +468,11 @@ struct NotePicker: View {
                 .textFieldStyle(.plain)
                 .font(.title3)
                 .padding(12)
+                .focused($fieldFocused)
                 .onSubmit { if let first = matches.first { onPick(first) } }
+                .onChange(of: query) {
+                    if let onTypedClose, query.hasSuffix("]]") { onTypedClose(String(query.dropLast(2))) }
+                }
             Divider()
             List(matches) { note in
                 Button { onPick(note) } label: {
@@ -364,5 +491,11 @@ struct NotePicker: View {
         .frame(minWidth: 420, minHeight: 320)
         #endif
         .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
+        #if os(macOS)
+        .onExitCommand { dismiss() }
+        #endif
+        // A popover doesn't focus its field by itself; the keyboard should
+        // come up right away on iOS too.
+        .onAppear { fieldFocused = true }
     }
 }

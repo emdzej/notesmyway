@@ -57,6 +57,7 @@ public final class NotebookSession {
     public var scope: Scope = .all {
         didSet {
             guard scope != oldValue else { return }
+            selectedNotes = []
             refreshNotes()
             // The editor shouldn't keep showing a note the new list doesn't have.
             if let selected = selection, !isIndexing, !notes.contains(where: { $0.path == selected }) { selection = nil }
@@ -64,7 +65,13 @@ public final class NotebookSession {
     }
     public var sort: NoteSort = .modified { didSet { refreshNotes() } }
     public var searchText = "" { didSet { if searchText != oldValue { refreshNotes() } } }
-    public var selection: NotebookPath?
+    /// The note in the editor.
+    public var selection: NotebookPath? {
+        didSet { if let selection, !selectedNotes.contains(selection) { selectedNotes = [] } }
+    }
+    /// Several notes selected in the list (⌘/⇧-click, Select on iOS); empty
+    /// when only `selection` is. The editor keeps showing `selection`.
+    public var selectedNotes: Set<NotebookPath> = []
     /// Rewrite links automatically when files move (spec §6, default on).
     public var fixesLinksOnMove = true
 
@@ -324,6 +331,10 @@ public final class NotebookSession {
             if changes.foldersChanged { folders = Self.folderTree(in: notebook, config: config) }
             return
         }
+        // Before `selection` follows a move: its didSet drops a set it isn't in.
+        if !selectedNotes.isEmpty {
+            selectedNotes = Set(selectedNotes.compactMap { changes.removed.contains($0) ? nil : changes.moved[$0] ?? $0 })
+        }
         // Open editors follow moves, and pick up outside edits.
         for (old, new) in changes.moved {
             if let editor = editors.removeValue(forKey: old) {
@@ -504,6 +515,31 @@ public final class NotebookSession {
         guard let path = notebook.path(for: url) else { throw CocoaError(.fileWriteInvalidFileName) }
         folders = Self.folderTree(in: notebook, config: config)
         return path
+    }
+
+    /// Whether `path` (a note or folder) can move into `folder` (nil = root):
+    /// not where it already is, and a folder not into itself.
+    public func canMove(_ path: NotebookPath, toFolder folder: NotebookPath?) -> Bool {
+        guard path.parent != folder else { return false }
+        guard let folder else { return true }
+        return folder != path && !folder.isInside(path)
+    }
+
+    /// Moves several notes or folders into `folder`; ones that can't go there are skipped.
+    public func move(_ paths: [NotebookPath], toFolder folder: NotebookPath?) async throws {
+        // A folder and something inside it: moving the folder takes care of both.
+        let tops = paths.filter { p in !paths.contains { p.isInside($0) } }
+        for path in tops where canMove(path, toFolder: folder) {
+            try await move(path, toFolder: folder)
+        }
+    }
+
+    public func moveToTrash(_ paths: [NotebookPath]) async throws {
+        for path in paths { try await moveToTrash(path) }
+    }
+
+    public func setPinned(_ paths: [NotebookPath], _ pinned: Bool) async throws {
+        for path in paths { try await setPinned(path, pinned) }
     }
 
     /// Renames a folder; links into it (and out of the notes in it) are fixed.

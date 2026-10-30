@@ -14,6 +14,7 @@ import UIKit
 #endif
 import Foundation
 import ImageIO
+import UniformTypeIdentifiers
 import MarkdownEngine
 import MarkdownEngineCodeBlocks
 import MarkdownEngineLatex
@@ -171,20 +172,96 @@ enum EditorSetup {
     /// Stores dropped files with the note and returns their links (spec §4.2):
     /// images as `![](…){.medium}`, other files as `[name](…)`.
     static func dropHandler(for context: NoteContext, stored: @escaping @MainActor ([URL]) -> Void) -> FileDropHandler {
-        { files in
-            var links: [String] = []
-            var urls: [URL] = []
-            for file in files {
-                guard let attachment = try? AttachmentStore.store(file.url, named: file.name, for: context.noteURL,
-                                                                  notebookRoot: context.root, layout: context.attachments) else { continue }
-                urls.append(attachment.url)
-                let link = file.markdownLink(to: attachment.linkPath)
-                links.append(file.isImage ? link + "{.medium}" : link)
+        { files in store(files, for: context, stored: stored) }
+    }
+
+    @MainActor
+    private static func store(_ files: [DroppedFile], for context: NoteContext, stored: @MainActor ([URL]) -> Void) -> String? {
+        var links: [String] = []
+        var urls: [URL] = []
+        for file in files {
+            guard let attachment = try? AttachmentStore.store(file.url, named: file.name, for: context.noteURL,
+                                                              notebookRoot: context.root, layout: context.attachments) else { continue }
+            urls.append(attachment.url)
+            let link = file.markdownLink(to: attachment.linkPath)
+            links.append(file.isImage ? link + "{.medium}" : link)
+        }
+        stored(urls)
+        return links.isEmpty ? nil : links.joined(separator: "\n")
+    }
+
+    /// Pasted image data (a screenshot, an image copied in Preview, Photos
+    /// or Safari) has no file: it's stored as "Pasted image <date>.png".
+    @MainActor
+    private static func store(images: [(data: Data, fileExtension: String)], for context: NoteContext,
+                              stored: @MainActor ([URL]) -> Void) -> String? {
+        var links: [String] = []
+        var urls: [URL] = []
+        for image in images {
+            let name = AttachmentStore.pastedImageName(fileExtension: image.fileExtension)
+            guard let attachment = try? AttachmentStore.store(image.data, named: name, for: context.noteURL,
+                                                              notebookRoot: context.root, layout: context.attachments) else { continue }
+            urls.append(attachment.url)
+            links.append("![](\(LinkPath.encode(attachment.linkPath))){.medium}")
+        }
+        stored(urls)
+        return links.isEmpty ? nil : links.joined(separator: "\n")
+    }
+
+    /// Text that comes with a picture of itself (cells copied in Numbers or
+    /// Excel, a selection in Pages) pastes as text; a lone URL (Safari's
+    /// Copy Image) doesn't count as text.
+    private static func isText(_ string: String?) -> Bool {
+        guard let string = string?.trimmingCharacters(in: .whitespacesAndNewlines), !string.isEmpty else { return false }
+        let isURL = !string.contains(where: \.isWhitespace) && URL(string: string)?.scheme != nil
+        return !isURL
+    }
+
+    #if os(macOS)
+    /// Stores pasted images with the note, as `dropHandler` does with
+    /// dropped files, and returns their links; nil leaves the paste to the
+    /// editor (text, and files that aren't images).
+    @MainActor
+    static func pasteHandler(for context: NoteContext, stored: @escaping @MainActor ([URL]) -> Void) -> (NSPasteboard) -> String? {
+        { pasteboard in
+            // Files copied in Finder (which also puts their icons on the pasteboard).
+            let fileURLs = pasteboard.readObjects(forClasses: [NSURL.self], options: [.urlReadingFileURLsOnly: true]) as? [URL] ?? []
+            if !fileURLs.isEmpty {
+                let images = fileURLs.map { DroppedFile(url: $0) }.filter(\.isImage)
+                return images.isEmpty ? nil : store(images, for: context, stored: stored)
             }
-            stored(urls)
-            return links.isEmpty ? nil : links.joined(separator: "\n")
+            let hasImage = pasteboard.types?.contains { UTType($0.rawValue)?.conforms(to: .image) == true } ?? false
+            guard hasImage, !isText(pasteboard.string(forType: .string)),
+                  let data = PasteboardImageReader.imageData(from: pasteboard) else { return nil }
+            return store(images: [(data, "png")], for: context, stored: stored)
         }
     }
+    #else
+    /// Stores pasted images with the note and returns their links; nil
+    /// leaves the paste to the editor.
+    @MainActor
+    static func pasteHandler(for context: NoteContext, stored: @escaping @MainActor ([URL]) -> Void) -> (UIPasteboard) -> String? {
+        { pasteboard in
+            guard pasteboard.hasImages, !(pasteboard.hasStrings && isText(pasteboard.string)) else { return nil }
+            // Keep the original encoding: a photo stays a JPEG or HEIC (not a PNG
+            // several times its size), a GIF stays animated.
+            let types: [(UTType, String)] = [(.gif, "gif"), (.heic, "heic"), (.jpeg, "jpg"), (.png, "png"), (.webP, "webp")]
+            var images: [(data: Data, fileExtension: String)] = []
+            for index in 0..<pasteboard.numberOfItems {
+                let item = IndexSet(integer: index)
+                if let found = types.lazy.compactMap({ type, ext in
+                    pasteboard.data(forPasteboardType: type.identifier, inItemSet: item)?.first.map { (data: $0, fileExtension: ext) }
+                }).first {
+                    images.append(found)
+                }
+            }
+            if images.isEmpty {
+                images = (pasteboard.images ?? []).compactMap { $0.pngData() }.map { (data: $0, fileExtension: "png") }
+            }
+            return store(images: images, for: context, stored: stored)
+        }
+    }
+    #endif
 }
 
 /// What a clicked link means for the app.

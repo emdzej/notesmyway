@@ -23,39 +23,25 @@ struct NoteListView: View {
     /// focus, so the selection stayed gray; clicks focus it explicitly.
     @FocusState private var isFocused: Bool
     @FocusState private var isSearchFocused: Bool
+    #if os(iOS)
+    @State private var editMode: EditMode = .inactive
+    #endif
 
     var body: some View {
-        // Rows are one height: a folder line is reserved on every row when any shows one.
-        let showsFolders = session.notes.contains { subfolder(of: $0) != nil }
-        List(selection: $session.selection) {
-            ForEach(session.notes) { note in
-                NoteRow(note: note, root: session.notebook.root, subfolder: subfolder(of: note), reservesFolderLine: showsFolders)
-                    .tag(note.path)
-                    #if os(macOS)
-                    // macOS only: on iOS the gesture swallowed taps on the row's text.
-                    .simultaneousGesture(TapGesture().onEnded { isFocused = true })
-                    #endif
-                    .contextMenu { menu(for: note) }
-                    #if os(iOS)
-                    .themeRow(selected: session.selection == note.path)
-                    .swipeActions(edge: .trailing) {
-                        // The app-wide accent tint would otherwise override the destructive red.
-                        Button("Trash", systemImage: "trash", role: .destructive) { trash(note.path) }
-                            .tint(.red)
-                    }
-                    .swipeActions(edge: .leading) {
-                        Button(note.pinned ? "Unpin" : "Pin", systemImage: note.pinned ? "pin.slash" : "pin") {
-                            run { try await session.setPinned(note.path, !note.pinned) }
-                        }
-                        .tint(.orange)
-                    }
-                    #endif
+        list
+        .contextMenu(forSelectionType: NotebookPath.self) { paths in
+            if paths.count == 1, let path = paths.first, let note = session.notes.first(where: { $0.path == path }) {
+                menu(for: note)
+            } else if paths.count > 1 {
+                menu(forMany: Array(paths))
             }
         }
         .focused($isFocused)
         .themePage()
         #if os(macOS)
-        .onDeleteCommand { if let path = session.selection { trash(path) } }
+        .onDeleteCommand {
+            if !session.selectedNotes.isEmpty { trash(Array(session.selectedNotes)) } else if let path = session.selection { trash(path) }
+        }
         #endif
         .overlay {
             if session.notes.isEmpty, !session.isIndexing {
@@ -78,8 +64,21 @@ struct NoteListView: View {
                         Label("Date Created", systemImage: "calendar").tag(NoteSort.created)
                         Label("Title", systemImage: "textformat").tag(NoteSort.title)
                     }
+                    #if os(iOS)
+                    Divider()
+                    Button("Select Notes", systemImage: "checkmark.circle") { editMode = .active }
+                        .disabled(session.notes.isEmpty)
+                    #endif
                 } label: { Label("Sort", systemImage: "arrow.up.arrow.down") }
+                #if os(iOS)
+                if editMode.isEditing {
+                    Button("Done") { endSelecting() }.fontWeight(.semibold)
+                } else {
+                    Button { newNote() } label: { Label("New Note", systemImage: "square.and.pencil") }
+                }
+                #else
                 Button { newNote() } label: { Label("New Note", systemImage: "square.and.pencil") }
+                #endif
             }
         }
         .namePrompt("Rename Note", isPresented: Binding(get: { renaming != nil }, set: { if !$0 { renaming = nil } }),
@@ -118,6 +117,137 @@ struct NoteListView: View {
         .alert("Couldn’t Complete", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK", role: .cancel) {}
         } message: { Text(errorMessage ?? "") }
+    }
+
+    /// ⌘/⇧-click selects several notes on the Mac; on iOS only in Select mode,
+    /// since a plain tap must keep pushing the editor.
+    @ViewBuilder private var list: some View {
+        #if os(iOS)
+        if editMode.isEditing {
+            List(selection: manySelection) { rows }
+                .environment(\.editMode, $editMode)
+                .toolbar { selectToolbar }
+        } else {
+            List(selection: $session.selection) { rows }
+        }
+        #else
+        List(selection: manySelection) { rows }
+        #endif
+    }
+
+    private var manySelection: Binding<Set<NotebookPath>> {
+        Binding(
+            get: { session.selectedNotes.isEmpty ? Set([session.selection].compactMap { $0 }) : session.selectedNotes },
+            set: { new in
+                if new.count > 1 {
+                    session.selectedNotes = new
+                } else {
+                    session.selectedNotes = []
+                    #if os(iOS)
+                    // In Select mode a single checked row doesn't open the note.
+                    if editMode.isEditing { session.selectedNotes = new; return }
+                    #endif
+                    session.selection = new.first
+                }
+            }
+        )
+    }
+
+    @ViewBuilder private var rows: some View {
+        // Rows are one height: a folder line is reserved on every row when any shows one.
+        let showsFolders = session.notes.contains { subfolder(of: $0) != nil }
+        ForEach(session.notes) { note in
+            NoteRow(note: note, root: session.notebook.root, subfolder: subfolder(of: note), reservesFolderLine: showsFolders)
+                .tag(note.path)
+                .draggable(dragItem(for: note.path)) { dragPreview(for: note) }
+                #if os(macOS)
+                // macOS only: on iOS the gesture swallowed taps on the row's text.
+                .simultaneousGesture(TapGesture().onEnded { isFocused = true })
+                #endif
+                #if os(iOS)
+                .themeRow(selected: session.selection == note.path && !editMode.isEditing)
+                .swipeActions(edge: .trailing) {
+                    // The app-wide accent tint would otherwise override the destructive red.
+                    Button("Trash", systemImage: "trash", role: .destructive) { trash(note.path) }
+                        .tint(.red)
+                }
+                .swipeActions(edge: .leading) {
+                    Button(note.pinned ? "Unpin" : "Pin", systemImage: note.pinned ? "pin.slash" : "pin") {
+                        run { try await session.setPinned(note.path, !note.pinned) }
+                    }
+                    .tint(.orange)
+                }
+                #endif
+        }
+    }
+
+    /// Dragging a selected note takes the whole selection along.
+    private func dragItem(for path: NotebookPath) -> NotebookDragItem {
+        let many = session.selectedNotes.contains(path) ? session.notes.map(\.path).filter(session.selectedNotes.contains) : [path]
+        return NotebookDragItem(notebook: session.notebook, paths: many)
+    }
+
+    private func dragPreview(for note: NoteSummary) -> some View {
+        let count = session.selectedNotes.contains(note.path) ? session.selectedNotes.count : 1
+        return Label(count > 1 ? "\(count) Notes" : note.title, systemImage: count > 1 ? "doc.on.doc" : "doc.text")
+            .padding(.horizontal, 10).padding(.vertical, 6)
+            .background(.regularMaterial, in: Capsule())
+    }
+
+    #if os(iOS)
+    @ToolbarContentBuilder private var selectToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .bottomBar) {
+            let paths = Array(session.selectedNotes)
+            Menu("Move To", systemImage: "folder") { moveTargets(for: paths) }
+                .disabled(paths.isEmpty)
+            Spacer()
+            Button("Pin", systemImage: "pin") { run { try await session.setPinned(paths, true) }; endSelecting() }
+                .disabled(paths.isEmpty)
+            Spacer()
+            Button("Trash", systemImage: "trash", role: .destructive) { trash(paths); endSelecting() }
+                .disabled(paths.isEmpty)
+        }
+    }
+
+    private func endSelecting() {
+        editMode = .inactive
+        session.selectedNotes = []
+    }
+    #endif
+
+    /// The folders `paths` can move to: the notebook itself, then every folder.
+    @ViewBuilder private func moveTargets(for paths: [NotebookPath]) -> some View {
+        Button(session.name, systemImage: "books.vertical") { move(paths, to: nil) }
+            .disabled(!paths.contains { session.canMove($0, toFolder: nil) })
+        ForEach(Self.flatten(session.folders), id: \.path) { folder in
+            Button(folder.path.rawValue, systemImage: "folder") { move(paths, to: folder.path) }
+                .disabled(!paths.contains { session.canMove($0, toFolder: folder.path) })
+        }
+    }
+
+    private func move(_ paths: [NotebookPath], to folder: NotebookPath?) {
+        run {
+            try await session.move(paths, toFolder: folder)
+            #if os(iOS)
+            endSelecting()
+            #endif
+        }
+    }
+
+    @ViewBuilder private func menu(forMany paths: [NotebookPath]) -> some View {
+        let notes = session.notes.filter { paths.contains($0.path) }
+        let allPinned = notes.allSatisfy(\.pinned)
+        Button(allPinned ? "Unpin \(paths.count) Notes" : "Pin \(paths.count) Notes", systemImage: allPinned ? "pin.slash" : "pin") {
+            run { try await session.setPinned(paths, !allPinned) }
+        }
+        Menu("Move To", systemImage: "folder") { moveTargets(for: paths) }
+        #if os(macOS)
+        Button("Show in Finder", systemImage: "finder") {
+            NSWorkspace.shared.activateFileViewerSelecting(paths.map(session.notebook.url(for:)))
+        }
+        #endif
+        Divider()
+        Button("Move \(paths.count) Notes to Trash", systemImage: "trash", role: .destructive) { trash(paths) }
     }
 
     private var otherNotebooks: [Library.Entry] {
@@ -163,12 +293,7 @@ struct NoteListView: View {
         Button(note.pinned ? "Unpin" : "Pin", systemImage: note.pinned ? "pin.slash" : "pin") { run { try await session.setPinned(note.path, !note.pinned) } }
         Button("Share…", systemImage: "square.and.arrow.up") { share(note) }
         Button("Rename…", systemImage: "pencil") { newName = note.path.stem; renaming = note }
-        Menu("Move To", systemImage: "folder") {
-            Button(session.name, systemImage: "books.vertical") { run { try await session.move(note.path, toFolder: nil) } }
-            ForEach(Self.flatten(session.folders), id: \.path) { folder in
-                Button(folder.path.rawValue, systemImage: "folder") { run { try await session.move(note.path, toFolder: folder.path) } }
-            }
-        }
+        Menu("Move To", systemImage: "folder") { moveTargets(for: [note.path]) }
         Button("Move to Notebook…", systemImage: "books.vertical") { requestMoveToNotebook(note.path) }
         #if os(macOS)
         ShowInFinderButton(url: session.notebook.url(for: note.path))
@@ -188,6 +313,11 @@ struct NoteListView: View {
             try await session.moveToTrash(path)
             if wasSelected { session.selection = next }
         }
+    }
+
+    private func trash(_ paths: [NotebookPath]) {
+        guard paths.count > 1 else { if let path = paths.first { trash(path) }; return }
+        run { try await session.moveToTrash(paths) }
     }
 
     /// Shares a note from the list: the open editor's text, else the file's.

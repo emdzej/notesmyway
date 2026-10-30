@@ -330,22 +330,39 @@ struct SidebarView: View {
                 ShowInFinderButton(url: session.notebook.root)
                 #endif
             }
+            .modifier(FolderDropTarget(session: session, folder: nil, onError: { errorMessage = $0 }))
     }
 
     private func folderRow(_ node: FolderNode, accessory: AnyView?, depth: Int) -> AnyView {
         AnyView(
             FolderLabel(name: node.name, depth: depth, accessory: accessory)
                 .tag(NotebookSession.Scope.folder(node.path))
+                .draggable(NotebookDragItem(notebook: session.notebook, paths: [node.path])) {
+                    Label(node.name, systemImage: "folder").padding(6).background(.regularMaterial, in: Capsule())
+                }
                 .contextMenu {
                     Button("New Folder…", systemImage: "folder.badge.plus") { newFolder(in: node.path) }
                     Button("Rename…", systemImage: "pencil") { folderName = node.name; renamingFolder = node.path }
+                    Menu("Move To", systemImage: "folder") {
+                        Button(session.name, systemImage: "books.vertical") { move(node.path, to: nil) }
+                            .disabled(!session.canMove(node.path, toFolder: nil))
+                        ForEach(NoteListView.flatten(session.folders), id: \.path) { folder in
+                            Button(folder.path.rawValue, systemImage: "folder") { move(node.path, to: folder.path) }
+                                .disabled(!session.canMove(node.path, toFolder: folder.path))
+                        }
+                    }
                     #if os(macOS)
                     ShowInFinderButton(url: session.notebook.url(for: node.path))
                     #endif
                     Divider()
                     Button("Move to Trash…", systemImage: "trash", role: .destructive) { trashingFolder = node.path }
                 }
+                .modifier(FolderDropTarget(session: session, folder: node.path, onError: { errorMessage = $0 }))
         )
+    }
+
+    private func move(_ folder: NotebookPath, to target: NotebookPath?) {
+        run { try await session.move([folder], toFolder: target) }
     }
 
     /// Asks for the name first: creating "New Folder" and renaming it raced the file watcher.
@@ -365,6 +382,30 @@ struct SidebarView: View {
         Task { @MainActor in
             do { try await action() } catch { errorMessage = error.localizedDescription }
         }
+    }
+}
+
+/// A sidebar folder that takes dragged notes and folders, highlighted while
+/// something that can move there hovers over it.
+struct FolderDropTarget: ViewModifier {
+    let session: NotebookSession
+    let folder: NotebookPath?
+    let onError: (String) -> Void
+    @State private var isTargeted = false
+
+    func body(content: Content) -> some View {
+        content
+            .dropDestination(for: NotebookDragItem.self) { items, _ in
+                let paths = items.flatMap { $0.items(in: session.notebook) }.filter { session.canMove($0, toFolder: folder) }
+                guard !paths.isEmpty else { return false }
+                Task { @MainActor in
+                    do { try await session.move(paths, toFolder: folder) } catch { onError(error.localizedDescription) }
+                }
+                return true
+            } isTargeted: { isTargeted = $0 }
+            .background {
+                if isTargeted { RoundedRectangle(cornerRadius: 6).fill(Palette.accentColor.opacity(0.25)).padding(-4) }
+            }
     }
 }
 

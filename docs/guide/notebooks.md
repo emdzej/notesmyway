@@ -12,6 +12,7 @@ The sidebar shows the notebook's folder with its subfolders nested under it. Sel
 
 - **New folder:** right-click (long-press on iPhone and iPad) a folder › **New Folder…**, and give it a name.
 - **Rename:** **Rename…** — every link that points into the folder is updated.
+- **Move:** drag the folder onto another one (or onto the notebook at the top), or use **Move To**. Links are updated.
 - **Show in Finder** (Mac): opens a Finder window with the folder selected.
 - **Delete:** **Move to Trash…**, or the **Delete** key on the Mac; the app asks first.
 
@@ -23,10 +24,14 @@ Right-click (or long-press) a note in the list:
 
 - **Pin / Unpin:** pinned notes are listed first and gathered under **Pinned**. Pinning writes `pinned: true` into the note's [frontmatter](/guide/writing#frontmatter), so it syncs with the file.
 - **Rename…:** renames the file and updates every link to it.
-- **Move To:** moves it to another folder, again updating links.
+- **Move To:** moves it to another folder, again updating links. You can also drag notes onto a folder in the sidebar.
 - **Show in Finder** (Mac): opens a Finder window with the note's file selected.
 - **Move to Trash:** the **Delete** key on the Mac; on iPhone and iPad, swipe left. Swipe right to pin. It goes to [Recently Deleted](#recently-deleted).
 - **File names from headings:** with **Rename files to match the first heading** on (notebook settings), a note's file is renamed after its first `# heading` when you pause typing or leave the note. Links to it are updated, and the banner offers **Undo**.
+
+**Several notes at once:** on the Mac, ⌘-click or ⇧-click notes in the list, then right-click them to pin, move or trash them together, or drag them onto a folder. On iPhone and iPad, choose **Select Notes** from the list's menu, check the notes, and use the buttons at the bottom.
+
+**Drag out:** drag a note from the list to Finder, Mail or another app to hand it over as its `.md` file.
 
 After a rename or a move, a banner says how many notes had their links updated, with an **Undo**.
 
@@ -42,7 +47,7 @@ The search field above the note list (**⌘F** on the Mac) filters as you type. 
 
 - **⌘O** opens a quick switcher: type part of a note's name to jump to it.
 - **⇧⌘P** opens the **command palette** (on iPhone and iPad also from the notebook menu, **Command Palette…**). Type a few letters of any command or note: new note or folder, pin, rename, move to a folder or another notebook, move to trash, formatting, Markdown source, the outline, switching notebooks or themes, going to a folder or tag. **↑** / **↓** pick, **Return** runs it.
-- **⌥⌘I**, or the inspector button, shows the note's **outline** (tap a heading to jump there) and its **backlinks**, the notes that link to it.
+- **⌥⌘I**, or the inspector button, shows the note's **outline** (tap a heading to jump there), its **backlinks**, the notes that link to it, and its [word count](/guide/writing#word-count).
 
 ## Recently Deleted
 

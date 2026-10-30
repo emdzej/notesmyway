@@ -101,7 +101,7 @@ Last updated 2026-10-29. See `spec.md` for the design.
 ## Known gaps (UIKit editor)
 
 - Size menu for images and cards (context menu / pinch) is not built yet (M4).
-- Not ported from AppKit yet: code-block copy button, find, Writing Tools hooks, placeholder, scroll-away header, reading column, paste-image handling.
+- Not ported from AppKit yet: code-block copy button, find, Writing Tools hooks, placeholder, scroll-away header, reading column.
 - Code-block background selection cut-out depends on `textLayoutManager.textSelections`, which UITextView may not keep in sync.
 - On macOS, the input handlers edit via `shouldChangeText` + `replaceCharacters` + `didChangeText` instead of `insertText(_:replacementRange:)`. Both are undoable, but LaTeX block auto-wrap deserves a manual check.
 
@@ -116,6 +116,14 @@ Last updated 2026-10-29. See `spec.md` for the design.
 
 - Table markers / drag resize, marker bar, source-mode switch and frontmatter chips were tested by unit tests and hosted snapshots, not clicked through in the running app (screen was locked). iOS paths compiled only.
 - Table rows: no per-row heights (by design); the cell editor is single-line for wrapped cells; GitHub may render the `{cols=…}` line as a table row.
+
+## Paste images, `[[` links, word count
+
+- **Paste images** (macOS and iOS): `EditorSetup.pasteHandler` stores pasted images through `AttachmentStore` and inserts `![](…){.medium}` on its own line, one undo step. macOS: image files copied in Finder keep their names; image data (screenshots, Preview, Safari's Copy Image) becomes `Pasted image yyyy-MM-dd at HH.mm.png` (`AttachmentStore.pastedImageName`, `store(_ data:)`; same bytes reuse the file, others get " 2"). Text that comes with a picture of itself (Numbers / Excel cells, Pages) still pastes as text. iOS keeps the pasteboard's encoding (GIF, HEIC, JPEG, PNG, WebP). Engine: UIKit `onPasteImage: (UIPasteboard) -> String?` (`MarkdownUITextView+Paste.swift`: `paste(_:)`, and `canPerformAction` offers Paste for images); both platforms put the image on its own line (`BlockInsertion`) through `insertMarkdown`.
+- **`[[` links:** typing `[[` (outside code and frontmatter; not `[[[`, `![[`, `\[[`) opens the note picker as a popover at the caret (a sheet on iPhone). Picking replaces `[[` and the auto-closed `]]` with `[Title](relative.md)`, exactly what ⌘L writes (`NoteLinkCompletion` in NmwCore); Esc or `]]` typed in the picker leaves the text as typed. Engine: `MarkdownEditorController.replace(_:with:actionName:)` and `caretRect`.
+- **Word count:** `TextStatistics` (NmwCore) counts words and characters without frontmatter, fence lines, markers or link destinations; the inspector's footer shows the note's and, with a selection, the selection's (engine: observable `MarkdownEditorController.selection`).
+- Tests: NmwCore 94 (adds statistics, link completion, pasted-image naming and storing data); NmwUI 54 (adds the macOS paste hook on private pasteboards: image data, Safari-style image + URL, text with a picture, Finder image vs. other files); engine 299 (adds `BlockInsertion` and an AppKit `replace` / `caretRect` / `selection` test). Built for macOS and the iOS simulator.
+- **Not tried by hand:** real pastes (Finder, Preview, Safari, iOS Photos; sandbox access to pasted Finder URLs), the popover's position and focus on macOS, iPad and iPhone, Esc in the popover, and the iOS Paste menu item appearing for images.
 
 ## Known gaps (app)
 

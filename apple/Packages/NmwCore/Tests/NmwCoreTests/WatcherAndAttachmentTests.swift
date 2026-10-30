@@ -127,6 +127,26 @@ struct AttachmentStoreTests {
         #expect(LinkPath.encode(stored.linkPath) == ".attachments/Q3%20%28final%29.pdf")
         #expect(AttachmentStore.numbered("archive.tar.gz", 3) == "archive.tar 3.gz")
     }
+
+    @Test func pastedDataGetsADatedNameAndIsDeduplicated() throws {
+        let tmp = try TempFolder()
+        defer { tmp.delete() }
+        let note = tmp.url.appending(path: "Idea.md")
+        let utc = TimeZone(identifier: "UTC")!
+        let name = AttachmentStore.pastedImageName(date: Date(timeIntervalSince1970: 1_793_380_800), timeZone: utc)
+        #expect(name == "Pasted image 2026-10-30 at 17.20.png")
+        #expect(AttachmentStore.pastedImageName(date: Date(timeIntervalSince1970: 0), fileExtension: "jpg", timeZone: utc)
+                == "Pasted image 1970-01-01 at 00.00.jpg")
+
+        let first = try AttachmentStore.store(Data([1, 2]), named: name, for: note, notebookRoot: tmp.url)
+        #expect(first.linkPath == ".attachments/Pasted image 2026-10-30 at 17.20.png")
+        // The same image again is reused; another one in the same minute is numbered.
+        let again = try AttachmentStore.store(Data([1, 2]), named: name, for: note, notebookRoot: tmp.url)
+        #expect(again.reused && again.url == first.url)
+        let other = try AttachmentStore.store(Data([3]), named: name, for: note, notebookRoot: tmp.url)
+        #expect(other.linkPath == ".attachments/Pasted image 2026-10-30 at 17.20 2.png")
+        #expect(try Data(contentsOf: other.url) == Data([3]))
+    }
 }
 
 @Suite("Notebook config", .serialized)

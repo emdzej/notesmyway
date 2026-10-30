@@ -292,6 +292,32 @@ struct NotebookSessionTests {
         #expect(!s.notes.contains { $0.path.rawValue.hasPrefix("Contacts/") })
     }
 
+    @Test func severalNotesAndFoldersMoveTogether() async throws {
+        let (tmp, s) = try await session()
+        defer { s.stop(); tmp.delete() }
+        #expect(!s.canMove(p("People"), toFolder: nil))            // already there
+        #expect(!s.canMove(p("People"), toFolder: p("People")))    // into itself
+        _ = try s.createFolder(named: "Inner", in: p("People"))
+        #expect(!s.canMove(p("People"), toFolder: p("People/Inner")))
+        #expect(s.canMove(p("Inbox.md"), toFolder: p("Projects")))
+
+        s.selection = p("Inbox.md")
+        s.selectedNotes = [p("Inbox.md"), p("People/Ann.md")]
+        try await s.move([p("Inbox.md"), p("People/Ann.md")], toFolder: p("Projects"))
+        #expect(tmp.exists("Projects/Inbox.md") && tmp.exists("Projects/Ann.md"))
+        #expect(s.selection == p("Projects/Inbox.md"))
+        #expect(s.selectedNotes == [p("Projects/Inbox.md"), p("Projects/Ann.md")])
+
+        // A folder moves with what's in it; the folder's own note isn't moved twice.
+        try await s.move([p("People"), p("People/Inner")], toFolder: p("Projects"))
+        #expect(tmp.exists("Projects/People/Inner"))
+        #expect(s.folders.first { $0.path == p("Projects") }?.children?.contains { $0.path == p("Projects/People") } == true)
+
+        try await s.moveToTrash([p("Projects/Inbox.md"), p("Projects/Ann.md")])
+        #expect(!tmp.exists("Projects/Inbox.md") && !tmp.exists("Projects/Ann.md"))
+        #expect(s.selectedNotes.isEmpty && s.selection == nil)
+    }
+
     @Test func changingScopeDropsASelectionOutsideIt() async throws {
         let (tmp, s) = try await session()
         defer { s.stop(); tmp.delete() }

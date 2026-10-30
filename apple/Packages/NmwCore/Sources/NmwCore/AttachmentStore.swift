@@ -67,6 +67,31 @@ public enum AttachmentStore {
         return StoredAttachment(url: target, linkPath: LinkPath.relative(from: noteURL, to: target), reused: false)
     }
 
+    /// Stores image (or other) data that has no file of its own, such as a
+    /// pasted screenshot, under `name` (see `pastedImageName`).
+    public static func store(_ data: Data, named name: String, for noteURL: URL, notebookRoot: URL?,
+                             layout: NotebookConfig.Attachments = NotebookConfig.Attachments()) throws -> StoredAttachment {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "nmw-paste-\(UUID().uuidString)", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let source = folder.appending(path: sanitized(name), directoryHint: .notDirectory)
+        try data.write(to: source)
+        return try store(source, named: name, for: noteURL, notebookRoot: notebookRoot, layout: layout)
+    }
+
+    /// `Pasted image 2026-10-30 at 17.20.png`, as macOS names screenshots
+    /// (no colons: they aren't allowed in file names on every system).
+    /// The same image pasted twice is stored once; different ones pasted
+    /// within the minute get " 2", " 3", ….
+    public static func pastedImageName(date: Date = Date(), fileExtension: String = "png",
+                                       timeZone: TimeZone = .current) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = timeZone
+        formatter.dateFormat = "yyyy-MM-dd 'at' HH.mm"
+        return "Pasted image \(formatter.string(from: date)).\(fileExtension)"
+    }
+
     /// `photo.jpg`, 2 → `photo 2.jpg`; `archive.tar.gz` keeps `.gz` only, like Finder.
     static func numbered(_ name: String, _ n: Int) -> String {
         let ext = (name as NSString).pathExtension

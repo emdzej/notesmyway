@@ -45,6 +45,10 @@ The same commands, with the shortcuts Apple Notes uses. They're also in the comm
 
 Right-clicking text offers Format, Heading and Lists too.
 
+## Pasting images
+
+Paste a screenshot, an image copied in Preview, Photos or Safari, or image files copied in Finder, and the image is stored in the note's [attachments folder](/guide/images#attachments) and shown on its own line. Images without a file name of their own are named like screenshots: `Pasted image 2026-10-30 at 17.20.png`. Pasting the same image again reuses the stored file. **⌘Z** takes the paste back.
+
 ## Markdown source
 
 **⇧⌘M** — or the `</>` button in the toolbar — switches the open note to its Markdown source: every character visible, monospaced, with colours for headings, emphasis markers, code, links, `{…}` attributes and frontmatter keys. Press it again to go back; the selection and the scroll position stay put. To open every note this way, set **Settings › General › Notes open as** to **Markdown Source**.
@@ -83,8 +87,17 @@ Notes link to each other with ordinary Markdown links to relative paths, so the 
 [Kitchen budget](Projects/Kitchen%20budget.md)
 ```
 
-Tap a link to open the note, file or web page. A link to a note that doesn't exist yet offers to create it. **⌘L** (Link to Note…) inserts a link to a note you pick. When you rename or move a note in the app, every link to it is rewritten.
+Tap a link to open the note, file or web page. A link to a note that doesn't exist yet offers to create it. When you rename or move a note in the app, every link to it is rewritten.
+
+Two ways to link without typing the path:
+
+- **Type `[[`.** A list of notes opens; keep typing to narrow it down, and pick one (or press **Return** for the first). The `[[` becomes a standard link, `[Kitchen budget](Projects/Kitchen%20budget.md)`. **Esc** closes the list and leaves the `[[` as typed, and so does typing `]]`. Nothing opens inside code.
+- **⌘L** (Link to Note…) inserts a link to a note you pick at the caret.
 
 ::: tip Wikilinks
-`[[Note]]` isn't part of CommonMark, so it shows as plain text. Standard links keep notes portable.
+`[[Note]]` isn't part of CommonMark, so a `[[Note]]` left in the text shows as plain text. Standard links keep notes portable.
 :::
+
+## Word count
+
+The inspector (**⌥⌘I**, or **Outline and Backlinks** in the **…** menu on iPhone and iPad) shows the note's words and characters at the bottom, and the selection's too while you have one selected. Frontmatter, Markdown markers and link addresses don't count; link text and code do.

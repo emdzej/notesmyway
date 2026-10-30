@@ -56,6 +56,10 @@ targets:
             UTTypeConformsTo: [public.json]
             UTTypeTagSpecification:
               public.filename-extension: [nmwtheme]
+          # Notes and folders dragged within the app (onto a sidebar folder).
+          - UTTypeIdentifier: pl.emdzej.notesmyway.items
+            UTTypeDescription: Notes my Way Items
+            UTTypeConformsTo: [public.data]
         UTImportedTypeDeclarations:
           - UTTypeIdentifier: net.daringfireball.markdown
             UTTypeDescription: Markdown Document
