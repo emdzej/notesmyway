@@ -61,6 +61,23 @@ struct NotebookWatcherTests {
         let updated = await events.next { !$0.updated.isEmpty }
         #expect(updated?.updated == [path("Inbox.md")])   // hidden folders never show up
     }
+
+    @Test func emptyFoldersAreReported() async throws {
+        let tmp = try TempFolder()
+        defer { tmp.delete() }
+        let index = try NotebookIndex(notebook: Notebook(root: tmp.url), at: nil)
+        let indexer = NotebookIndexer(index: index)
+        try await indexer.sync()
+
+        let events = Collector(NotebookWatcher.changes(of: indexer, latency: 0.1))
+        defer { events.task.cancel() }
+        try await Task.sleep(for: .milliseconds(300))   // let FSEvents start
+
+        // As Finder would: an empty folder changes no notes.
+        try FileManager.default.createDirectory(at: tmp.url.appending(path: "Drafts"), withIntermediateDirectories: true)
+        let made = await events.next { $0.foldersChanged }
+        #expect(made != nil && made?.isEmpty == true)
+    }
 }
 #endif
 

@@ -136,8 +136,8 @@ struct NotebookView: View {
             .toolbarTitleDisplayMode(.inline)
             #endif
         } else {
-            ContentUnavailableView("No Note Selected", systemImage: "note.text",
-                                   description: Text("Pick a note, or press ⌘N to start one."))
+            // Just the background: the note list already says when there's nothing to pick.
+            Color.clear
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background { WelcomeBackground() }
         }
@@ -304,16 +304,18 @@ struct SidebarView: View {
         } message: {
             Text("The folder and the notes in it go to Recently Deleted (.nmw/trash), where they’re kept for 30 days and can be restored.")
         }
-        .alert("Rename Folder", isPresented: Binding(get: { renamingFolder != nil }, set: { if !$0 { renamingFolder = nil } })) {
-            TextField("Name", text: $folderName)
-            Button("Rename") {
-                if let folder = renamingFolder {
-                    let name = folderName
-                    run { try await session.renameFolder(folder, to: name) }
-                }
+        .namePrompt("Rename Folder", isPresented: Binding(get: { renamingFolder != nil }, set: { if !$0 { renamingFolder = nil } }),
+                    text: $folderName, actionTitle: "Rename", message: "Links to notes inside it are updated.") {
+            if let folder = renamingFolder {
+                let name = folderName
+                run { try await session.renameFolder(folder, to: name) }
             }
-            Button("Cancel", role: .cancel) {}
-        } message: { Text("Links to notes inside it are updated.") }
+        }
+        .namePrompt("New Folder", isPresented: Binding(get: { session.newFolderRequest != nil }, set: { if !$0 { session.newFolderRequest = nil } }),
+                    text: $folderName, actionTitle: "Create") {
+            if let request = session.newFolderRequest { createFolder(named: folderName, in: request.parent) }
+        }
+        .onChange(of: session.newFolderRequest?.id) { _, id in if id != nil { folderName = "" } }
         .alert("Couldn’t Complete", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("OK", role: .cancel) {}
         } message: { Text(errorMessage ?? "") }
@@ -322,7 +324,12 @@ struct SidebarView: View {
     private func rootRow(_ accessory: AnyView?) -> some View {
         FolderLabel(name: session.name, depth: 0, accessory: accessory)
             .tag(NotebookSession.Scope.folder(nil))
-            .contextMenu { Button("New Folder", systemImage: "folder.badge.plus") { newFolder(in: nil) } }
+            .contextMenu {
+                Button("New Folder…", systemImage: "folder.badge.plus") { newFolder(in: nil) }
+                #if os(macOS)
+                ShowInFinderButton(url: session.notebook.root)
+                #endif
+            }
     }
 
     private func folderRow(_ node: FolderNode, accessory: AnyView?, depth: Int) -> AnyView {
@@ -330,20 +337,25 @@ struct SidebarView: View {
             FolderLabel(name: node.name, depth: depth, accessory: accessory)
                 .tag(NotebookSession.Scope.folder(node.path))
                 .contextMenu {
-                    Button("New Folder", systemImage: "folder.badge.plus") { newFolder(in: node.path) }
+                    Button("New Folder…", systemImage: "folder.badge.plus") { newFolder(in: node.path) }
                     Button("Rename…", systemImage: "pencil") { folderName = node.name; renamingFolder = node.path }
+                    #if os(macOS)
+                    ShowInFinderButton(url: session.notebook.url(for: node.path))
+                    #endif
                     Divider()
                     Button("Move to Trash…", systemImage: "trash", role: .destructive) { trashingFolder = node.path }
                 }
         )
     }
 
+    /// Asks for the name first: creating "New Folder" and renaming it raced the file watcher.
     private func newFolder(in parent: NotebookPath?) {
+        session.newFolderRequest = .init(parent: parent)
+    }
+
+    private func createFolder(named name: String, in parent: NotebookPath?) {
         do {
-            let folder = try session.createFolder(in: parent)
-            session.scope = .folder(folder)
-            folderName = folder.name
-            renamingFolder = folder
+            session.scope = .folder(try session.createFolder(named: name, in: parent))
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -356,6 +368,17 @@ struct SidebarView: View {
     }
 }
 
+#if os(macOS)
+/// Reveals a note or folder in Finder.
+struct ShowInFinderButton: View {
+    let url: URL
+
+    var body: some View {
+        Button("Show in Finder", systemImage: "finder") { NSWorkspace.shared.activateFileViewerSelecting([url]) }
+    }
+}
+#endif
+
 /// The folder tree: every level starts expanded, with its disclosure arrow visible.
 struct FolderRows: View {
     let nodes: [FolderNode]
@@ -365,7 +388,9 @@ struct FolderRows: View {
     var depth = 0
 
     var body: some View {
-        ForEach(nodes) { node in
+        // A leaf that gains a subfolder becomes a DisclosureGroup; under the same
+        // identity the Mac's outline left ghost rows behind, so the shape is part of it.
+        ForEach(nodes, id: \.rowID) { node in
             if let children = node.children {
                 #if os(iOS)
                 let open = expanded(node.path)
@@ -394,6 +419,10 @@ struct FolderRows: View {
             }
         )
     }
+}
+
+private extension FolderNode {
+    var rowID: String { children == nil ? path.rawValue : path.rawValue + "/" }
 }
 
 /// A folder's name and icon. On iOS, nested folders are indented by hand

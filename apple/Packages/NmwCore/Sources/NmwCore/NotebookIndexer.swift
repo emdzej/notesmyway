@@ -21,6 +21,9 @@ public struct IndexChanges: Equatable, Sendable {
     public var moved: [NotebookPath: NotebookPath] = [:]
     /// Files that couldn't be read (permissions, not UTF-8, iCloud placeholder…).
     public var failed: [NotebookPath] = []
+    /// A folder appeared, moved or went away (set by the watcher). Empty
+    /// folders change no notes, so this is the only sign of them.
+    public var foldersChanged = false
 
     public var isEmpty: Bool { added.isEmpty && updated.isEmpty && removed.isEmpty && moved.isEmpty }
 }

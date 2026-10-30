@@ -56,14 +56,23 @@ public final class NotebookWatcher: @unchecked Sendable {
     public static func changes(of indexer: NotebookIndexer, latency: TimeInterval = 0.3) -> AsyncStream<IndexChanges> {
         AsyncStream { continuation in
             let watcher = NotebookWatcher(notebook: indexer.notebook, latency: latency) { paths, rescan in
+                let root = indexer.notebook
                 Task {
-                    let changes = try? await (rescan ? indexer.sync() : indexer.update(paths))
-                    if let changes, !changes.isEmpty || !changes.failed.isEmpty { continuation.yield(changes) }
+                    guard var changes = try? await (rescan ? indexer.sync() : indexer.update(paths)) else { return }
+                    changes.foldersChanged = rescan || paths.contains { Self.mayBeFolder(root.url(for: $0)) }
+                    if !changes.isEmpty || !changes.failed.isEmpty || changes.foldersChanged { continuation.yield(changes) }
                 }
             }
             continuation.onTermination = { _ in watcher.stop() }
             watcher.start()
         }
+    }
+
+    /// A folder now, or a path gone that had no extension (a folder, most likely).
+    static func mayBeFolder(_ url: URL) -> Bool {
+        var isDirectory: ObjCBool = false
+        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) { return isDirectory.boolValue }
+        return url.pathExtension.isEmpty
     }
 
     // MARK: Coalescing

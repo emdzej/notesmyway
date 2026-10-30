@@ -273,8 +273,8 @@ struct CommandPalette: View {
             PaletteItem(id: "new-note", title: "New Note", systemImage: "square.and.pencil", shortcut: "⌘N", keywords: "create") {
                 Task { try? await session.createNote(in: folder) }
             },
-            PaletteItem(id: "new-folder", title: "New Folder", systemImage: "folder.badge.plus", keywords: "create") {
-                if let made = try? session.createFolder(in: folder) { session.scope = .folder(made) }
+            PaletteItem(id: "new-folder", title: "New Folder…", systemImage: "folder.badge.plus", keywords: "create", presents: true) {
+                session.newFolderRequest = .init(parent: folder)
             },
             PaletteItem(id: "open-quickly", title: "Open Quickly…", systemImage: "magnifyingglass", shortcut: "⌘O",
                         keywords: "find note switch", presents: true) {

@@ -4,14 +4,15 @@
 
 Add as many notebooks as you like and switch between them from the menu at the top of the sidebar. **Remove “…” from Notes my Way** in the same menu only forgets the notebook; the folder and its files stay where they are.
 
-The app watches the folder, so a note edited in another app — or synced from another device — shows up right away. Notebook settings and the trash live in a hidden `.nmw/` folder inside the notebook, so they travel with it.
+The app watches the folder, so a note or folder added, edited or moved in another app — or synced from another device — shows up right away. Notebook settings and the trash live in a hidden `.nmw/` folder inside the notebook, so they travel with it.
 
 ## Folders
 
 The sidebar shows the notebook's folder with its subfolders nested under it. Selecting a folder lists its notes and the notes of its subfolders; a caption shows which subfolder a note is in. To show or hide a folder's subfolders, use the arrow next to it (on iPhone and iPad, the chevron at the right of the row; tapping the folder's name opens it).
 
-- **New folder:** right-click (long-press on iPhone and iPad) a folder › **New Folder**.
+- **New folder:** right-click (long-press on iPhone and iPad) a folder › **New Folder…**, and give it a name.
 - **Rename:** **Rename…** — every link that points into the folder is updated.
+- **Show in Finder** (Mac): opens a Finder window with the folder selected.
 - **Delete:** **Move to Trash…**, or the **Delete** key on the Mac; the app asks first.
 
 Folders and files whose names start with `.` are hidden.
@@ -23,6 +24,7 @@ Right-click (or long-press) a note in the list:
 - **Pin / Unpin:** pinned notes are listed first and gathered under **Pinned**. Pinning writes `pinned: true` into the note's [frontmatter](/guide/writing#frontmatter), so it syncs with the file.
 - **Rename…:** renames the file and updates every link to it.
 - **Move To:** moves it to another folder, again updating links.
+- **Show in Finder** (Mac): opens a Finder window with the note's file selected.
 - **Move to Trash:** the **Delete** key on the Mac; on iPhone and iPad, swipe left. Swipe right to pin. It goes to [Recently Deleted](#recently-deleted).
 - **File names from headings:** with **Rename files to match the first heading** on (notebook settings), a note's file is renamed after its first `# heading` when you pause typing or leave the note. Links to it are updated, and the banner offers **Undo**.
 
@@ -34,7 +36,7 @@ After a rename or a move, a banner says how many notes had their links updated, 
 
 ## Search
 
-The search field above the note list filters as you type. It matches every word you type by prefix, ignoring case and accents. Two filters narrow it down: `tag:baking` (or `#baking`) and `path:Projects/`.
+The search field above the note list (**⌘F** on the Mac) filters as you type. It matches every word you type by prefix, ignoring case and accents. Two filters narrow it down: `tag:baking` (or `#baking`) and `path:Projects/`.
 
 ## Quick switcher, command palette, outline and backlinks
 

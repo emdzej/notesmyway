@@ -127,5 +127,4 @@ Last updated 2026-10-29. See `spec.md` for the design.
 ## Next
 
 1. Try the app by hand on macOS and iPad (list above), fix what turns up.
-2. M3 leftovers: find & replace.
-3. M4 polish (size menu for images and cards), then M5 iCloud.
+2. M4 polish (size menu for images and cards), then M5 iCloud.

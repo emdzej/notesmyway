@@ -46,6 +46,8 @@ With **Rename files to match the first heading** on, a note's file follows its f
 | --- | --- |
 | ⌘N | New note |
 | ⌘O | Open quickly (note switcher) |
+| ⌘F | Search notes (the search field above the note list) |
+| ⌥⌘F | Find in the open note |
 | ⇧⌘P | Command palette |
 | ⇧⌘O | Open a Markdown file |
 | ⌘L | Link to note |

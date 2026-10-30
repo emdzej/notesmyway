@@ -22,6 +22,7 @@ struct NoteListView: View {
     /// A click selects a row but doesn't focus the list once the editor had
     /// focus, so the selection stayed gray; clicks focus it explicitly.
     @FocusState private var isFocused: Bool
+    @FocusState private var isSearchFocused: Bool
 
     var body: some View {
         // Rows are one height: a folder line is reserved on every row when any shows one.
@@ -66,6 +67,8 @@ struct NoteListView: View {
             }
         }
         .searchable(text: $session.searchText, prompt: "Search (tag:, path:)")
+        .searchFocused($isSearchFocused)
+        .onChange(of: session.searchFocusRequest) { isSearchFocused = true }
         .navigationTitle(title)
         .toolbar {
             ToolbarItemGroup {
@@ -79,12 +82,9 @@ struct NoteListView: View {
                 Button { newNote() } label: { Label("New Note", systemImage: "square.and.pencil") }
             }
         }
-        .alert("Rename Note", isPresented: Binding(get: { renaming != nil }, set: { if !$0 { renaming = nil } })) {
-            TextField("Name", text: $newName)
-            Button("Rename") { if let note = renaming { rename(note) } }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("Links to this note are updated.")
+        .namePrompt("Rename Note", isPresented: Binding(get: { renaming != nil }, set: { if !$0 { renaming = nil } }),
+                    text: $newName, actionTitle: "Rename", message: "Links to this note are updated.") {
+            if let note = renaming { rename(note) }
         }
         .confirmationDialog("Move “\(movingToNotebook?.stem ?? "")” to Notebook", isPresented: Binding(get: { movingToNotebook != nil }, set: { if !$0 { movingToNotebook = nil } }), titleVisibility: .visible) {
             ForEach(otherNotebooks) { entry in
@@ -170,6 +170,9 @@ struct NoteListView: View {
             }
         }
         Button("Move to Notebook…", systemImage: "books.vertical") { requestMoveToNotebook(note.path) }
+        #if os(macOS)
+        ShowInFinderButton(url: session.notebook.url(for: note.path))
+        #endif
         Divider()
         Button("Move to Trash", systemImage: "trash", role: .destructive) { trash(note.path) }
     }

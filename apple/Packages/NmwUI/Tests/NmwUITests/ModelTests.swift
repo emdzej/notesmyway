@@ -272,6 +272,12 @@ struct NotebookSessionTests {
         #expect(made == p("Projects/New Folder") && again == p("Projects/New Folder 2"))
         #expect(s.folders.first { $0.path == p("Projects") }?.children?.count == 2)
 
+        // An empty folder's rename has no index changes; the tree still follows it.
+        try await s.renameFolder(again, to: "Drafts")
+        #expect(s.folders.first { $0.path == p("Projects") }?.children?.map(\.name) == ["Drafts", "New Folder"])
+        let named = try s.createFolder(named: "Ideas", in: nil)
+        #expect(named == p("Ideas") && s.folders.contains { $0.path == named })
+
         s.scope = .folder(p("People"))
         let renamed = try await s.renameFolder(p("People"), to: "Contacts")
         #expect(renamed == p("Contacts"))
@@ -284,6 +290,16 @@ struct NotebookSessionTests {
         #expect(!tmp.exists("Contacts"))
         #expect(s.scope == .folder(nil))
         #expect(!s.notes.contains { $0.path.rawValue.hasPrefix("Contacts/") })
+    }
+
+    @Test func changingScopeDropsASelectionOutsideIt() async throws {
+        let (tmp, s) = try await session()
+        defer { s.stop(); tmp.delete() }
+        s.selection = p("People/Ann.md")
+        s.scope = .folder(p("People"))
+        #expect(s.selection == p("People/Ann.md"))
+        s.scope = .folder(p("Projects"))
+        #expect(s.selection == nil)
     }
 
     @Test func attachmentFoldersFollowTheSettings() async throws {

@@ -359,6 +359,16 @@ struct NmwCommands: Commands {
                 .keyboardShortcut("p", modifiers: [.command, .shift])
                 .disabled(session == nil)
         }
+        // Before the Edit › Find submenu, so ⌘F reaches the note search first;
+        // finding inside the note moves to ⌥⌘F.
+        CommandGroup(before: .textEditing) {
+            Button("Search Notes", systemImage: "magnifyingglass") { session?.searchFocusRequest += 1 }
+                .keyboardShortcut("f")
+                .disabled(session == nil)
+            Button("Find in Note…", systemImage: "text.magnifyingglass") { editor?.showFind() }
+                .keyboardShortcut("f", modifiers: [.command, .option])
+                .disabled(editor == nil)
+        }
         CommandGroup(after: .textEditing) {
             Button("Link to Note…", systemImage: "link") { linkToNote?.run() }
                 .keyboardShortcut("l")

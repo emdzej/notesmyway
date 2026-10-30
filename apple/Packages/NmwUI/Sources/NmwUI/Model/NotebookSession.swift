@@ -54,7 +54,14 @@ public final class NotebookSession {
     @ObservationIgnored private let bump = Bump()
     @ObservationIgnored let indexer: NotebookIndexer
 
-    public var scope: Scope = .all { didSet { if scope != oldValue { refreshNotes() } } }
+    public var scope: Scope = .all {
+        didSet {
+            guard scope != oldValue else { return }
+            refreshNotes()
+            // The editor shouldn't keep showing a note the new list doesn't have.
+            if let selected = selection, !isIndexing, !notes.contains(where: { $0.path == selected }) { selection = nil }
+        }
+    }
     public var sort: NoteSort = .modified { didSet { refreshNotes() } }
     public var searchText = "" { didSet { if searchText != oldValue { refreshNotes() } } }
     public var selection: NotebookPath?
@@ -77,6 +84,15 @@ public final class NotebookSession {
 
     /// The quick switcher (⌘O) is showing.
     public var isShowingSwitcher = false
+    /// Bumped by ⌘F; the note list focuses its search field.
+    public var searchFocusRequest = 0
+    /// Asks for a name, then creates the folder (the sidebar presents it).
+    public var newFolderRequest: NewFolderRequest?
+
+    public struct NewFolderRequest: Identifiable {
+        public let id = UUID()
+        public let parent: NotebookPath?
+    }
     /// The command palette (⇧⌘P) is showing.
     public var isShowingPalette = false
     /// File › Import from Apple Notes (macOS).
@@ -304,7 +320,10 @@ public final class NotebookSession {
     // MARK: Changes
 
     func apply(_ changes: IndexChanges, fromSave: Bool = false) async {
-        guard !changes.isEmpty else { return }
+        guard !changes.isEmpty else {
+            if changes.foldersChanged { folders = Self.folderTree(in: notebook, config: config) }
+            return
+        }
         // Open editors follow moves, and pick up outside edits.
         for (old, new) in changes.moved {
             if let editor = editors.removeValue(forKey: old) {
@@ -443,6 +462,8 @@ public final class NotebookSession {
             changes.removed.removeAll { $0 == path }
         }
         await apply(changes, fromSave: true)
+        // An empty folder's move has no index changes, so `apply` doesn't refresh the tree.
+        folders = Self.folderTree(in: notebook, config: config)
         ownMove = nil
         return target
     }

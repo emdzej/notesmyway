@@ -14,13 +14,14 @@ What's done, and what comes next. Dates aren't promised.
 - Themes: built-in themes for the editor, source view and code, and JSON themes of your own.
 - Import from Apple Notes on the Mac: folders, dates, pinned notes, formatting, checklists, tables and attachments.
 - A formatting bar above the keyboard on iPhone and iPad (with formula buttons in table cells), and a Format menu with Apple Notes' shortcuts on the Mac.
+- System integration: Spotlight, a Share extension, widgets and Shortcuts.
+- A command palette, find and replace, restoring from the trash, Move to Notebook…, and an option to rename files after their first heading.
 
 ## Next
 
 - **iCloud sync** — notebooks in iCloud Drive, with conflict merging.
 - **Self-hosted sync** — a small Go server with device pairing, for people who'd rather not use iCloud.
-- **System integration** — Spotlight, a Share extension, widgets, Shortcuts and Quick Note.
-- Smaller things: a command palette, find and replace, restoring from the trash, Move to Notebook…, an option to rename files after their first heading.
+- **Quick Note** — jot something down from anywhere on the Mac and iPad.
 
 ## Later
 
