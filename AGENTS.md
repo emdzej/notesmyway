@@ -16,8 +16,10 @@ when a feature lands.
   `lsregister -f` (`/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister`)
   so Finder and the Dock pick up the new icon and document types.
 - **Clean up** what you create: derived data in `/tmp`, simulator installs, screenshot copies.
-- **The repository is private; the site is public.** Nothing under `docs/` may link to this repository
-  or describe building from source. The site is for users (the app is "coming soon to the App Store").
+- **The site is for users.** `docs/` may link to this repository (source, licence, releases, issues), but
+  build-from-source instructions belong in the README, not on the site.
+- **Keep personal data out of git:** the developer's personal email only in commits, no device names or IDs
+  (they go in `AGENTS.local.md`). Tags are the bare version, without a "v".
 
 ## The editor engine
 
