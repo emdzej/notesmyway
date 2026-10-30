@@ -485,7 +485,14 @@ extension View {
                     .ignoresSafeArea()
                 }
             #else
-            self
+            // The theme's page color through the sidebar's glass.
+            if let page = EditorAppearance.shared.pageColor {
+                self
+                    .scrollContentBackground(.hidden)
+                    .background { page.opacity(0.55).ignoresSafeArea() }
+            } else {
+                self
+            }
             #endif
         case .myWay:
             self
