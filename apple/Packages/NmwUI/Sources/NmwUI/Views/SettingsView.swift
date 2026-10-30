@@ -61,7 +61,7 @@ public struct SettingsView: View {
 
 /// Settings for the app on this device (not synced with notebooks).
 struct GeneralSettingsForm: View {
-    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
+    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.theme
     @AppStorage(EditorMode.key) private var editorMode = EditorMode.formatted
     @AppStorage(ChecklistSettings.movesCheckedKey) private var movesCheckedToBottom = false
 

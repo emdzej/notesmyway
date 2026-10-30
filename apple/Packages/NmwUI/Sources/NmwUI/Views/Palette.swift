@@ -64,21 +64,22 @@ public enum AppAppearance: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-/// The sidebar's background: the platform's, or the icon's colors. Stored in `nmw.sidebarStyle`.
+/// The sidebar's background: the theme's (its gradient, else a wash of its
+/// page color), the platform's, or the icon's colors. Stored in `nmw.sidebarStyle`.
 public enum SidebarStyle: String, CaseIterable, Identifiable, Sendable {
-    case system, myWay
+    case theme, system, myWay
     public var id: String { rawValue }
     static let key = "nmw.sidebarStyle"
 
     var title: String {
         switch self {
+        case .theme: "From Theme"
         case .system: "System Default"
         case .myWay: "My Way"
         }
     }
 }
 
-/// Applies the appearance setting and the accent to a window's root view.
 /// The theme sets the accent; a light- or dark-only theme also fixes the
 /// scheme, over the Appearance setting.
 struct AppLook: ViewModifier {

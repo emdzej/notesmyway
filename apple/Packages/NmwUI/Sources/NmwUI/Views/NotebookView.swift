@@ -195,7 +195,7 @@ struct SidebarView: View {
     @State private var folderName = ""
     @State private var errorMessage: String?
     @State private var trashingFolder: NotebookPath?
-    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
+    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.theme
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var sizeClass
     /// iPhone: going back clears the list's selection; the scope stays, and
@@ -467,47 +467,63 @@ extension View {
     }
     #endif
 
-    /// "My Way": the icon's gradient behind the sidebar, with light text on it.
+    /// The sidebar's background for a style: "From Theme" uses the theme's
+    /// gradient if it has one, else the system look with its page color.
     @ViewBuilder func sidebarStyle(_ style: SidebarStyle) -> some View {
         switch style {
-        case .system:
-            #if os(iOS)
-            // On iPhone and iPad the sidebar is a whole screen: the welcome watermark fills it.
-            self
-                .scrollContentBackground(.hidden)
-                .background {
-                    ZStack {
-                        Color(uiColor: .systemGroupedBackground)
-                        // A wash of the theme's page color.
-                        EditorAppearance.shared.pageColor?.opacity(0.6)
-                        WelcomeBackground()
-                    }
-                    .ignoresSafeArea()
-                }
-            #else
-            // The theme's page color through the sidebar's glass.
-            if let page = EditorAppearance.shared.pageColor {
-                self
-                    .scrollContentBackground(.hidden)
-                    .background { page.opacity(0.55).ignoresSafeArea() }
+        case .theme:
+            if let colors = EditorAppearance.shared.theme.sidebarColors {
+                sidebarGradient(colors)
             } else {
-                self
+                systemSidebar()
             }
-            #endif
+        case .system:
+            systemSidebar()
         case .myWay:
+            sidebarGradient([Palette.sidebarTop, Palette.sidebarBottom])
+        }
+    }
+
+    @ViewBuilder private func systemSidebar() -> some View {
+        #if os(iOS)
+        // On iPhone and iPad the sidebar is a whole screen: the welcome watermark fills it.
+        self
+            .scrollContentBackground(.hidden)
+            .background {
+                ZStack {
+                    Color(uiColor: .systemGroupedBackground)
+                    // A wash of the theme's page color.
+                    EditorAppearance.shared.pageColor?.opacity(0.6)
+                    WelcomeBackground()
+                }
+                .ignoresSafeArea()
+            }
+        #else
+        // The theme's page color through the sidebar's glass.
+        if let page = EditorAppearance.shared.pageColor {
             self
                 .scrollContentBackground(.hidden)
-                .background {
-                    ZStack {
-                        LinearGradient(colors: [Palette.sidebarTop, Palette.sidebarBottom], startPoint: .top, endPoint: .bottom)
-                        #if os(iOS)
-                        WelcomeBackground(tint: .white, glow: false)
-                        #endif
-                    }
-                    .ignoresSafeArea()
-                }
-                .environment(\.colorScheme, .dark)
-                .tint(.white)
+                .background { page.opacity(0.55).ignoresSafeArea() }
+        } else {
+            self
         }
+        #endif
+    }
+
+    /// A gradient behind the sidebar, with light text on it.
+    private func sidebarGradient(_ colors: [Color]) -> some View {
+        self
+            .scrollContentBackground(.hidden)
+            .background {
+                ZStack {
+                    LinearGradient(colors: colors.count == 1 ? colors + colors : colors, startPoint: .top, endPoint: .bottom)
+                    #if os(iOS)
+                    WelcomeBackground(tint: .white, glow: false)
+                    #endif
+                }
+                .ignoresSafeArea()
+            }
+            .environment(\.colorScheme, .dark)
+            .tint(.white)
     }
 }

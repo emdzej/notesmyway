@@ -10,7 +10,7 @@
 
 - **Theme**: it colors the whole app, not just the editor. You get the note page, the note list, a wash over the iPhone and iPad sidebar, and the accent (buttons, selection, checkboxes), which is the theme's link color.
 - **Appearance**: System, Light or Dark. A theme made for only one mode switches the app to that mode while it's on, and Appearance then shows "Dark (set by theme)" or "Light (set by theme)".
-- **Sidebar**: System Default, or **My Way**, the icon's teal-to-navy gradient with light text.
+- **Sidebar**: **From Theme** (the default), **System Default**, or **My Way**, the icon's teal-to-navy gradient with light text. From Theme uses the theme's own sidebar gradient if it has one (Notes my Way's is the My Way gradient), and otherwise a wash of its page color.
 
 Settings windows, menus and the share sheet keep the system look.
 
@@ -83,6 +83,7 @@ A file whose `id` matches a built-in theme replaces it.
 ```
 
 - **`name`** is required. **`id`** defaults to the name, lowercased with dashes.
+- **`sidebar`**: the sidebar's colors from top to bottom, for example `["#148093", "#0A345C"]`. One color gives a solid fill. Sidebar text turns light on it. Leave it out to get a wash of the page color.
 - **`modes`**: `["light", "dark"]` (the default when it's missing), `["light"]` or `["dark"]`. With one mode, only that palette is needed, and the app switches to that mode while the theme is on.
 - **Colors**: `#RGB`, `#RRGGBB` or `#RRGGBBAA`. Every key is optional; a key set in only one palette is used for both.
 - **Palette keys**: `background`, `text`, `mutedText`, `heading`, `headingMarker`, `link`, `accent` (the app's accent; it defaults to `link`), `inlineCode`, `codeBackground`, `quoteBar`, `quoteText`, `rule`, `tableBorder`, `tableHeader`, `selection`, `caret`, `chip`, `tag`, `cardBackground`, `cardBorder`.

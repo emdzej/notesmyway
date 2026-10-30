@@ -33,17 +33,20 @@ public struct EditorTheme: Codable, Equatable, Identifiable, Sendable {
     /// The modes the theme is made for: "light", "dark"; nil is both. With
     /// one only, the app switches to it while the theme is on.
     public var modes: [String]?
+    /// The sidebar's colors, top to bottom (one is a solid fill), with light
+    /// text on them; nil washes the sidebar with the page color.
+    public var sidebar: [String]?
     public var light: Colors
     public var dark: Colors
 
     public init(id: String, name: String, font: String? = nil, headingFont: String? = nil, sourceFont: String? = nil,
-                codeTheme: CodeTheme? = nil, modes: [String]? = nil, light: Colors, dark: Colors) {
+                codeTheme: CodeTheme? = nil, modes: [String]? = nil, sidebar: [String]? = nil, light: Colors, dark: Colors) {
         self.id = id; self.name = name; self.font = font; self.headingFont = headingFont; self.sourceFont = sourceFont
-        self.codeTheme = codeTheme; self.modes = modes; self.light = light; self.dark = dark
+        self.codeTheme = codeTheme; self.modes = modes; self.sidebar = sidebar; self.light = light; self.dark = dark
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, font, headingFont, sourceFont, codeTheme, modes, light, dark
+        case id, name, font, headingFont, sourceFont, codeTheme, modes, sidebar, light, dark
     }
 
     /// Lenient, for hand-written files: `id` defaults to the name made
@@ -58,6 +61,7 @@ public struct EditorTheme: Codable, Equatable, Identifiable, Sendable {
         sourceFont = try c.decodeIfPresent(String.self, forKey: .sourceFont)
         codeTheme = try c.decodeIfPresent(CodeTheme.self, forKey: .codeTheme)
         modes = try c.decodeIfPresent([String].self, forKey: .modes)
+        sidebar = try c.decodeIfPresent([String].self, forKey: .sidebar)
         light = try c.decodeIfPresent(Colors.self, forKey: .light) ?? Colors()
         dark = try c.decodeIfPresent(Colors.self, forKey: .dark) ?? Colors()
     }
@@ -212,6 +216,13 @@ extension EditorTheme {
         Self.color(light.accent ?? light.link, dark.accent ?? dark.link)
     }
 
+    /// The sidebar gradient's colors; nil when the theme doesn't set them.
+    var sidebarColors: [Color]? {
+        guard let sidebar, !sidebar.isEmpty else { return nil }
+        let colors = sidebar.compactMap(Self.parse).map { Color($0) }
+        return colors.count == sidebar.count ? colors : nil
+    }
+
     /// The page (editor) background; nil keeps the system's.
     var pageColor: PlatformColor? { pair(\.background) }
 
@@ -266,6 +277,8 @@ extension EditorTheme {
     static let notesMyWay = EditorTheme(
         id: "nmw", name: "Notes my Way",
         codeTheme: CodeTheme(light: "atom-one-light", dark: "atom-one-dark"),
+        // The icon's gradient, as the "My Way" sidebar.
+        sidebar: ["#148093", "#0A345C"],
         light: Colors(link: "#1A8FA8", tag: "#1A8FA8", source: SourceColors(heading: "#1A8FA8")),
         dark: Colors(link: "#5CCFDB", tag: "#5CCFDB", source: SourceColors(heading: "#5CCFDB"))
     )
@@ -447,7 +460,8 @@ enum ThemeStore {
                 throw .invalid("“modes” must list \"light\", \"dark\" or both.")
             }
         }
-        let bad = badColors(in: theme)
+        var bad = badColors(in: theme)
+        if let sidebar = theme.sidebar, sidebar.contains(where: { EditorTheme.parse($0) == nil }) { bad.append("sidebar") }
         if !bad.isEmpty {
             throw .invalid("These colors aren’t hex colors like #1A8FA8: \(bad.prefix(4).joined(separator: ", ")).")
         }
