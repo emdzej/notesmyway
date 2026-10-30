@@ -31,10 +31,15 @@ echo "Notes my Way $VERSION"
 xcodebuild build -project nmw.xcodeproj -scheme nmw -configuration Release -destination 'platform=macOS' \
   -derivedDataPath "$DD" \
   CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="$IDENTITY" DEVELOPMENT_TEAM="$NMW_TEAM" \
-  ENABLE_HARDENED_RUNTIME=YES OTHER_CODE_SIGN_FLAGS="--timestamp" -quiet
+  ENABLE_HARDENED_RUNTIME=YES OTHER_CODE_SIGN_FLAGS="--timestamp" \
+  CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO -quiet
 APP="$DD/Build/Products/Release/Notes my Way.app"
 
-codesign --verify --strict --deep --verbose=2 "$APP"
+codesign --verify --strict --deep "$APP"
+# A plain build adds get-task-allow (debugging), which notarisation refuses.
+if codesign -d --entitlements - --xml "$APP" 2>/dev/null | grep -q get-task-allow; then
+  echo "get-task-allow is still in the entitlements" >&2; exit 1
+fi
 codesign -dv "$APP" 2>&1 | grep -E "Authority=Developer ID|TeamIdentifier"
 
 # The DMG: the app and a link to /Applications.
