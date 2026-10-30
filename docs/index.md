@@ -39,7 +39,7 @@ A notebook is any folder of Markdown files. Folders are real folders, attachment
 [Notebooks and folders →](/guide/notebooks)
 
 </div>
-<img class="nmw-shot" src="/screenshots/ipad-lisbon-light.webp" alt="iPad: sidebar with folders and tags, the note list, and a note with a photo" />
+<img class="nmw-shot nmw-shot--mac" src="/screenshots/mac-dark.webp" alt="Mac in dark mode: sidebar with folders and tags, the note list, and a note with a photo" />
 </div>
 
 <div class="nmw-row nmw-row--flip">
@@ -52,7 +52,7 @@ Formatting renders in place and the markers come back on the line you're editing
 [Writing →](/guide/writing)
 
 </div>
-<img class="nmw-shot" src="/screenshots/ipad-source.webp" alt="iPad: a note in Markdown source mode with coloured syntax" />
+<img class="nmw-shot nmw-shot--mac" src="/screenshots/mac-source.webp" alt="Mac: a note in Markdown source mode with coloured syntax" />
 </div>
 
 <div class="nmw-row">
@@ -65,7 +65,7 @@ Tables are an editable grid: add rows and columns from the markers on the edges,
 [Tables and formulas →](/guide/tables)
 
 </div>
-<img class="nmw-shot" src="/screenshots/ipad-budget.webp" alt="iPad: a kitchen budget table with computed totals" />
+<img class="nmw-shot nmw-shot--mac" src="/screenshots/mac-budget.webp" alt="Mac: a kitchen budget table with computed totals" />
 </div>
 
 <div class="nmw-row nmw-row--flip">
@@ -78,7 +78,7 @@ Seven themes, from the teal default to a serif Paper. Each one colors the whole 
 [Themes and appearance →](/guide/themes)
 
 </div>
-<img class="nmw-shot" src="/screenshots/ipad-paper.webp" alt="iPad: the Paper theme on the sidebar, the note list and a serif recipe note" />
+<img class="nmw-shot nmw-shot--mac" src="/screenshots/mac-paper.webp" alt="Mac: the Paper theme on the sidebar, the note list and a serif recipe note" />
 </div>
 
 <div class="nmw-phones">

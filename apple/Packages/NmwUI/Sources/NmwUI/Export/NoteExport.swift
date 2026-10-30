@@ -287,14 +287,20 @@ final class NoteRenderer: NSObject, WKNavigationDelegate {
     }
 
     /// The print panel, as a sheet on `window`.
-    func print(in parent: NSWindow?) {
+    /// Returns when the panel is done, so the caller keeps this renderer
+    /// (and the web view being printed) alive until then.
+    func print(in parent: NSWindow?) async {
         let op = operation(printInfo())
         op.showsPrintPanel = true
         op.showsProgressPanel = true
-        if let parent {
-            op.runModal(for: parent, delegate: nil, didRun: nil, contextInfo: nil)
-        } else {
+        guard let parent else {
             op.run()
+            return
+        }
+        let done = PrintDone()
+        _ = await withCheckedContinuation { continuation in
+            done.continuation = continuation
+            op.runModal(for: parent, delegate: done, didRun: #selector(PrintDone.printOperationDidRun(_:success:contextInfo:)), contextInfo: nil)
         }
     }
 
@@ -396,7 +402,7 @@ final class NoteExporter {
     #else
     func print(in window: NSWindow?) async {
         await prepare()
-        renderer.print(in: window)
+        await renderer.print(in: window)
     }
 
     /// Asks where to save, then writes the PDF there.

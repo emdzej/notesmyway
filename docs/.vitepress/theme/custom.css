@@ -186,6 +186,9 @@ div.nmw-shot img { max-width: 100%; max-height: 720px; }
 }
 .nmw-shot-row img { width: min(32%, 240px); }
 
+/* Mac captures carry the window's own corners and shadow. */
+.nmw-row .nmw-shot--mac { width: 100%; max-height: none; border-radius: 0; box-shadow: none; }
+
 /* Get the app: a quiet badge, not a fake App Store button. */
 .nmw-store {
   margin: 24px 0 32px;
