@@ -61,20 +61,23 @@ public struct SettingsView: View {
 
 /// Settings for the app on this device (not synced with notebooks).
 struct GeneralSettingsForm: View {
-    @AppStorage(AppAppearance.key) private var appearance = AppAppearance.system
     @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
     @AppStorage(EditorMode.key) private var editorMode = EditorMode.formatted
     @AppStorage(ChecklistSettings.movesCheckedKey) private var movesCheckedToBottom = false
 
     var body: some View {
+        ScrollViewReader { proxy in
         Form {
-            Section("Look") {
-                Picker("Appearance", selection: $appearance) {
-                    ForEach(AppAppearance.allCases) { Text($0.title).tag($0) }
-                }
+            Section {
+                ThemePicker()
+                AppearancePicker()
                 Picker("Sidebar", selection: $sidebarStyle) {
                     ForEach(SidebarStyle.allCases) { Text($0.title).tag($0) }
                 }
+            } header: {
+                Text("Look")
+            } footer: {
+                Text("The theme colors the notes, the note list and the app’s accent.").foregroundStyle(.secondary)
             }
             Section {
                 Picker("Notes open as", selection: $editorMode) {
@@ -86,12 +89,23 @@ struct GeneralSettingsForm: View {
             } footer: {
                 Text("Switch the open note with the </> toolbar button (⇧⌘M).").foregroundStyle(.secondary)
             }
-            EditorThemeSection()
+            EditorTextSection()
+            ThemeLibrarySection().id("themes")
             #if os(macOS)
             MarkdownDefaultAppSection()
             #endif
         }
         .formStyle(.grouped)
+        #if DEBUG
+        // Screenshots: `-NmwSettingsSection themes`.
+        .task {
+            guard let section = UserDefaults.standard.string(forKey: "NmwSettingsSection") else { return }
+            try? await Task.sleep(for: .milliseconds(300))
+            proxy.scrollTo(section, anchor: .top)
+        }
+        #endif
+        }
+        .themeInstallAlerts(inSettings: true)
     }
 }
 

@@ -80,11 +80,13 @@ struct NotebookView: View {
 
     #if DEBUG
     /// Screenshots: `-NmwScope all|pinned|folder:<path>|tag:<tag>` and
-    /// `-NmwOpenNote <path in the notebook>`, applied once indexing is done.
+    /// `-NmwOpenNote <path in the notebook>`, applied once indexing is done;
+    /// `-NmwGeneralSettings YES` opens Settings › General.
     /// (Settings such as `-nmw.theme paper` or `-nmw.showsInspector YES`
     /// work as launch arguments already.)
     private func applyLaunchOptions() async {
         let defaults = UserDefaults.standard
+        if defaults.bool(forKey: "NmwGeneralSettings") { session.isShowingSettings = true }
         guard defaults.string(forKey: "NmwScope") != nil || defaults.string(forKey: "NmwOpenNote") != nil else { return }
         for _ in 0..<50 where session.isIndexing || session.notes.isEmpty {
             try? await Task.sleep(for: .milliseconds(100))
@@ -417,11 +419,16 @@ struct NotebookMenu: View {
 struct MobileSettings: View {
     let session: NotebookSession
     @Environment(\.dismiss) private var dismiss
+    #if DEBUG
+    @State private var path: [String] = UserDefaults.standard.bool(forKey: "NmwGeneralSettings") ? ["general"] : []
+    #else
+    @State private var path: [String] = []
+    #endif
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
-                NavigationLink { GeneralSettingsForm().navigationTitle("General") } label: {
+                NavigationLink(value: "general") {
                     Label("General", systemImage: "gearshape")
                 }
                 NavigationLink { NotebookSettingsForm(session: session).navigationTitle(session.name) } label: {
@@ -429,6 +436,7 @@ struct MobileSettings: View {
                 }
             }
             .navigationTitle("Settings")
+            .navigationDestination(for: String.self) { _ in GeneralSettingsForm().navigationTitle("General") }
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         }
     }
@@ -436,6 +444,29 @@ struct MobileSettings: View {
 #endif
 
 extension View {
+    /// A list on the theme's page color (the note list), when the theme sets one.
+    @ViewBuilder func themePage() -> some View {
+        if let page = EditorAppearance.shared.pageColor {
+            self
+                .scrollContentBackground(.hidden)
+                .background { page.ignoresSafeArea() }
+        } else {
+            self
+        }
+    }
+
+    #if os(iOS)
+    /// iOS list cells paint their own background: the page color instead,
+    /// and the accent for the selected row (iPad).
+    @ViewBuilder func themeRow(selected: Bool) -> some View {
+        if let page = EditorAppearance.shared.pageColor {
+            listRowBackground(selected ? Palette.accentColor.opacity(0.22) : page)
+        } else {
+            self
+        }
+    }
+    #endif
+
     /// "My Way": the icon's gradient behind the sidebar, with light text on it.
     @ViewBuilder func sidebarStyle(_ style: SidebarStyle) -> some View {
         switch style {
@@ -447,6 +478,8 @@ extension View {
                 .background {
                     ZStack {
                         Color(uiColor: .systemGroupedBackground)
+                        // A wash of the theme's page color.
+                        EditorAppearance.shared.pageColor?.opacity(0.6)
                         WelcomeBackground()
                     }
                     .ignoresSafeArea()

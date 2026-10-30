@@ -34,6 +34,7 @@ struct NoteListView: View {
                     #endif
                     .contextMenu { menu(for: note) }
                     #if os(iOS)
+                    .themeRow(selected: session.selection == note.path)
                     .swipeActions(edge: .trailing) {
                         // The app-wide accent tint would otherwise override the destructive red.
                         Button("Trash", systemImage: "trash", role: .destructive) { trash(note.path) }
@@ -49,6 +50,7 @@ struct NoteListView: View {
             }
         }
         .focused($isFocused)
+        .themePage()
         #if os(macOS)
         .onDeleteCommand { if let path = session.selection { trash(path) } }
         #endif

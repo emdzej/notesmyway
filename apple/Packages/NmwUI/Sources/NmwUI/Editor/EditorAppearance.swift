@@ -60,6 +60,8 @@ public final class EditorAppearance {
 
     /// All themes (built-in and user), refreshed by `reloadThemes()`.
     public private(set) var themes: [EditorTheme] = EditorTheme.builtIn
+    /// Ids of the themes read from the Themes folder (installed or duplicated).
+    private(set) var userThemeIDs: Set<String> = []
     /// Bumped when user theme files are re-read, so editors restyle.
     private(set) var themesRevision = 0
 
@@ -73,11 +75,13 @@ public final class EditorAppearance {
         lineSpacing = spacing > 0 ? spacing : 1
         sourceThemeID = defaults.string(forKey: Key.sourceTheme) ?? ""
         themes = ThemeStore.all()
+        userThemeIDs = Set(ThemeStore.userThemes().map(\.id))
     }
 
     /// Re-reads the Themes folder.
     public func reloadThemes() {
         let fresh = ThemeStore.all()
+        userThemeIDs = Set(ThemeStore.userThemes().map(\.id))
         if fresh != themes {
             themes = fresh
             themesRevision += 1
@@ -88,6 +92,12 @@ public final class EditorAppearance {
     var sourceTheme: EditorTheme {
         sourceThemeID.isEmpty ? theme : (themes.first { $0.id == sourceThemeID } ?? theme)
     }
+
+    /// The app's accent (tint, selection, checkboxes): the theme's, else the app's teal.
+    var accent: PlatformColor { theme.accentColor ?? Palette.accent }
+
+    /// The theme's page color for the note list and sidebar; nil leaves the system's.
+    var pageColor: Color? { theme.pageColor.map { Color($0) } }
 
     /// The theme's page color for a mode, for the whole editor pane (behind
     /// the bars and toolbar too); nil leaves the system background.

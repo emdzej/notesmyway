@@ -4,8 +4,8 @@
 //
 //  The app's accent (the icon's teal, lightened) and the app-wide look
 //  settings: appearance (system / light / dark) and sidebar style. The
-//  accent matches `AccentColor` in the app's asset catalog; it's defined
-//  here too so the editor's links use it.
+//  accent matches `AccentColor` in the app's asset catalog; a theme's
+//  accent or link color replaces it app-wide (`accentColor`).
 //
 
 #if os(macOS)
@@ -20,7 +20,8 @@ enum Palette {
     /// `#1A8FA8` in light mode, `#5CCFDB` in dark mode.
     static let accent: PlatformColor = dynamic(light: (0x1A, 0x8F, 0xA8), dark: (0x5C, 0xCF, 0xDB), name: "nmwAccent")
 
-    static var accentColor: Color { Color(accent) }
+    /// The accent in use: the current theme's (its accent or link color), else `accent`.
+    @MainActor static var accentColor: Color { Color(EditorAppearance.shared.accent) }
 
     /// The "My Way" sidebar: the icon's gradient, teal at the top to deep blue.
     static let sidebarTop = Color(red: 0x14 / 255, green: 0x80 / 255, blue: 0x93 / 255)
@@ -78,8 +79,13 @@ public enum SidebarStyle: String, CaseIterable, Identifiable, Sendable {
 }
 
 /// Applies the appearance setting and the accent to a window's root view.
+/// The theme sets the accent; a light- or dark-only theme also fixes the
+/// scheme, over the Appearance setting.
 struct AppLook: ViewModifier {
     @AppStorage(AppAppearance.key) private var appearance = AppAppearance.system
+    private var theme = EditorAppearance.shared
+
+    private var scheme: ColorScheme? { theme.theme.requiredScheme ?? appearance.colorScheme }
 
     func body(content: Content) -> some View {
         content
@@ -87,15 +93,16 @@ struct AppLook: ViewModifier {
             #if os(macOS)
             // NSApp.appearance, not preferredColorScheme: going back to "System"
             // from a forced scheme doesn't take with the latter on macOS.
-            .onChange(of: appearance, initial: true) { _, value in
+            .onChange(of: scheme, initial: true) { _, value in
                 NSApp.appearance = switch value {
-                case .system: nil
+                case nil: nil
                 case .light: NSAppearance(named: .aqua)
                 case .dark: NSAppearance(named: .darkAqua)
+                @unknown default: nil
                 }
             }
             #else
-            .preferredColorScheme(appearance.colorScheme)
+            .preferredColorScheme(scheme)
             #endif
     }
 }

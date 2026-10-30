@@ -45,8 +45,12 @@ public struct LibraryView: View {
             if case .success(let url) = result { library.open(file: url) }
         }
         .focusedSceneValue(\.libraryActions, LibraryActions(addNotebook: { pickingFolder = true }, openFile: { pickingFile = true }))
-        // `notesmyway://` links (widgets, Shortcuts), else a Markdown file.
-        .onOpenURL { if !library.handle($0) { library.open(file: $0) } }
+        // `notesmyway://` links (widgets, Shortcuts), a theme file, else a Markdown file.
+        .onOpenURL { url in
+            if ThemeInstaller.isTheme(url) { ThemeInstaller.shared.open(url) }
+            else if !library.handle(url) { library.open(file: url) }
+        }
+        .themeInstallAlerts()
         .onContinueUserActivity(CSSearchableItemActionType) { library.handle(spotlightActivity: $0) }
         .onChange(of: scenePhase, initial: true) { _, phase in if phase == .active { library.activateIntegration() } }
         #if os(macOS)

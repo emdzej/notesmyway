@@ -95,4 +95,48 @@ struct ThemeTests {
         // Settings persist.
         #expect(EditorAppearance(defaults: defaults).themeID == "paper")
     }
+
+    // MARK: Installing
+
+    @Test func lenientDecodingFillsIDAndPalettes() throws {
+        let theme = try ThemeStore.validate(Data(##"{"name":"Ocean Night!","modes":["dark"],"dark":{"background":"#001122"}}"##.utf8))
+        #expect(theme.id == "ocean-night")
+        #expect(theme.light == EditorTheme.Colors())
+        #expect(theme.requiredScheme == .dark)
+        #expect(!theme.supportsLight && theme.supportsDark)
+    }
+
+    @Test func modesDefaultToBoth() {
+        #expect(EditorTheme.paper.requiredScheme == nil)
+        #expect(EditorTheme.builtIn.allSatisfy { $0.supportsLight && $0.supportsDark })
+    }
+
+    @Test func validationExplainsWhatIsWrong() {
+        func reason(_ json: String) -> String? {
+            do { _ = try ThemeStore.validate(Data(json.utf8)); return nil } catch { return error.localizedDescription }
+        }
+        #expect(reason("not json")?.contains("valid JSON") == true)
+        #expect(reason(##"{"id":"x"}"##)?.contains("name") == true)
+        #expect(reason(##"{"name":"X","light":{"link":"blue"}}"##)?.contains("light.link") == true)
+        #expect(reason(##"{"name":"X","dark":{"source":{"code":"#12"}}}"##)?.contains("dark.source.code") == true)
+        #expect(reason(##"{"name":"X","modes":["sepia"]}"##)?.contains("modes") == true)
+        #expect(reason(##"{"name":"X","modes":[]}"##)?.contains("modes") == true)
+        #expect(reason(##"{"name":"X","light":{"accent":"#336699"}}"##) == nil)
+    }
+
+    @Test func conflictsAreFoundAndKeptApart() {
+        var copy = EditorTheme.paper
+        #expect(ThemeStore.existing(copy)?.id == "paper")
+        copy = ThemeStore.keepingBoth(copy)
+        #expect(copy.id == "paper-2")
+        #expect(copy.name == "Paper 2")
+        #expect(ThemeStore.existing(copy) == nil)
+    }
+
+    @Test func accentFallsBackToLink() {
+        var theme = EditorTheme(id: "t", name: "T", light: .init(link: "#112233"), dark: .init())
+        #expect(theme.accentColor != nil)
+        theme.light.link = nil
+        #expect(theme.accentColor == nil)
+    }
 }

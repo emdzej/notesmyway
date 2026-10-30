@@ -38,6 +38,17 @@ targets:
             CFBundleTypeRole: Editor
             LSHandlerRank: Default
             LSItemContentTypes: [net.daringfireball.markdown]
+          # .nmwtheme files install a theme (Settings › Themes).
+          - CFBundleTypeName: Notes my Way Theme
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Owner
+            LSItemContentTypes: [pl.emdzej.notesmyway.theme]
+        UTExportedTypeDeclarations:
+          - UTTypeIdentifier: pl.emdzej.notesmyway.theme
+            UTTypeDescription: Notes my Way Theme
+            UTTypeConformsTo: [public.json]
+            UTTypeTagSpecification:
+              public.filename-extension: [nmwtheme]
         UTImportedTypeDeclarations:
           - UTTypeIdentifier: net.daringfireball.markdown
             UTTypeDescription: Markdown Document

@@ -15,6 +15,7 @@ import UIKit
 #endif
 import Foundation
 import MarkdownEngine
+import SwiftUI
 
 /// A theme as stored in JSON. Every color is optional ("#RRGGBB" or
 /// "#RRGGBBAA"); a missing one keeps the engine's built-in look.
@@ -29,8 +30,44 @@ public struct EditorTheme: Codable, Equatable, Identifiable, Sendable {
     public var sourceFont: String?
     /// HighlighterSwift theme names for code blocks.
     public var codeTheme: CodeTheme?
+    /// The modes the theme is made for: "light", "dark"; nil is both. With
+    /// one only, the app switches to it while the theme is on.
+    public var modes: [String]?
     public var light: Colors
     public var dark: Colors
+
+    public init(id: String, name: String, font: String? = nil, headingFont: String? = nil, sourceFont: String? = nil,
+                codeTheme: CodeTheme? = nil, modes: [String]? = nil, light: Colors, dark: Colors) {
+        self.id = id; self.name = name; self.font = font; self.headingFont = headingFont; self.sourceFont = sourceFont
+        self.codeTheme = codeTheme; self.modes = modes; self.light = light; self.dark = dark
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, name, font, headingFont, sourceFont, codeTheme, modes, light, dark
+    }
+
+    /// Lenient, for hand-written files: `id` defaults to the name made
+    /// file-safe, and a missing palette is empty (the built-in look).
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        name = try c.decode(String.self, forKey: .name)
+        let rawID = try c.decodeIfPresent(String.self, forKey: .id) ?? ""
+        id = rawID.trimmingCharacters(in: .whitespaces).isEmpty ? Self.slug(name) : rawID
+        font = try c.decodeIfPresent(String.self, forKey: .font)
+        headingFont = try c.decodeIfPresent(String.self, forKey: .headingFont)
+        sourceFont = try c.decodeIfPresent(String.self, forKey: .sourceFont)
+        codeTheme = try c.decodeIfPresent(CodeTheme.self, forKey: .codeTheme)
+        modes = try c.decodeIfPresent([String].self, forKey: .modes)
+        light = try c.decodeIfPresent(Colors.self, forKey: .light) ?? Colors()
+        dark = try c.decodeIfPresent(Colors.self, forKey: .dark) ?? Colors()
+    }
+
+    /// "My Theme!" → "my-theme".
+    static func slug(_ name: String) -> String {
+        let parts = name.lowercased().split { !($0.isLetter || $0.isNumber) }
+        let slug = parts.joined(separator: "-")
+        return slug.isEmpty ? "theme" : slug
+    }
 
     public struct CodeTheme: Codable, Equatable, Sendable {
         public var light: String
@@ -44,6 +81,8 @@ public struct EditorTheme: Codable, Equatable, Identifiable, Sendable {
         public var heading: String?
         public var headingMarker: String?
         public var link: String?
+        /// The app's accent (selection, buttons, checkboxes); nil uses `link`.
+        public var accent: String?
         public var inlineCode: String?
         public var codeBackground: String?
         public var quoteBar: String?
@@ -60,12 +99,12 @@ public struct EditorTheme: Codable, Equatable, Identifiable, Sendable {
         public var source: SourceColors?
 
         public init(background: String? = nil, text: String? = nil, mutedText: String? = nil, heading: String? = nil,
-                    headingMarker: String? = nil, link: String? = nil, inlineCode: String? = nil, codeBackground: String? = nil,
+                    headingMarker: String? = nil, link: String? = nil, accent: String? = nil, inlineCode: String? = nil, codeBackground: String? = nil,
                     quoteBar: String? = nil, quoteText: String? = nil, rule: String? = nil, tableBorder: String? = nil,
                     tableHeader: String? = nil, selection: String? = nil, caret: String? = nil, chip: String? = nil,
                     tag: String? = nil, cardBackground: String? = nil, cardBorder: String? = nil, source: SourceColors? = nil) {
             self.background = background; self.text = text; self.mutedText = mutedText; self.heading = heading
-            self.headingMarker = headingMarker; self.link = link; self.inlineCode = inlineCode; self.codeBackground = codeBackground
+            self.headingMarker = headingMarker; self.link = link; self.accent = accent; self.inlineCode = inlineCode; self.codeBackground = codeBackground
             self.quoteBar = quoteBar; self.quoteText = quoteText; self.rule = rule; self.tableBorder = tableBorder
             self.tableHeader = tableHeader; self.selection = selection; self.caret = caret; self.chip = chip
             self.tag = tag; self.cardBackground = cardBackground; self.cardBorder = cardBorder; self.source = source
@@ -166,6 +205,26 @@ extension EditorTheme {
         if let c = sourcePair(\.code) { source.codeColor = c }
         if let c = sourcePair(\.key) { source.keyColor = c }
         if let c = sourcePair(\.attribute) { source.attributeColor = c }
+    }
+
+    /// The app's accent: `accent`, else `link`; nil when the theme sets neither.
+    var accentColor: PlatformColor? {
+        Self.color(light.accent ?? light.link, dark.accent ?? dark.link)
+    }
+
+    /// The page (editor) background; nil keeps the system's.
+    var pageColor: PlatformColor? { pair(\.background) }
+
+    var supportsLight: Bool { modes.map { $0.contains { $0.lowercased() == "light" } } ?? true }
+    var supportsDark: Bool { modes.map { $0.contains { $0.lowercased() == "dark" } } ?? true }
+
+    /// The scheme a light- or dark-only theme needs; nil when it has both.
+    var requiredScheme: ColorScheme? {
+        switch (supportsLight, supportsDark) {
+        case (true, false): .light
+        case (false, true): .dark
+        default: nil
+        }
     }
 
     /// The code-block background as a light/dark pair, if the theme sets it.
@@ -308,7 +367,7 @@ extension EditorTheme {
 
 // MARK: - Store
 
-/// Built-in themes plus `*.json` themes from the Themes folder.
+/// Built-in themes plus `*.json` / `*.nmwtheme` themes from the Themes folder.
 @MainActor
 enum ThemeStore {
 
@@ -329,12 +388,143 @@ enum ThemeStore {
     static func userThemes() -> [EditorTheme] {
         guard let files = try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil) else { return [] }
         return files
-            .filter { $0.pathExtension.lowercased() == "json" }
+            .filter { fileExtensions.contains($0.pathExtension.lowercased()) }
             .sorted { $0.lastPathComponent < $1.lastPathComponent }
             .compactMap { url in
                 guard let data = try? Data(contentsOf: url) else { return nil }
                 return try? JSONDecoder().decode(EditorTheme.self, from: data)
             }
+    }
+
+    static let fileExtension = "nmwtheme"
+    static let fileExtensions: Set<String> = ["json", fileExtension]
+
+    /// The file in the Themes folder a user theme was read from.
+    static func file(for id: String) -> URL? {
+        guard let files = try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil) else { return nil }
+        return files.first { url in
+            guard fileExtensions.contains(url.pathExtension.lowercased()), let data = try? Data(contentsOf: url) else { return false }
+            return (try? JSONDecoder().decode(EditorTheme.self, from: data))?.id == id
+        }
+    }
+
+    static func isUserTheme(_ id: String) -> Bool { userThemes().contains { $0.id == id } }
+
+    // MARK: Installing
+
+    enum InstallError: LocalizedError, Equatable {
+        case unreadable
+        case invalid(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .unreadable: "The file couldn’t be read."
+            case .invalid(let reason): reason
+            }
+        }
+    }
+
+    /// Reads and checks a theme file: valid JSON with a name, and colors
+    /// that are all "#RGB", "#RRGGBB" or "#RRGGBBAA".
+    static func validate(_ data: Data) throws(InstallError) -> EditorTheme {
+        let theme: EditorTheme
+        do {
+            theme = try JSONDecoder().decode(EditorTheme.self, from: data)
+        } catch let DecodingError.keyNotFound(key, _) {
+            throw .invalid("It has no “\(key.stringValue)”.")
+        } catch let DecodingError.typeMismatch(_, context), let DecodingError.valueNotFound(_, context) {
+            let path = context.codingPath.map(\.stringValue).joined(separator: ".")
+            throw .invalid("“\(path)” has the wrong kind of value.")
+        } catch DecodingError.dataCorrupted {
+            throw .invalid("It isn’t a theme: the file isn’t valid JSON.")
+        } catch {
+            throw .invalid("It isn’t a theme.")
+        }
+        guard !theme.name.trimmingCharacters(in: .whitespaces).isEmpty else { throw .invalid("Its name is empty.") }
+        if let modes = theme.modes {
+            let known = modes.map { $0.lowercased() }
+            guard !known.isEmpty, known.allSatisfy({ ["light", "dark"].contains($0) }) else {
+                throw .invalid("“modes” must list \"light\", \"dark\" or both.")
+            }
+        }
+        let bad = badColors(in: theme)
+        if !bad.isEmpty {
+            throw .invalid("These colors aren’t hex colors like #1A8FA8: \(bad.prefix(4).joined(separator: ", ")).")
+        }
+        return theme
+    }
+
+    /// Keys like "light.link" whose value doesn't parse.
+    static func badColors(in theme: EditorTheme) -> [String] {
+        var bad: [String] = []
+        for (mode, colors) in [("light", theme.light), ("dark", theme.dark)] {
+            guard let data = try? JSONEncoder().encode(colors),
+                  let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { continue }
+            for (key, value) in dict.sorted(by: { $0.key < $1.key }) {
+                if let hex = value as? String, EditorTheme.parse(hex) == nil { bad.append("\(mode).\(key)") }
+                if let source = value as? [String: Any] {
+                    for (k, v) in source.sorted(by: { $0.key < $1.key }) {
+                        if let hex = v as? String, EditorTheme.parse(hex) == nil { bad.append("\(mode).source.\(k)") }
+                    }
+                }
+            }
+        }
+        return bad
+    }
+
+    /// A theme already installed or built in with the same id.
+    static func existing(_ theme: EditorTheme) -> EditorTheme? {
+        all().first { $0.id == theme.id }
+    }
+
+    /// Writes `theme` to the Themes folder, replacing a user theme with the
+    /// same id (a built-in with that id is then hidden by it).
+    @discardableResult
+    static func install(_ theme: EditorTheme) throws -> URL {
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        if let old = file(for: theme.id) { try FileManager.default.removeItem(at: old) }
+        let url = folder.appending(path: "\(fileName(theme.id)).json")
+        try encoded(theme).write(to: url, options: .atomic)
+        return url
+    }
+
+    /// `theme` with an id and name that don't clash: "Name 2", "name-2".
+    static func keepingBoth(_ theme: EditorTheme) -> EditorTheme {
+        let themes = all()
+        var copy = theme
+        var n = 2
+        while themes.contains(where: { $0.id == copy.id || $0.name == copy.name }) {
+            copy.id = "\(theme.id)-\(n)"
+            copy.name = "\(theme.name) \(n)"
+            n += 1
+        }
+        return copy
+    }
+
+    /// Removes a user theme's file.
+    static func delete(id: String) throws {
+        if let url = file(for: id) { try FileManager.default.removeItem(at: url) }
+    }
+
+    /// A `.nmwtheme` copy of `theme` in a temporary folder, to share.
+    static func exportFile(_ theme: EditorTheme) throws -> URL {
+        let dir = FileManager.default.temporaryDirectory.appending(path: "nmw-themes", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let url = dir.appending(path: "\(fileName(theme.name)).\(fileExtension)")
+        try encoded(theme).write(to: url, options: .atomic)
+        return url
+    }
+
+    private static func fileName(_ s: String) -> String {
+        let cleaned = s.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-")
+            .trimmingCharacters(in: .whitespacesAndNewlines.union(CharacterSet(charactersIn: ".")))
+        return cleaned.isEmpty ? "theme" : cleaned
+    }
+
+    private static func encoded(_ theme: EditorTheme) throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        return try encoder.encode(theme)
     }
 
     static func all() -> [EditorTheme] {
@@ -359,9 +549,7 @@ enum ThemeStore {
             n += 1
         } while FileManager.default.fileExists(atPath: url.path)
         copy.name = "\(theme.name) (Custom)"
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-        try encoder.encode(copy).write(to: url, options: .atomic)
+        try encoded(copy).write(to: url, options: .atomic)
         return url
     }
 

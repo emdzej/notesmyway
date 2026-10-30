@@ -224,9 +224,23 @@ A link marked `{.preview}` (or any size attribute) renders as a preview card in 
 - **Engine** (done): the engine renders cards from data supplied by a `LinkPreviewProvider` service. Lookups are synchronous and return `LinkPreview` (`.ready`, `.loading`, `.unavailable`) or nil for a plain link; the provider changes its `fingerprint()` when a fetch completes, and the editor restyles. Fetching and caching live in the app (`NmwCore`), not in the engine.
 
 ### 4.5 Themes
-The editor (formatted view and viewer) and the markdown source view are themed. A theme sets colors for light and dark mode, the body / heading / source fonts, and the code-block highlighting theme (a HighlighterSwift theme name). Settings › General › Theme picks the theme, a font (theme's, System, Serif, Monospaced), the text size, line spacing, and optionally a different theme for the source view. These are device settings (`nmw.theme`, `nmw.editorFont`, `nmw.editorFontSize`, `nmw.editorLineSpacing`, `nmw.sourceTheme`), not synced with notebooks.
+The theme colors the whole app. The editor (formatted view and viewer) and the markdown source view use all of it. The rest of the app takes three things from it:
+- the note list and the note pane: the page `background`;
+- the iOS sidebar: a wash of that color (the "My Way" sidebar keeps its gradient);
+- the app's accent (tint, selection, checkboxes): `accent`, or `link` if there's no `accent`.
+
+Settings, menus and system sheets stay native.
+
+A theme sets colors for light and dark mode, the body / heading / source fonts, and the code-block highlighting theme (a HighlighterSwift theme name). `modes` (`["light","dark"]` by default) declares which modes it supports. A one-mode theme fixes the app's appearance while it's on, overriding Settings › Appearance, which then reads "Dark (set by theme)". Settings › General › Look picks the theme, and Settings › General › Text picks a font (theme's, System, Serif, Monospaced), the text size, line spacing, and optionally a different theme for the source view. These are device settings (`nmw.theme`, `nmw.editorFont`, `nmw.editorFontSize`, `nmw.editorLineSpacing`, `nmw.sourceTheme`), not synced with notebooks.
 
 Built in: Notes my Way (default), Paper, GitHub, Solarized, Nord, Dracula, Mono. Custom themes are JSON files in the Themes folder: `Application Support/nmw/Themes` on macOS ("Open Themes Folder", "Duplicate as Custom Theme…"), `Files › On My iPhone › Notes my Way › Themes` on iOS. A file whose `id` matches a built-in replaces it.
+
+Installing: `.nmwtheme` (UTType `pl.emdzej.notesmyway.theme`, conforming to `public.json`, exported by the app) opens in the app from Files, Mail, Messages or Finder. Settings › Themes › Install Theme… (`.nmwtheme` or `.json`; drop onto the section on macOS) does the same.
+- The file is validated: valid JSON, a `name`, colors that parse, and `modes` that are known. On failure the user sees the reason.
+- A clash with an existing id offers Replace or Keep Both ("Name 2", `id-2`).
+- Installed themes are written as `<id>.json` into the Themes folder.
+- Settings › Themes lists the installed themes with Use / Share (exports a `.nmwtheme`) / Duplicate / Delete. Deleting the current theme falls back to the default.
+- `id` defaults to the name made file-safe, and a missing palette is empty.
 
 ```json
 {
@@ -247,7 +261,7 @@ Built in: Notes my Way (default), Paper, GitHub, Solarized, Nord, Dracula, Mono.
 }
 ```
 
-Every color is optional (`#RGB`, `#RRGGBB` or `#RRGGBBAA`); a missing one keeps the default, and a key set in only one palette is used for both. Fonts are `system`, `serif`, `mono`, `rounded` or a PostScript name. Palette keys: `background`, `text`, `mutedText`, `heading`, `headingMarker`, `link`, `inlineCode`, `codeBackground`, `quoteBar`, `quoteText`, `rule`, `tableBorder`, `tableHeader`, `selection`, `caret`, `chip` (frontmatter chips), `tag`, `cardBackground`, `cardBorder`, and `source` with `background`, `text`, `marker`, `heading`, `emphasis`, `link`, `url`, `code`, `key`, `attribute`, `listMarker`.
+Every color is optional (`#RGB`, `#RRGGBB` or `#RRGGBBAA`); a missing one keeps the default, and a key set in only one palette is used for both. Fonts are `system`, `serif`, `mono`, `rounded` or a PostScript name. Palette keys: `background`, `text`, `mutedText`, `heading`, `headingMarker`, `link`, `accent`, `inlineCode`, `codeBackground`, `quoteBar`, `quoteText`, `rule`, `tableBorder`, `tableHeader`, `selection`, `caret`, `chip` (frontmatter chips), `tag`, `cardBackground`, `cardBorder`, and `source` with `background`, `text`, `marker`, `heading`, `emphasis`, `link`, `url`, `code`, `key`, `attribute`, `listMarker`.
 
 ### 4.6 Engine work (in `swift-markdown-engine`)
 1. **Multiplatform** (done): platform typealiases (`PlatformFont`, `PlatformColor`, `PlatformImage`, …) so Parser, Styling, Renderer, Configuration, Input, and Services compile for macOS and iOS. The TextView layer is split into `TextView/AppKit` (existing) and `TextView/UIKit` (new: a `UITextView` subclass, a `UIViewRepresentable` wrapper, and a coordinator).
@@ -405,6 +419,7 @@ Each milestone ends with something that works.
 
 ## 9. Open questions
 - Daily notes / templates: v1 or later?
+- Plugin ABI for WebAssembly extensions (§9 Later platforms › Plugins).
 - Apple Pencil drawings: as `.png` attachments with a `.drawing` sidecar, or out of scope?
 
 ## 9. Later platforms (roadmap)
@@ -416,4 +431,11 @@ Order, each step building on the previous one:
 3. **Hosted cloud.** The same server, multi-tenant: accounts (Sign in with Apple / passkeys), quotas, and end-to-end encryption (§7.3 "Later") on by default, so the operator stores ciphertext only.
 4. **Windows and Linux desktop.** The web client wrapped in Tauri, with direct file-system access: a local folder is a notebook exactly as on the Mac (same `.nmw/` index-free conventions; the index is rebuilt locally), sync through the server. Not native ports: the Swift engine depends on TextKit 2.
 5. **Android** — Tauri mobile or native, decided after 4.
+
+**Plugins (WebAssembly).** Markdown extensions as sandboxed `.wasm` modules, run on Apple platforms by WasmKit (`../WasmKit`, a Swift WebAssembly runtime), and later by the browser's own runtime in the web client. A plugin declares what it contributes in a manifest:
+- block or inline syntax: a matcher plus a renderer returning styled ranges or an HTML/image fragment;
+- formula functions;
+- import/export formats.
+
+The host passes text in and gets styled ranges or HTML back, with no file or network access unless the manifest asks and the user grants it. Plugins install the way themes do: opening a `.nmwplugin` file. Open questions: the ABI (WIT component model vs. a small JSON-over-memory ABI), and the per-keystroke cost of calling into Wasm from the styler (cache results per block).
 

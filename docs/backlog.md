@@ -27,4 +27,6 @@ What's done, and what comes next. Dates aren't promised.
 - **Web app in the cloud** — a hosted version of the same server for people who don't want to run one, with accounts and end-to-end encryption, so notes stay unreadable to whoever runs it.
 - **Windows and Linux** — desktop apps built on the web app's editor, opening local folders as notebooks just like the Mac app, and syncing through the server.
 - **Android** — after the desktop apps, on the same foundation.
+- **Plugins in WebAssembly** — Markdown extensions (new block and inline syntax, custom renderers, formula functions, import/export formats) as sandboxed `.wasm` modules run by WasmKit, a WebAssembly runtime written in Swift. Plugins could be shared like themes and installed by opening a file. Because they are WebAssembly, the same plugins could later run in the web app and on Windows and Linux.
+- **Theme gallery** — themes on this site with an Install button that opens the app (`notesmyway://theme?url=…`).
 
