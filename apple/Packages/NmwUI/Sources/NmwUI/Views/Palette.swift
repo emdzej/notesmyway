@@ -78,6 +78,15 @@ public enum SidebarStyle: String, CaseIterable, Identifiable, Sendable {
         case .myWay: "My Way"
         }
     }
+
+    /// Whether the sidebar is a gradient (light text and controls on it).
+    @MainActor var hasGradient: Bool {
+        switch self {
+        case .theme: EditorAppearance.shared.theme.sidebarColors != nil
+        case .system: false
+        case .myWay: true
+        }
+    }
 }
 
 /// The theme sets the accent; a light- or dark-only theme also fixes the

@@ -18,16 +18,52 @@ struct NotebookView: View {
     /// iPhone: which column shows (the sidebar unless a DEBUG launch option says otherwise).
     @State private var compactColumn: NavigationSplitViewColumn = Self.launchCompactColumn
     @State private var columnVisibility: NavigationSplitViewVisibility = Self.launchColumnVisibility
+    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.theme
+    @Environment(\.colorScheme) private var colorSchemeOutside
+
+    #if os(macOS)
+    /// On a gradient sidebar the system toggle (in the window's light toolbar)
+    /// draws dark on the gradient: the sidebar shows its own, light one instead.
+    private var ownsSidebarToggle: Bool { sidebarStyle.hasGradient }
+    private var sidebarHidden: Bool { columnVisibility == .doubleColumn || columnVisibility == .detailOnly }
+
+    private func toggleSidebar() {
+        withAnimation { columnVisibility = sidebarHidden ? .all : .doubleColumn }
+    }
+    #endif
 
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $compactColumn) {
             SidebarView(session: session, library: library, addNotebook: addNotebook)
                 .navigationSplitViewColumnWidth(min: 180, ideal: 220)
+                #if os(macOS)
+                .toolbar {
+                    if ownsSidebarToggle {
+                        ToolbarItem {
+                            Button(action: toggleSidebar) { Label("Hide Sidebar", systemImage: "sidebar.left") }
+                                .help("Hide Sidebar")
+                        }
+                    }
+                }
+                .toolbar(removing: ownsSidebarToggle ? .sidebarToggle : nil)
+                // Light icon and dark glass over the gradient (after .toolbar, so its items inherit it).
+                .environment(\.colorScheme, ownsSidebarToggle ? .dark : colorSchemeOutside)
+                #endif
         } content: {
             Group {
                 if session.scope == .trash { TrashListView(session: session) } else { NoteListView(session: session, library: library) }
             }
             .navigationSplitViewColumnWidth(min: 240, ideal: 300)
+            #if os(macOS)
+            .toolbar {
+                if ownsSidebarToggle, sidebarHidden {
+                    ToolbarItem(placement: .navigation) {
+                        Button(action: toggleSidebar) { Label("Show Sidebar", systemImage: "sidebar.left") }
+                            .help("Show Sidebar")
+                    }
+                }
+            }
+            #endif
         } detail: {
             detail
         }
