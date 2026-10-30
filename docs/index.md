@@ -16,7 +16,7 @@ hero:
       link: /get-the-app
     - theme: alt
       text: Download for Mac
-      link: https://github.com/emdzej/notesmyway/releases/latest
+      link: https://github.com/emdzej/notesmyway/releases/latest/download/Notes-my-Way.dmg
     - theme: alt
       text: Feature guide
       link: /guide/

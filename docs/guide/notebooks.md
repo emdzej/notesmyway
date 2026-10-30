@@ -61,7 +61,7 @@ If other notes in the current notebook link to the note, the app tells you how m
 
 ## Share, print and PDF
 
-**Share** sends a note as a Markdown file, as a PDF and as plain text. The app receiving it picks what it understands: Mail attaches the files, Messages takes the text, Files and AirDrop get the `.md` and the PDF.
+**Share** sends a note as a Markdown file and as plain text. The app receiving it picks what it understands: Mail attaches the file, Messages takes the text, Files and AirDrop get the `.md`. For a PDF, print the note: on the Mac the print dialog's **PDF** menu saves one (or use **File › Export as PDF…**), and on iPhone and iPad **Print** in the share sheet can save or share a PDF.
 
 - **iPhone and iPad:** the Share button at the top of a note. The share sheet also has **Print**. With a keyboard, ⌘P prints straight away.
 - **Mac:** the Share button in the note's toolbar, or **File › Share…**. **File › Print…** (⌘P) prints, and **File › Export as PDF…** saves a PDF where you choose.

@@ -377,10 +377,12 @@ final class NoteExporter {
         return url
     }
 
-    /// The note as Markdown file, PDF and plain text; on iOS also a print
+    /// The note as a Markdown file and plain text; on iOS also a print
     /// formatter, so the share sheet offers Print.
     func shareItems() async throws -> [Any] {
-        var items: [Any] = [try markdownFile(), try await pdfFile(), MarkdownPlainText.text(of: markdown)]
+        // No PDF here: rendering one before the sheet appears made Share lag.
+        // Export as PDF (Mac) and the print sheet's PDF option (iOS) cover it.
+        var items: [Any] = [try markdownFile(), MarkdownPlainText.text(of: markdown)]
         #if os(iOS)
         items.append(renderer.printFormatter)
         #endif
@@ -501,8 +503,10 @@ struct NoteExportCommands: Equatable {
 }
 
 #if os(macOS)
-/// A note for `ShareLink`: its Markdown file first, then a PDF (rendered
-/// only if the destination wants one) and plain text.
+/// A note for `ShareLink`: its Markdown file, and plain text for places that
+/// only take text. No PDF: the share menu may ask for every representation
+/// up front, and rendering one (a web view, on the main thread) made Share
+/// lag. File › Export as PDF covers that, as in Apple Notes.
 struct NoteShareItem: Transferable {
     let title: String
     let makeExporter: @MainActor @Sendable () -> NoteExporter
@@ -510,9 +514,6 @@ struct NoteShareItem: Transferable {
     static var transferRepresentation: some TransferRepresentation {
         FileRepresentation(exportedContentType: NoteExport.markdownType) { item in
             SentTransferredFile(try await item.makeExporter().markdownFile())
-        }
-        FileRepresentation(exportedContentType: .pdf) { item in
-            SentTransferredFile(try await item.makeExporter().pdfFile())
         }
         ProxyRepresentation { item in await MarkdownPlainText.text(of: item.makeExporter().markdown) }
     }

@@ -9,7 +9,7 @@ Notes my Way is being prepared for the App Store. This page will link to it as s
 
 ## Mac: download now
 
-The Mac app is ready to download from GitHub: [**Download for Mac**](https://github.com/emdzej/notesmyway/releases/latest) (`Notes-my-Way-0.1.0.dmg`). Open the DMG and drag Notes my Way into Applications. It's signed with a Developer ID and notarised by Apple, so it opens with a double-click.
+The Mac app is ready to download: [**Download for Mac**](https://github.com/emdzej/notesmyway/releases/latest/download/Notes-my-Way.dmg) (the latest version; earlier ones and the release notes are on the [releases page](https://github.com/emdzej/notesmyway/releases)). Open the DMG and drag Notes my Way into Applications. It's signed with a Developer ID and notarised by Apple, so it opens with a double-click.
 
 When the App Store version arrives, it reads the same notebooks: your notes are files in your folders, not in the app.
 

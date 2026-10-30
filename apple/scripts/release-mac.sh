@@ -4,7 +4,8 @@
 #
 #   NMW_TEAM=<team id> NMW_NOTARY_PROFILE=<notarytool keychain profile> apple/scripts/release-mac.sh
 #
-# Output: apple/build/release/Notes-my-Way-<version>.dmg
+# Output: apple/build/release/Notes-my-Way-<version>.dmg, and the same file as
+# Notes-my-Way.dmg; attach both to the release.
 # The notary profile is made once with `xcrun notarytool store-credentials`.
 set -euo pipefail
 
@@ -55,5 +56,9 @@ codesign --force --timestamp -s "$IDENTITY" "$DMG"
 xcrun notarytool submit "$DMG" --keychain-profile "$NMW_NOTARY_PROFILE" --wait
 xcrun stapler staple "$DMG"
 spctl --assess --type open --context context:primary-signature -vv "$DMG"
+# The same DMG under a name that never changes, for a link that always
+# downloads the latest release: …/releases/latest/download/Notes-my-Way.dmg
+cp "$DMG" "$OUT/Notes-my-Way.dmg"
 shasum -a 256 "$DMG"
 echo "$DMG"
+echo "$OUT/Notes-my-Way.dmg"

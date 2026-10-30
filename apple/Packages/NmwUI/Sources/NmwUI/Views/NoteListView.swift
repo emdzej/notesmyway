@@ -24,9 +24,11 @@ struct NoteListView: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
+        // Rows are one height: a folder line is reserved on every row when any shows one.
+        let showsFolders = session.notes.contains { subfolder(of: $0) != nil }
         List(selection: $session.selection) {
             ForEach(session.notes) { note in
-                NoteRow(note: note, root: session.notebook.root, subfolder: subfolder(of: note))
+                NoteRow(note: note, root: session.notebook.root, subfolder: subfolder(of: note), reservesFolderLine: showsFolders)
                     .tag(note.path)
                     #if os(macOS)
                     // macOS only: on iOS the gesture swallowed taps on the row's text.
@@ -220,30 +222,37 @@ struct NoteRow: View {
     let note: NoteSummary
     let root: URL
     var subfolder: String? = nil
+    /// Keep the folder line's space even without a folder, so rows line up.
+    var reservesFolderLine = false
 
+    /// Every row has the same lines (title, two of date and preview, maybe a
+    /// folder), so the list is even whatever a note contains.
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 4) {
                     if note.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(.orange) }
                     Text(note.title).font(.headline).lineLimit(1)
+                    Spacer(minLength: 4)
+                    if note.tasksTotal > 0 {
+                        // Checklist progress, e.g. "3/5".
+                        Label("\(note.tasksDone)/\(note.tasksTotal)", systemImage: note.tasksDone == note.tasksTotal ? "checkmark.circle.fill" : "circle.dashed")
+                            .labelStyle(.titleAndIcon)
+                            .font(.caption.monospacedDigit())
+                            .foregroundStyle(note.tasksDone == note.tasksTotal ? Palette.accentColor : .secondary)
+                            .fixedSize()
+                    }
                 }
                 let date = Text(note.modified, format: .dateTime.day().month(.abbreviated).year()).foregroundStyle(.primary)
                 let snippet = Text(note.snippet.isEmpty ? "No additional text" : note.snippet).foregroundStyle(.secondary)
                 Text("\(date)  \(snippet)")
                     .font(.subheadline)
-                    .lineLimit(2)
-                if note.tasksTotal > 0 {
-                    // Checklist progress, e.g. "3/5".
-                    Label("\(note.tasksDone)/\(note.tasksTotal)", systemImage: note.tasksDone == note.tasksTotal ? "checkmark.circle.fill" : "circle.dashed")
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(note.tasksDone == note.tasksTotal ? Palette.accentColor : .secondary)
-                }
-                if let subfolder {
-                    Label(subfolder, systemImage: "folder").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    .lineLimit(2, reservesSpace: true)
+                if subfolder != nil || reservesFolderLine {
+                    Label(subfolder ?? " ", systemImage: "folder").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                        .opacity(subfolder == nil ? 0 : 1)
                 }
             }
-            Spacer(minLength: 0)
             if let thumbnail { thumbnail.resizable().scaledToFill().frame(width: 44, height: 44).clipShape(RoundedRectangle(cornerRadius: 6)) }
         }
         .padding(.vertical, 4)

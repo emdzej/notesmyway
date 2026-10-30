@@ -63,8 +63,9 @@ CI clones it next to this repository.
 - **Version:** `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `apple/project.yml` (one setting for the app
   and both extensions). Tags are the bare version, without a "v": `0.1.0`.
 - **Mac DMG:** `NMW_TEAM=<team> NMW_NOTARY_PROFILE=<notarytool profile> apple/scripts/release-mac.sh` builds
-  with a Developer ID, makes the DMG, signs, notarises and staples it, and checks it with `spctl`. The DMG is
-  attached to the GitHub release by hand for now.
+  with a Developer ID, makes the DMG, signs, notarises and staples it, and checks it with `spctl`. Attach
+  both files it prints to the GitHub release (by hand for now): the site's Download button points at
+  `releases/latest/download/Notes-my-Way.dmg`, the unversioned copy.
 
 ## Pushing
 
