@@ -226,7 +226,7 @@ A link marked `{.preview}` (or any size attribute) renders as a preview card in 
 ### 4.5 Themes
 The theme colors the whole app. The editor (formatted view and viewer) and the markdown source view use all of it. The rest of the app takes three things from it:
 - the note list and the note pane: the page `background`;
-- the sidebar, when Settings › Sidebar is "From Theme" (the default): the theme's `sidebar` gradient (a list of hex colors from top to bottom, with light text on it; Notes my Way uses the icon's teal-to-navy), else a wash of the page color. The "System Default" and "My Way" styles ignore the theme;
+- the iOS sidebar: a wash of that color (the "My Way" sidebar keeps its gradient);
 - the app's accent (tint, selection, checkboxes): `accent`, or `link` if there's no `accent`.
 
 Settings, menus and system sheets stay native.

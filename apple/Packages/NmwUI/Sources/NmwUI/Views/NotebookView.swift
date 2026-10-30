@@ -18,52 +18,16 @@ struct NotebookView: View {
     /// iPhone: which column shows (the sidebar unless a DEBUG launch option says otherwise).
     @State private var compactColumn: NavigationSplitViewColumn = Self.launchCompactColumn
     @State private var columnVisibility: NavigationSplitViewVisibility = Self.launchColumnVisibility
-    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.theme
-    @Environment(\.colorScheme) private var colorSchemeOutside
-
-    #if os(macOS)
-    /// On a gradient sidebar the system toggle (in the window's light toolbar)
-    /// draws dark on the gradient: the sidebar shows its own, light one instead.
-    private var ownsSidebarToggle: Bool { sidebarStyle.hasGradient }
-    private var sidebarHidden: Bool { columnVisibility == .doubleColumn || columnVisibility == .detailOnly }
-
-    private func toggleSidebar() {
-        withAnimation { columnVisibility = sidebarHidden ? .all : .doubleColumn }
-    }
-    #endif
 
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $compactColumn) {
             SidebarView(session: session, library: library, addNotebook: addNotebook)
                 .navigationSplitViewColumnWidth(min: 180, ideal: 220)
-                #if os(macOS)
-                .toolbar {
-                    if ownsSidebarToggle {
-                        ToolbarItem {
-                            Button(action: toggleSidebar) { Label("Hide Sidebar", systemImage: "sidebar.left") }
-                                .help("Hide Sidebar")
-                        }
-                    }
-                }
-                .toolbar(removing: ownsSidebarToggle ? .sidebarToggle : nil)
-                // Light icon and dark glass over the gradient (after .toolbar, so its items inherit it).
-                .environment(\.colorScheme, ownsSidebarToggle ? .dark : colorSchemeOutside)
-                #endif
         } content: {
             Group {
                 if session.scope == .trash { TrashListView(session: session) } else { NoteListView(session: session, library: library) }
             }
             .navigationSplitViewColumnWidth(min: 240, ideal: 300)
-            #if os(macOS)
-            .toolbar {
-                if ownsSidebarToggle, sidebarHidden {
-                    ToolbarItem(placement: .navigation) {
-                        Button(action: toggleSidebar) { Label("Show Sidebar", systemImage: "sidebar.left") }
-                            .help("Show Sidebar")
-                    }
-                }
-            }
-            #endif
         } detail: {
             detail
         }
@@ -231,7 +195,7 @@ struct SidebarView: View {
     @State private var folderName = ""
     @State private var errorMessage: String?
     @State private var trashingFolder: NotebookPath?
-    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.theme
+    @AppStorage(SidebarStyle.key) private var sidebarStyle = SidebarStyle.system
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var sizeClass
     /// iPhone: going back clears the list's selection; the scope stays, and
@@ -503,63 +467,47 @@ extension View {
     }
     #endif
 
-    /// The sidebar's background for a style: "From Theme" uses the theme's
-    /// gradient if it has one, else the system look with its page color.
+    /// "My Way": the icon's gradient behind the sidebar, with light text on it.
     @ViewBuilder func sidebarStyle(_ style: SidebarStyle) -> some View {
         switch style {
-        case .theme:
-            if let colors = EditorAppearance.shared.theme.sidebarColors {
-                sidebarGradient(colors)
-            } else {
-                systemSidebar()
-            }
         case .system:
-            systemSidebar()
-        case .myWay:
-            sidebarGradient([Palette.sidebarTop, Palette.sidebarBottom])
-        }
-    }
-
-    @ViewBuilder private func systemSidebar() -> some View {
-        #if os(iOS)
-        // On iPhone and iPad the sidebar is a whole screen: the welcome watermark fills it.
-        self
-            .scrollContentBackground(.hidden)
-            .background {
-                ZStack {
-                    Color(uiColor: .systemGroupedBackground)
-                    // A wash of the theme's page color.
-                    EditorAppearance.shared.pageColor?.opacity(0.6)
-                    WelcomeBackground()
-                }
-                .ignoresSafeArea()
-            }
-        #else
-        // The theme's page color through the sidebar's glass.
-        if let page = EditorAppearance.shared.pageColor {
+            #if os(iOS)
+            // On iPhone and iPad the sidebar is a whole screen: the welcome watermark fills it.
             self
                 .scrollContentBackground(.hidden)
-                .background { page.opacity(0.55).ignoresSafeArea() }
-        } else {
-            self
-        }
-        #endif
-    }
-
-    /// A gradient behind the sidebar, with light text on it.
-    private func sidebarGradient(_ colors: [Color]) -> some View {
-        self
-            .scrollContentBackground(.hidden)
-            .background {
-                ZStack {
-                    LinearGradient(colors: colors.count == 1 ? colors + colors : colors, startPoint: .top, endPoint: .bottom)
-                    #if os(iOS)
-                    WelcomeBackground(tint: .white, glow: false)
-                    #endif
+                .background {
+                    ZStack {
+                        Color(uiColor: .systemGroupedBackground)
+                        // A wash of the theme's page color.
+                        EditorAppearance.shared.pageColor?.opacity(0.6)
+                        WelcomeBackground()
+                    }
+                    .ignoresSafeArea()
                 }
-                .ignoresSafeArea()
+            #else
+            // The theme's page color through the sidebar's glass.
+            if let page = EditorAppearance.shared.pageColor {
+                self
+                    .scrollContentBackground(.hidden)
+                    .background { page.opacity(0.55).ignoresSafeArea() }
+            } else {
+                self
             }
-            .environment(\.colorScheme, .dark)
-            .tint(.white)
+            #endif
+        case .myWay:
+            self
+                .scrollContentBackground(.hidden)
+                .background {
+                    ZStack {
+                        LinearGradient(colors: [Palette.sidebarTop, Palette.sidebarBottom], startPoint: .top, endPoint: .bottom)
+                        #if os(iOS)
+                        WelcomeBackground(tint: .white, glow: false)
+                        #endif
+                    }
+                    .ignoresSafeArea()
+                }
+                .environment(\.colorScheme, .dark)
+                .tint(.white)
+        }
     }
 }
