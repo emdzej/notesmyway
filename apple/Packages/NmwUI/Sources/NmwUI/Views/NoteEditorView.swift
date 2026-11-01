@@ -152,6 +152,17 @@ struct NoteEditorView: View {
                         showsInspector.toggle()
                     }
                     .keyboardShortcut("i", modifiers: [.command, .option])
+                    Divider()
+                    // Text size, as in Safari's page menu: smaller, the size, larger.
+                    let appearance = EditorAppearance.shared
+                    ControlGroup {
+                        Button("Smaller Text", systemImage: "textformat.size.smaller") { appearance.zoomOut() }
+                            .disabled(!appearance.canZoomOut)
+                        Button("\(Int(appearance.fontSize)) pt") { appearance.resetZoom() }
+                        Button("Larger Text", systemImage: "textformat.size.larger") { appearance.zoomIn() }
+                            .disabled(!appearance.canZoomIn)
+                    }
+                    .menuActionDismissBehavior(.disabled)
                 } label: {
                     Label("More", systemImage: "ellipsis")
                 }

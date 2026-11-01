@@ -39,7 +39,7 @@ Notes my Way comes with built-in themes for the formatted editor, the Markdown s
 In **Settings › Appearance › Text**:
 
 - **Font**: the theme's font, or System, Serif or Mono.
-- **Text size** and **Line spacing**.
+- **Text size** and **Line spacing**. You can also zoom from the note: **View › Zoom In** (⌘+), **Zoom Out** (⌘−) and **Actual Size** (⌘0) on the Mac, the text size buttons in the **…** menu on iPhone and iPad. Zooming changes the text size setting, so it applies to every note.
 - **Markdown source theme**: the same as the editor, or a different theme for source mode (⇧⌘M) and code blocks.
 
 Table headers use a light tint of the theme's accent unless the theme sets its own `tableHeader` color.

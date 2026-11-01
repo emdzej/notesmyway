@@ -374,6 +374,19 @@ struct NmwCommands: Commands {
                 .keyboardShortcut("l")
                 .disabled(linkToNote == nil)
         }
+        CommandGroup(before: .toolbar) {
+            let appearance = EditorAppearance.shared
+            Button("Actual Size", systemImage: "textformat.size") { appearance.resetZoom() }
+                .keyboardShortcut("0")
+                .disabled(appearance.isActualSize)
+            Button("Zoom In", systemImage: "plus.magnifyingglass") { appearance.zoomIn() }
+                .keyboardShortcut("+")
+                .disabled(!appearance.canZoomIn)
+            Button("Zoom Out", systemImage: "minus.magnifyingglass") { appearance.zoomOut() }
+                .keyboardShortcut("-")
+                .disabled(!appearance.canZoomOut)
+            Divider()
+        }
         CommandMenu("Format") {
             Group {
             // Paragraph and character styles (Apple Notes' shortcuts).
@@ -477,6 +490,17 @@ public struct NmwScenes: Scene {
 @MainActor
 public final class NmwAppDelegate: NSObject, NSApplicationDelegate {
     public let library = Library.shared
+    private var zoomKeyMonitor: Any?
+
+    public func applicationDidFinishLaunching(_ notification: Notification) {
+        // View › Zoom In is ⌘+, which takes ⇧ on most layouts; take plain ⌘= too, as Safari does.
+        zoomKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            guard event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .command,
+                  event.charactersIgnoringModifiers == "=" else { return event }
+            MainActor.assumeIsolated { EditorAppearance.shared.zoomIn() }
+            return nil
+        }
+    }
 
     public func application(_ application: NSApplication, open urls: [URL]) {
         for url in urls where !library.handle(url) { library.open(file: url) }

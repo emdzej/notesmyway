@@ -78,6 +78,15 @@ public final class EditorAppearance {
         userThemeIDs = Set(ThemeStore.userThemes().map(\.id))
     }
 
+    // Zoom (⌘+ / ⌘− / ⌘0, the "…" menu on iPhone) steps the text size setting,
+    // so it's app-wide and remembered, as in Notes.
+    var canZoomIn: Bool { fontSize < Self.fontSizes.upperBound }
+    var canZoomOut: Bool { fontSize > Self.fontSizes.lowerBound }
+    var isActualSize: Bool { fontSize == Self.defaultFontSize }
+    public func zoomIn() { fontSize = min(fontSize + 1, Self.fontSizes.upperBound) }
+    public func zoomOut() { fontSize = max(fontSize - 1, Self.fontSizes.lowerBound) }
+    public func resetZoom() { fontSize = Self.defaultFontSize }
+
     /// Re-reads the Themes folder.
     public func reloadThemes() {
         let fresh = ThemeStore.all()

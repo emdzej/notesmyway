@@ -125,6 +125,11 @@ Last updated 2026-10-29. See `spec.md` for the design.
 - Tests: NmwCore 94 (adds statistics, link completion, pasted-image naming and storing data); NmwUI 54 (adds the macOS paste hook on private pasteboards: image data, Safari-style image + URL, text with a picture, Finder image vs. other files); engine 299 (adds `BlockInsertion` and an AppKit `replace` / `caretRect` / `selection` test). Built for macOS and the iOS simulator.
 - **Not tried by hand:** real pastes (Finder, Preview, Safari, iOS Photos; sandbox access to pasted Finder URLs), the popover's position and focus on macOS, iPad and iPhone, Esc in the popover, and the iOS Paste menu item appearing for images.
 
+## Zoom
+
+- **macOS:** View › Actual Size (⌘0), Zoom In (⌘+, and plain ⌘= through a key monitor in `NmwAppDelegate`), Zoom Out (⌘−). iPhone and iPad: Smaller Text / size / Larger Text in the editor's "…" menu (tapping the size resets it). All step `EditorAppearance.fontSize` by 1 pt within 11–28 pt, so zoom is the Settings text size: app-wide and remembered.
+- Built for macOS and installed on the iPhone. **Not tried by hand:** the shortcuts, and whether the "…" menu stays open between taps and updates the size label.
+
 ## Known gaps (app)
 
 - Not built yet: "Move to Notebook…" for standalone files, drag-to-move in the sidebar. Palette, Recently Deleted, Move to Notebook… and the heading rename are unit-tested and built for macOS and iOS but not clicked through in the running app.
