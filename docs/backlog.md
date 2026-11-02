@@ -13,6 +13,7 @@ What's done, and what comes next. Dates aren't promised.
 - Formulas in tables, compatible with [vitepress-plugin-markdownformula](https://github.com/emdzej/vitepress-plugin-markdownformula).
 - Themes: built-in themes for the editor, source view and code, and JSON themes of your own.
 - Import from Apple Notes on the Mac: folders, dates, pinned notes, formatting, checklists, tables and attachments.
+- Import from Obsidian: wikilinks and embeds become standard links, attachments move to the notebook's attachment folders.
 - A formatting bar above the keyboard on iPhone and iPad (with formula buttons in table cells), and a Format menu with Apple Notes' shortcuts on the Mac.
 - System integration: Spotlight, a Share extension, widgets and Shortcuts.
 - A command palette, find and replace, restoring from the trash, Move to Notebook…, and an option to rename files after their first heading.

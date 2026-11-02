@@ -82,7 +82,7 @@ The printed page looks like the formatted note, on a white page in your theme's 
 **File › Import from Apple Notes…** copies your Apple Notes into a folder of the current notebook, one Markdown file per note. Apple Notes isn't changed.
 
 1. Notes my Way asks for access to Apple Notes' data folder, `group.com.apple.notes`. The window that opens has it selected already, so click **Open**.
-2. It shows how many notes it found. Pick the folder name ("Apple Notes" by default) and click **Import**.
+2. It shows how many notes it found and about how much space they take with their attachments (with a warning if the disk is short of room). Pick the folder name ("Apple Notes" by default) and click **Import**.
 
 Notes keep their folders, their creation and modification dates, and whether they're pinned. Their first line becomes the title. Headings, bold, italic, strikethrough, links, bulleted and numbered lists, checklists, quotes, monospaced blocks and tables become Markdown. A table's first row becomes its header, since Markdown tables need one. Photos, files, drawings and scans are copied into the attachment folder. Tags stay `#tags`, and links between notes point at the imported files.
 
@@ -92,6 +92,25 @@ A few things don't come across yet:
 - **A table that can't be read** is left out, and a line in the note marks where it was.
 - **Attachments that are only in iCloud** can't be found until Apple Notes has downloaded them. Open those notes in Apple Notes, then import again.
 - **Recently Deleted** isn't imported.
+
+## Import from Obsidian
+
+You can open an Obsidian vault as a notebook as it is, but its `[[wikilinks]]` then show as plain text. **Import from Obsidian…** (in the notebook menu, and in the File menu on the Mac) copies a vault into a folder of the current notebook as standard Markdown instead. The vault isn't changed.
+
+1. Choose the vault's folder.
+2. Notes my Way shows how many notes and files it found, and about how much space they take. Pick the folder name ("Obsidian" by default) and click **Import**.
+
+Notes keep their folders, names and dates. Links are converted:
+
+| In Obsidian | After the import |
+| --- | --- |
+| `[[Note]]`, `[[Note\|Alias]]` | `[Note](Note.md)`, `[Alias](Note.md)` |
+| `[[Note#Heading]]`, `[[#Heading]]` | `[Note › Heading](Note.md#heading)`, `[Heading](#heading)` |
+| `![[photo.jpg]]`, `![[photo.jpg\|300]]` | `![](.attachments/photo.jpg)`, `![](.attachments/photo.jpg){width=300}` |
+| `![[report.pdf]]`, `[[report.pdf]]` | `[report.pdf](.attachments/report.pdf)` |
+| `![[Note]]` (an embedded note) | `[Note](Note.md)` |
+
+Links are found the way Obsidian finds them: by path, or by name anywhere in the vault. Every file a note links to moves into the notebook's [attachment folder](/guide/images#attachments), and links written as Markdown are updated to match. Files no note links to are copied where they were. Frontmatter, tags, callouts and code are left as they are. A `#^block` part of a link is dropped, since Markdown has no block links, and links to notes that aren't in the vault stay as `[[…]]`. Obsidian's own settings (`.obsidian`) and its trash aren't copied.
 
 ## Changes made elsewhere
 

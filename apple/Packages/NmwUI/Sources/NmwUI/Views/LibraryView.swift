@@ -339,6 +339,10 @@ struct NmwCommands: Commands {
             }
             .disabled(session == nil)
             #endif
+            Button("Import from Obsidian…", systemImage: "square.and.arrow.down.on.square") {
+                session?.isShowingObsidianImport = true
+            }
+            .disabled(session == nil)
         }
         CommandGroup(replacing: .printItem) {
             Button("Print…", systemImage: "printer") { export?.run(.print) }

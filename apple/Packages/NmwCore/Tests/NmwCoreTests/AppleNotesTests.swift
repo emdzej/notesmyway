@@ -300,7 +300,7 @@ struct AppleNotesImportTests {
                     ZFOLDER INTEGER, ZCREATIONDATE3 REAL, ZMODIFICATIONDATE1 REAL, ZISPINNED INTEGER,
                     ZISPASSWORDPROTECTED INTEGER, ZMARKEDFORDELETION INTEGER, ZTYPEUTI TEXT, ZMEDIA INTEGER,
                     ZURLSTRING TEXT, ZALTTEXT TEXT, ZTOKENCONTENTIDENTIFIER TEXT, ZFILENAME TEXT,
-                    ZPARENTATTACHMENT INTEGER, ZMERGEABLEDATA1 BLOB);
+                    ZPARENTATTACHMENT INTEGER, ZMERGEABLEDATA1 BLOB, ZNOTE INTEGER);
                 CREATE TABLE ZICNOTEDATA (Z_PK INTEGER PRIMARY KEY, ZNOTE INTEGER, ZDATA BLOB);
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZNAME) VALUES (1, 8, 'ACC-1', 'iCloud');
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZTITLE2, ZOWNER, ZFOLDERTYPE) VALUES
@@ -343,6 +343,7 @@ struct AppleNotesImportTests {
                 INSERT INTO ZICCLOUDSYNCINGOBJECT (Z_PK, Z_ENT, ZIDENTIFIER, ZTYPEUTI, ZURLSTRING, ZTITLE) VALUES (25, 5, 'ATT-URL', 'public.url', 'https://example.com', 'Example');
                 """)
             try db.execute(sql: "UPDATE ZICCLOUDSYNCINGOBJECT SET ZMERGEABLEDATA1 = ? WHERE Z_PK = 22", arguments: [sampleTable])
+            try db.execute(sql: "UPDATE ZICCLOUDSYNCINGOBJECT SET ZNOTE = 10 WHERE Z_PK IN (20, 22); UPDATE ZICCLOUDSYNCINGOBJECT SET ZNOTE = 11 WHERE Z_PK = 24")
         }
         try queue.close()
         let media = folder.appending(path: "Accounts/ACC-1/Media/MEDIA-1/1_ABC", directoryHint: .isDirectory)
@@ -352,6 +353,16 @@ struct AppleNotesImportTests {
         try FileManager.default.createDirectory(at: fallback, withIntermediateDirectories: true)
         try Data([0x89, 0x50, 0x4E, 0x47]).write(to: fallback.appending(path: "ATT-DRAW.png"))
         return folder
+    }
+
+    @Test func estimatesTheImportSize() throws {
+        let temp = try TempFolder()
+        defer { temp.delete() }
+        let library = try AppleNotesLibrary(folder: try makeNotesFolder(in: temp.url))
+        let importer = AppleNotesImporter(library: library, notebookRoot: temp.url)
+        // Lisbon, both Ideas (not the locked or deleted ones), the photo and the drawing.
+        let text = library.notes.filter { [10, 11, 14].contains($0.id) }.reduce(0) { $0 + ($1.data?.count ?? 0) }
+        #expect(importer.estimatedSize() == Int64(text + 4 + 4))
     }
 
     @Test func readsTheLibrary() throws {

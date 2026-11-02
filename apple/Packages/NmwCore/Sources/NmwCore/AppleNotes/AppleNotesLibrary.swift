@@ -61,6 +61,8 @@ public struct AppleNotesLibrary: Sendable {
         public let token: String?
         public let mediaID: Int64?
         public let parentID: Int64?
+        /// The note it's in (nil for inline attachments on some systems).
+        public var noteID: Int64? = nil
         /// Tables: gzipped CRDT data.
         public let mergeableData: Data?
     }
@@ -185,14 +187,14 @@ public struct AppleNotesLibrary: Sendable {
             SELECT Z_PK, \(column("ZIDENTIFIER")) AS identifier, \(column("ZTYPEUTI")) AS uti,
                    \(column("ZTITLE")) AS title, \(column("ZURLSTRING")) AS url, \(column("ZALTTEXT")) AS alt,
                    \(column("ZTOKENCONTENTIDENTIFIER")) AS token, \(column("ZMEDIA")) AS media,
-                   \(column("ZPARENTATTACHMENT")) AS parent, \(column("ZMERGEABLEDATA1", "ZMERGEABLEDATA")) AS mergeable
+                   \(column("ZPARENTATTACHMENT")) AS parent, \(column("ZNOTE")) AS note, \(column("ZMERGEABLEDATA1", "ZMERGEABLEDATA")) AS mergeable
             FROM ZICCLOUDSYNCINGOBJECT WHERE Z_ENT IN (?, ?)
             """, arguments: [entity("ICAttachment"), entity("ICInlineAttachment")]) {
             guard let identifier: String = row["identifier"] else { continue }
             attachments[identifier] = Attachment(
                 id: row["Z_PK"], identifier: identifier, typeUTI: row["uti"] ?? "", title: row["title"],
                 url: row["url"], altText: row["alt"], token: row["token"], mediaID: row["media"],
-                parentID: row["parent"], mergeableData: row["mergeable"])
+                parentID: row["parent"], noteID: row["note"], mergeableData: row["mergeable"])
         }
 
         var media: [Int64: Media] = [:]

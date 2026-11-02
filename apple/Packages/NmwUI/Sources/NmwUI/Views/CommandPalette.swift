@@ -296,6 +296,10 @@ struct CommandPalette: View {
             session.isShowingAppleNotesImport = true
         })
         #endif
+        items.append(PaletteItem(id: "import-obsidian", title: "Import from Obsidian…", systemImage: "square.and.arrow.down.on.square",
+                                 keywords: "migrate vault wikilinks", presents: true) {
+            session.isShowingObsidianImport = true
+        })
         return items
     }
 

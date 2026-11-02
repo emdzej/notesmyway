@@ -46,6 +46,24 @@ public struct AppleNotesImporter: Sendable {
         return library.notes.filter { !$0.deleted && !$0.locked && $0.data != nil && !($0.folderID.map(special.contains) ?? false) }
     }
 
+    /// About how much the import writes, in bytes: each importable note's
+    /// attachment files (or the images Notes renders for drawings and scans)
+    /// plus its text, which the compressed body stands in for. Reads file
+    /// sizes, so call it off the main thread.
+    public func estimatedSize() -> Int64 {
+        let notes = importable
+        let noteIDs = Set(notes.map(\.id))
+        var total = notes.reduce(Int64(0)) { $0 + Int64($1.data?.count ?? 0) }
+        for attachment in library.attachments.values {
+            // Gallery pages are inside their gallery's rendered image.
+            guard let note = attachment.noteID, noteIDs.contains(note), attachment.parentID == nil else { continue }
+            let source = attachment.mediaID.flatMap { library.media[$0] }.flatMap(library.file(for:))
+                ?? library.fallbackImage(for: attachment)
+            if let source, let size = try? source.resourceValues(forKeys: [.fileSizeKey]).fileSize { total += Int64(size) }
+        }
+        return total
+    }
+
     /// Imports into `destination` (created if needed); `progress` gets (done, total).
     public func run(into destination: URL, progress: (Int, Int) -> Void = { _, _ in }) -> Report {
         var report = Report(destination: destination)

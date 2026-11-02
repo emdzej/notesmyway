@@ -104,6 +104,8 @@ public final class NotebookSession {
     public var isShowingPalette = false
     /// File › Import from Apple Notes (macOS).
     public var isShowingAppleNotesImport = false
+    /// Import from Obsidian (the notebook menu, File menu, palette).
+    public var isShowingObsidianImport = false
     /// iPhone / iPad Settings sheet (the Mac has its Settings window).
     public var isShowingSettings = false
     /// Asks the note list to show its Rename alert for this note (palette).

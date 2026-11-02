@@ -19,7 +19,7 @@ struct AppleNotesImportView: View {
     private enum Step {
         case start
         case loading
-        case ready(AppleNotesLibrary)
+        case ready(AppleNotesLibrary, size: Int64)
         case importing(done: Int, total: Int)
         case finished(AppleNotesImporter.Report)
     }
@@ -56,11 +56,14 @@ struct AppleNotesImportView: View {
                 .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
         case .loading:
             ProgressView("Reading Apple Notes…").frame(maxWidth: .infinity)
-        case .ready(let library):
+        case .ready(let library, let size):
             let importer = AppleNotesImporter(library: library, notebookRoot: session.notebook.root, layout: session.config.attachments)
             let locked = library.notes.filter { $0.locked && !$0.deleted }.count
             let folders = library.folders.filter { !$0.isSpecial }.count
-            Text("\(importer.importableCount) notes in \(folders) folders.")
+            Text("\(importer.importableCount) notes in \(folders) folders, about \(ImportSize.format(size)) with attachments.")
+            if let warning = ImportSize.spaceWarning(size, at: session.notebook.root) {
+                Text(warning).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+            }
             if locked > 0 {
                 Text("\(locked) locked notes will be skipped: unlock them in Apple Notes first to import them.")
                     .foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
@@ -90,7 +93,7 @@ struct AppleNotesImportView: View {
             Button("Choose Folder…") { choose() }.keyboardShortcut(.defaultAction)
         case .loading, .importing:
             Button("Cancel", role: .cancel) { dismiss() }.disabled(true)
-        case .ready(let library):
+        case .ready(let library, _):
             Button("Cancel", role: .cancel) { dismiss() }
             Button("Import") { run(library) }
                 .keyboardShortcut(.defaultAction)
@@ -129,10 +132,16 @@ struct AppleNotesImportView: View {
         access = url.startAccessingSecurityScopedResource() ? url : nil
         step = .loading
         Task {
-            let result = await Task.detached { Result { try AppleNotesLibrary(folder: url) } }.value
+            let root = session.notebook.root, layout = session.config.attachments
+            let result = await Task.detached {
+                Result { () throws -> (AppleNotesLibrary, Int64) in
+                    let library = try AppleNotesLibrary(folder: url)
+                    return (library, AppleNotesImporter(library: library, notebookRoot: root, layout: layout).estimatedSize())
+                }
+            }.value
             switch result {
-            case .success(let library):
-                step = .ready(library)
+            case .success(let (library, size)):
+                step = .ready(library, size: size)
             case .failure(let error):
                 errorMessage = error.localizedDescription
                 step = .start
@@ -142,7 +151,7 @@ struct AppleNotesImportView: View {
 
     private func run(_ library: AppleNotesLibrary) {
         let importer = AppleNotesImporter(library: library, notebookRoot: session.notebook.root, layout: session.config.attachments)
-        let destination = uniqueFolder(named: folderName.trimmingCharacters(in: .whitespaces))
+        let destination = ImportSize.uniqueFolder(named: folderName.trimmingCharacters(in: .whitespaces), in: session.notebook.root)
         step = .importing(done: 0, total: importer.importableCount)
         Task {
             let report = await Task.detached {
@@ -154,18 +163,6 @@ struct AppleNotesImportView: View {
             session.refresh()
             step = .finished(report)
         }
-    }
-
-    /// "Apple Notes", or "Apple Notes 2" if that folder is already there.
-    private func uniqueFolder(named name: String) -> URL {
-        let root = session.notebook.root
-        var candidate = root.appending(path: name, directoryHint: .isDirectory)
-        var n = 2
-        while FileManager.default.fileExists(atPath: candidate.path) {
-            candidate = root.appending(path: "\(name) \(n)", directoryHint: .isDirectory)
-            n += 1
-        }
-        return candidate
     }
 }
 #endif

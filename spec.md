@@ -87,7 +87,7 @@ nmw/
 
 Changing a setting never moves existing files. Keys nmw doesn't know are kept when it saves.
 
-- Any folder can be a notebook. Obsidian vaults open as notebooks, and `.obsidian/` is ignored, but their `[[wikilinks]]` show as plain text (see 3.3).
+- Any folder can be a notebook. Obsidian vaults open as notebooks, and `.obsidian/` is ignored, but their `[[wikilinks]]` show as plain text (see 3.3). Import from Obsidian… copies a vault into a notebook folder as standard Markdown: wikilinks and embeds become relative links, linked attachments move to the notebook's attachment folders.
 - Folders are real folders, with unlimited nesting.
 - Files and folders starting with `.` are hidden in the UI (and not indexed). The attachment folder shows in the sidebar only when its setting is on.
 - Text encoding is UTF-8. Line endings are preserved as read; new files use `\n`.

@@ -42,6 +42,7 @@ struct NotebookView: View {
         #if os(macOS)
         .sheet(isPresented: $session.isShowingAppleNotesImport) { AppleNotesImportView(session: session) }
         #endif
+        .sheet(isPresented: $session.isShowingObsidianImport) { ObsidianImportView(session: session) }
         .sheet(isPresented: $session.isShowingPalette) {
             CommandPalette(session: session, library: library)
         }
@@ -528,6 +529,7 @@ struct NotebookMenu: View {
             .pickerStyle(.inline)
             Divider()
             Button("Add Notebook…", systemImage: "plus", action: addNotebook)
+            Button("Import from Obsidian…", systemImage: "square.and.arrow.down.on.square") { session.isShowingObsidianImport = true }
             #if os(macOS)
             // iPhone / iPad: ⇧⌘P with a keyboard only; without one the buttons are quicker.
             Button("Command Palette…", systemImage: "command") { session.isShowingPalette = true }
