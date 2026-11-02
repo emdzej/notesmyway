@@ -22,7 +22,7 @@ Notes my Way doesn't have a file format of its own. A notebook looks like this:
 
 ## Other apps
 
-**Obsidian.** A vault opens as a notebook; `.obsidian/` is ignored. Frontmatter, `#tags`, nested tags, `$math$` and the `![alt|200](…)` width hint work as in Obsidian. `[[wikilinks]]` show as plain text: Notes my Way uses standard relative links instead.
+**Obsidian.** A vault opens as a notebook; `.obsidian/` is ignored. Frontmatter, `#tags`, nested tags, `$math$` and the `![alt|200](…)` width hint work as in Obsidian. `[[wikilinks]]` show as plain text: Notes my Way uses standard relative links instead. [Import from Obsidian…](/guide/notebooks#import-from-obsidian) copies a vault into a notebook with its wikilinks and embeds converted and its attachments moved to the attachment folders.
 
 **GitHub, VS Code, static-site generators.** Notes are CommonMark + GFM, and links between notes are relative paths, so they work there as written. `{…}` attributes after images and links follow the Pandoc / kramdown / markdown-it-attrs convention; renderers without it show the braces as text, and the link still works.
 

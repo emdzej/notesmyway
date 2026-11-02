@@ -45,6 +45,10 @@ The same commands, with the shortcuts Apple Notes uses. They're also in the comm
 
 Right-clicking text offers Format, Heading and Lists too.
 
+## Text size
+
+**View › Zoom In** (⌘+), **Zoom Out** (⌘−) and **Actual Size** (⌘0) on the Mac, and the text size buttons in the editor's **…** menu on iPhone and iPad, make the text larger or smaller. They change the text size setting (Settings › Appearance), so every note follows.
+
 ## Pasting images
 
 Paste a screenshot, an image copied in Preview, Photos or Safari, or image files copied in Finder, and the image is stored in the note's [attachments folder](/guide/images#attachments) and shown on its own line. Images without a file name of their own are named like screenshots: `Pasted image 2026-10-30 at 17.20.png`. Pasting the same image again reuses the stored file. **⌘Z** takes the paste back.
