@@ -114,7 +114,8 @@ struct AppleNotesImportView: View {
         if report.locked > 0 { parts.append("\(report.locked) locked notes were skipped.") }
         if report.tables > 0 { parts.append("\(report.tables) tables couldn’t be converted; their notes say where they were.") }
         if report.missingAttachments > 0 { parts.append("\(report.missingAttachments) attachments weren’t found (not downloaded from iCloud yet?).") }
-        if !report.failures.isEmpty { parts.append("Couldn’t read: \(report.failures.prefix(5).joined(separator: ", ")).") }
+        let failed = report.failures.prefix(5).joined(separator: ", ")
+        if !report.failures.isEmpty { parts.append(String(localized: "Couldn’t read: \(failed).")) }
         return parts.joined(separator: " ")
     }
 
@@ -124,7 +125,7 @@ struct AppleNotesImportView: View {
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
         panel.directoryURL = AppleNotesLibrary.defaultFolder
-        panel.message = "Choose Apple Notes’ data folder, “group.com.apple.notes”."
+        panel.message = String(localized: "Choose Apple Notes’ data folder, “group.com.apple.notes”.")
         panel.prompt = "Open"
         guard panel.runModal() == .OK, let url = panel.url else { return }
         errorMessage = nil

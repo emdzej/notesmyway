@@ -88,7 +88,7 @@ public final class NoteEditorModel {
             setTextFromDisk(snapshot.text)
             errorMessage = nil
         } catch NoteFile.Error.notUTF8 {
-            errorMessage = "“\(url.lastPathComponent)” isn’t UTF-8 text, so Notes my Way won’t edit it."
+            errorMessage = String(localized: "“\(url.lastPathComponent)” isn’t UTF-8 text, so Notes my Way won’t edit it.")
         } catch {
             errorMessage = error.localizedDescription
         }

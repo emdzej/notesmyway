@@ -78,7 +78,7 @@ public final class Library {
             return existing
         }
         guard let data = Self.bookmark(for: url) else {
-            errorMessage = "Couldn’t remember access to “\(url.lastPathComponent)”."
+            errorMessage = String(localized: "Couldn’t remember access to “\(url.lastPathComponent)”.")
             return nil
         }
         let entry = register(url, bookmark: data)

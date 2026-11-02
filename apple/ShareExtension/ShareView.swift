@@ -27,7 +27,7 @@ struct ShareView: View {
             Form {
                 if let content {
                     Section {
-                        Text(content.isEmpty ? "Nothing to save." : content.summary)
+                        Text(content.isEmpty ? String(localized: "Nothing to save.") : content.summary)
                             .foregroundStyle(.secondary)
                             .lineLimit(3)
                     }

@@ -63,7 +63,7 @@ struct TrashListView: View {
             }
         } message: { Text("This can’t be undone.") }
         .confirmationDialog("Empty the Trash?", isPresented: $emptying, titleVisibility: .visible) {
-            Button("Delete \(session.trashItems.count == 1 ? "1 Item" : "\(session.trashItems.count) Items")", role: .destructive) {
+            Button("Delete \(session.trashItems.count) Items", role: .destructive) {
                 attempt { try session.emptyTrash() }
             }
         } message: { Text("Everything in Recently Deleted is deleted. This can’t be undone.") }
@@ -93,7 +93,7 @@ struct TrashRow: View {
                 .frame(width: 20)
             VStack(alignment: .leading, spacing: 3) {
                 Text(item.isNote ? item.originalPath.stem : item.name).font(.headline).lineLimit(1)
-                Text("Was in \(item.originalPath.parent?.rawValue ?? "the notebook’s folder")")
+                Text("Was in \(item.originalPath.parent?.rawValue ?? String(localized: "the notebook’s folder"))")
                     .font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
                 Text("Deleted \(item.deletedAt.formatted(.dateTime.day().month(.abbreviated))) · \(daysLeft)")
                     .font(.caption).foregroundStyle(.secondary)
@@ -104,9 +104,8 @@ struct TrashRow: View {
 
     private var daysLeft: String {
         switch item.daysLeft() {
-        case 0: "deleted for good today"
-        case 1: "1 day left"
-        case let n: "\(n) days left"
+        case 0: String(localized: "deleted for good today")
+        case let n: String(localized: "\(n) days left")
         }
     }
 }

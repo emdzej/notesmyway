@@ -100,6 +100,26 @@ DEBUG builds take launch arguments (see `Library.swift` and `NotebookView.swift`
 - **Site sizes:** Mac 1600 px wide (keep the alpha and window shadow), iPad 1200 × 1600, iPhone 600 px
   wide, all WebP in `docs/public/screenshots/`.
 
+## Localization
+
+The apps are in English and Polish; the site is English only. The system language is used unless
+Settings › General › Language picks one (it sets the app's own `AppleLanguages`, read at launch).
+
+- **Catalogs:** `apple/Localization/Localizable.xcstrings` (shared by the app, widgets and share extension),
+  `AppShortcuts.xcstrings` (Siri / Shortcuts phrases) and `InfoPlist.xcstrings` (document type names).
+  Package code resolves against the main bundle, so NmwUI and NmwCore strings live there too.
+- **Writing UI text:** SwiftUI literals are localized as they are. Text held in a `String` (palette titles,
+  errors, enum titles) needs `String(localized:)`; helper parameters for titles take `LocalizedStringKey` or
+  `LocalizedStringResource`. Counts go in the text (`"\(n) notes"`) with plural variations in the catalog,
+  never `n == 1 ? … : …`. Names written to disk stay English (`Untitled.md`, `Inbox.md`, `Pasted image …`).
+- **New strings:** run `apple/scripts/sync-strings.sh` (builds for macOS and iOS with extraction on, merges
+  the keys, lists strings without Polish), then translate them in Xcode's catalog editor. Polish uses „…”
+  quotes and Apple's terms (Notatki, Ostatnio usunięte, Udostępnij…).
+- **Engine:** MarkdownKit keeps English titles in code (`MenuIcons` looks icons up by them) and translates
+  where they're shown, through `EngineStrings.localized`; its catalog is
+  `Sources/MarkdownEngineCore/Resources/Localizable.xcstrings`, filled by hand. `EngineStringsTests` fails
+  when a menu title has no Polish.
+
 ## Licences
 
 Every dependency's licence ships in the app: `Settings › About` (`Views/AboutView.swift`) reads the texts in

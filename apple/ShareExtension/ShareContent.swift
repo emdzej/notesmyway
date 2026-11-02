@@ -31,7 +31,7 @@ struct ShareContent: Sendable {
         var parts: [String] = []
         if let link = links.first { parts.append(link.title ?? link.url.host() ?? link.url.absoluteString) }
         if let text = texts.first { parts.append(String(text.prefix(80))) }
-        if !images.isEmpty { parts.append(images.count == 1 ? "1 image" : "\(images.count) images") }
+        if !images.isEmpty { parts.append(String(localized: "\(images.count) images")) }
         return parts.joined(separator: " · ")
     }
 

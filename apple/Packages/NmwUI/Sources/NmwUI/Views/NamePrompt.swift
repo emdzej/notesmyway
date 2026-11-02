@@ -10,8 +10,8 @@
 import SwiftUI
 
 extension View {
-    func namePrompt(_ title: String, isPresented: Binding<Bool>, text: Binding<String>, actionTitle: String,
-                    message: String? = nil, onCommit: @escaping () -> Void) -> some View {
+    func namePrompt(_ title: LocalizedStringKey, isPresented: Binding<Bool>, text: Binding<String>, actionTitle: LocalizedStringKey,
+                    message: LocalizedStringKey? = nil, onCommit: @escaping () -> Void) -> some View {
         #if os(macOS)
         sheet(isPresented: isPresented) {
             NamePromptSheet(title: title, message: message, actionTitle: actionTitle, text: text) {
@@ -36,9 +36,9 @@ extension View {
 
 #if os(macOS)
 private struct NamePromptSheet: View {
-    let title: String
-    let message: String?
-    let actionTitle: String
+    let title: LocalizedStringKey
+    let message: LocalizedStringKey?
+    let actionTitle: LocalizedStringKey
     @Binding var text: String
     let commit: () -> Void
     let cancel: () -> Void

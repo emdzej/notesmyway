@@ -53,7 +53,7 @@ struct StylePanel: View {
         .frame(width: 340)
     }
 
-    private func style(_ title: String, _ style: MarkdownFormatting.BlockStyle, font: Font) -> some View {
+    private func style(_ title: LocalizedStringKey, _ style: MarkdownFormatting.BlockStyle, font: Font) -> some View {
         let selected = controller.currentBlockStyle == style
         return Button { controller.setBlockStyle(style) } label: {
             Text(title).font(font).lineLimit(1).minimumScaleFactor(0.7)

@@ -30,6 +30,7 @@
 | Index | SQLite via GRDB.swift with FTS5 |
 | Sync server | Go, standard library `net/http`, `modernc.org/sqlite`, content-addressed blob store |
 | Code highlighting / math | `MarkdownEngineCodeBlocks` (HighlighterSwift) / `MarkdownEngineLatex` (SwiftMath) |
+| UI languages | English and Polish (string catalogs in `apple/Localization`); the system language unless Settings › General › Language picks one |
 
 ### Repository layout
 

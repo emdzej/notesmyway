@@ -79,8 +79,8 @@ public struct AppleNotesLibrary: Sendable {
 
         public var errorDescription: String? {
             switch self {
-            case .noDatabase: "The folder doesn’t contain Apple Notes’ database (NoteStore.sqlite)."
-            case .unreadable(let reason): "Apple Notes’ database couldn’t be read: \(reason)"
+            case .noDatabase: String(localized: "The folder doesn’t contain Apple Notes’ database (NoteStore.sqlite).")
+            case .unreadable(let reason): String(localized: "Apple Notes’ database couldn’t be read: \(reason)")
             }
         }
     }

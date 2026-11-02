@@ -185,31 +185,31 @@ struct CommandPalette: View {
         let pinned = note?.pinned ?? false
         let controller = session.activeController
         return [
-            PaletteItem(id: "source", title: "Toggle Markdown Source", systemImage: "chevron.left.forwardslash.chevron.right",
-                        shortcut: "⇧⌘M", keywords: "raw formatted view") {
+            PaletteItem(id: "source", title: String(localized: "Toggle Markdown Source"), systemImage: "chevron.left.forwardslash.chevron.right",
+                        shortcut: "⇧⌘M", keywords: String(localized: "raw formatted view")) {
                 NotificationCenter.default.post(name: .nmwToggleSource, object: controller)
             },
-            PaletteItem(id: "outline", title: showsInspector ? "Hide Outline and Backlinks" : "Show Outline and Backlinks",
-                        systemImage: "sidebar.right", shortcut: "⌥⌘I", keywords: "inspector headings") {
+            PaletteItem(id: "outline", title: showsInspector ? String(localized: "Hide Outline and Backlinks") : String(localized: "Show Outline and Backlinks"),
+                        systemImage: "sidebar.right", shortcut: "⌥⌘I", keywords: String(localized: "inspector headings")) {
                 showsInspector.toggle()
             },
-            PaletteItem(id: "pin", title: pinned ? "Unpin Note" : "Pin Note", systemImage: pinned ? "pin.slash" : "pin") {
+            PaletteItem(id: "pin", title: pinned ? String(localized: "Unpin Note") : String(localized: "Pin Note"), systemImage: pinned ? "pin.slash" : "pin") {
                 Task { try? await session.setPinned(path, !pinned) }
             },
-            PaletteItem(id: "rename", title: "Rename Note…", systemImage: "pencil", presents: true) {
+            PaletteItem(id: "rename", title: String(localized: "Rename Note…"), systemImage: "pencil", presents: true) {
                 session.renameRequest = path
             },
-            PaletteItem(id: "move", title: "Move to Folder…", systemImage: "folder", keywords: "move", next: .moveToFolder(path)),
-            PaletteItem(id: "move-notebook", title: "Move to Notebook…", systemImage: "books.vertical", presents: true) {
+            PaletteItem(id: "move", title: String(localized: "Move to Folder…"), systemImage: "folder", keywords: String(localized: "move"), next: .moveToFolder(path)),
+            PaletteItem(id: "move-notebook", title: String(localized: "Move to Notebook…"), systemImage: "books.vertical", presents: true) {
                 session.moveToNotebookRequest = path
             },
-            PaletteItem(id: "trash", title: "Move to Trash", systemImage: "trash", keywords: "delete remove") {
+            PaletteItem(id: "trash", title: String(localized: "Move to Trash"), systemImage: "trash", keywords: String(localized: "delete remove")) {
                 Task { try? await session.moveToTrash(path) }
             },
-            PaletteItem(id: "share", title: "Share…", systemImage: "square.and.arrow.up", keywords: "send export airdrop mail", presents: true) {
+            PaletteItem(id: "share", title: String(localized: "Share…"), systemImage: "square.and.arrow.up", keywords: String(localized: "send export airdrop mail"), presents: true) {
                 Self.export(.share, controller)
             },
-            PaletteItem(id: "print", title: "Print…", systemImage: "printer", shortcut: "⌘P", presents: true) {
+            PaletteItem(id: "print", title: String(localized: "Print…"), systemImage: "printer", shortcut: "⌘P", presents: true) {
                 Self.export(.print, controller)
             },
         ] + exportPDFCommand(controller)
@@ -221,7 +221,7 @@ struct CommandPalette: View {
 
     private func exportPDFCommand(_ controller: MarkdownEditorController?) -> [PaletteItem] {
         #if os(macOS)
-        [PaletteItem(id: "export-pdf", title: "Export as PDF…", systemImage: "doc.richtext", keywords: "save pdf", presents: true) {
+        [PaletteItem(id: "export-pdf", title: String(localized: "Export as PDF…"), systemImage: "doc.richtext", keywords: String(localized: "save pdf"), presents: true) {
             Self.export(.exportPDF, controller)
         }]
         #else
@@ -231,14 +231,14 @@ struct CommandPalette: View {
 
     private var formatCommands: [PaletteItem] {
         guard let controller = session.activeController else { return [] }
-        func block(_ id: String, _ title: String, _ image: String, _ shortcut: String?, _ style: MarkdownFormatting.BlockStyle) -> PaletteItem {
-            PaletteItem(id: "format-\(id)", title: title, subtitle: "Format", systemImage: image, shortcut: shortcut) {
+        func block(_ id: String, _ title: LocalizedStringResource, _ image: String, _ shortcut: String?, _ style: MarkdownFormatting.BlockStyle) -> PaletteItem {
+            PaletteItem(id: "format-\(id)", title: String(localized: title), subtitle: String(localized: "Format"), systemImage: image, shortcut: shortcut) {
                 controller.setBlockStyle(style)
                 controller.focus()
             }
         }
-        func inline(_ id: String, _ title: String, _ image: String, _ shortcut: String?, _ style: MarkdownFormatting.InlineStyle) -> PaletteItem {
-            PaletteItem(id: "format-\(id)", title: title, subtitle: "Format", systemImage: image, shortcut: shortcut) {
+        func inline(_ id: String, _ title: LocalizedStringResource, _ image: String, _ shortcut: String?, _ style: MarkdownFormatting.InlineStyle) -> PaletteItem {
+            PaletteItem(id: "format-\(id)", title: String(localized: title), subtitle: String(localized: "Format"), systemImage: image, shortcut: shortcut) {
                 controller.toggle(style)
                 controller.focus()
             }
@@ -256,7 +256,7 @@ struct CommandPalette: View {
             block("bullets", "Bulleted List", "list.bullet", "⇧⌘7", .bullet),
             block("numbers", "Numbered List", "list.number", "⇧⌘9", .numbered),
             block("quote", "Quote", "text.quote", "⌘'", .quote),
-            PaletteItem(id: "format-table", title: "Insert Table", subtitle: "Format", systemImage: "tablecells", shortcut: "⌥⌘T") {
+            PaletteItem(id: "format-table", title: String(localized: "Insert Table"), subtitle: String(localized: "Format"), systemImage: "tablecells", shortcut: "⌥⌘T") {
                 controller.insertTable()
                 controller.focus()
             },
@@ -270,34 +270,34 @@ struct CommandPalette: View {
     private var generalCommands: [PaletteItem] {
         let folder = currentFolder
         var items = [
-            PaletteItem(id: "new-note", title: "New Note", systemImage: "square.and.pencil", shortcut: "⌘N", keywords: "create") {
+            PaletteItem(id: "new-note", title: String(localized: "New Note"), systemImage: "square.and.pencil", shortcut: "⌘N", keywords: String(localized: "create")) {
                 Task { try? await session.createNote(in: folder) }
             },
-            PaletteItem(id: "new-folder", title: "New Folder…", systemImage: "folder.badge.plus", keywords: "create", presents: true) {
+            PaletteItem(id: "new-folder", title: String(localized: "New Folder…"), systemImage: "folder.badge.plus", keywords: String(localized: "create"), presents: true) {
                 session.newFolderRequest = .init(parent: folder)
             },
-            PaletteItem(id: "open-quickly", title: "Open Quickly…", systemImage: "magnifyingglass", shortcut: "⌘O",
-                        keywords: "find note switch", presents: true) {
+            PaletteItem(id: "open-quickly", title: String(localized: "Open Quickly…"), systemImage: "magnifyingglass", shortcut: "⌘O",
+                        keywords: String(localized: "find note switch"), presents: true) {
                 session.isShowingSwitcher = true
             },
         ]
         #if os(macOS)
-        items.append(PaletteItem(id: "settings", title: "Settings…", systemImage: "gearshape", shortcut: "⌘,", keywords: "preferences options") {
+        items.append(PaletteItem(id: "settings", title: String(localized: "Settings…"), systemImage: "gearshape", shortcut: "⌘,", keywords: String(localized: "preferences options")) {
             openSettings()
         })
         #else
-        items.append(PaletteItem(id: "settings", title: "Settings…", systemImage: "gearshape", keywords: "preferences options", presents: true) {
+        items.append(PaletteItem(id: "settings", title: String(localized: "Settings…"), systemImage: "gearshape", keywords: String(localized: "preferences options"), presents: true) {
             session.isShowingSettings = true
         })
         #endif
         #if os(macOS)
-        items.append(PaletteItem(id: "import-apple-notes", title: "Import from Apple Notes…", systemImage: "square.and.arrow.down.on.square",
-                                 keywords: "migrate notes app", presents: true) {
+        items.append(PaletteItem(id: "import-apple-notes", title: String(localized: "Import from Apple Notes…"), systemImage: "square.and.arrow.down.on.square",
+                                 keywords: String(localized: "migrate notes app"), presents: true) {
             session.isShowingAppleNotesImport = true
         })
         #endif
-        items.append(PaletteItem(id: "import-obsidian", title: "Import from Obsidian…", systemImage: "square.and.arrow.down.on.square",
-                                 keywords: "migrate vault wikilinks", presents: true) {
+        items.append(PaletteItem(id: "import-obsidian", title: String(localized: "Import from Obsidian…"), systemImage: "square.and.arrow.down.on.square",
+                                 keywords: String(localized: "migrate vault wikilinks"), presents: true) {
             session.isShowingObsidianImport = true
         })
         return items
@@ -305,21 +305,21 @@ struct CommandPalette: View {
 
     private var places: [PaletteItem] {
         var items = [
-            PaletteItem(id: "go-all", title: "Go to All Notes", systemImage: "note.text") { session.scope = .all },
-            PaletteItem(id: "go-pinned", title: "Go to Pinned", systemImage: "pin") { session.scope = .pinned },
-            PaletteItem(id: "go-trash", title: "Go to Recently Deleted", systemImage: "trash", keywords: "trash restore") {
+            PaletteItem(id: "go-all", title: String(localized: "Go to All Notes"), systemImage: "note.text") { session.scope = .all },
+            PaletteItem(id: "go-pinned", title: String(localized: "Go to Pinned"), systemImage: "pin") { session.scope = .pinned },
+            PaletteItem(id: "go-trash", title: String(localized: "Go to Recently Deleted"), systemImage: "trash", keywords: String(localized: "trash restore")) {
                 session.scope = .trash
             },
-            PaletteItem(id: "go-root", title: "Go to \(session.name)", subtitle: "Folder", systemImage: "folder") {
+            PaletteItem(id: "go-root", title: String(localized: "Go to \(session.name)"), subtitle: String(localized: "Folder"), systemImage: "folder") {
                 session.scope = .folder(nil)
             },
         ]
         items += NoteListView.flatten(session.folders).map { folder in
-            PaletteItem(id: "go-folder-\(folder.path.rawValue)", title: "Go to \(folder.name)", subtitle: folder.path.rawValue,
-                        systemImage: "folder", keywords: "folder") { session.scope = .folder(folder.path) }
+            PaletteItem(id: "go-folder-\(folder.path.rawValue)", title: String(localized: "Go to \(folder.name)"), subtitle: folder.path.rawValue,
+                        systemImage: "folder", keywords: String(localized: "folder")) { session.scope = .folder(folder.path) }
         }
         items += session.tags.map { tag in
-            PaletteItem(id: "go-tag-\(tag.tag)", title: "Go to #\(tag.tag)", subtitle: "Tag", systemImage: "number") {
+            PaletteItem(id: "go-tag-\(tag.tag)", title: String(localized: "Go to #\(tag.tag)"), subtitle: String(localized: "Tag"), systemImage: "number") {
                 session.scope = .tag(tag.tag)
             }
         }
@@ -328,7 +328,7 @@ struct CommandPalette: View {
 
     private var notebooks: [PaletteItem] {
         library.entries.filter { $0.id != session.notebook.localID }.map { entry in
-            PaletteItem(id: "notebook-\(entry.id)", title: "Switch to \(entry.name)", subtitle: "Notebook", systemImage: "books.vertical") {
+            PaletteItem(id: "notebook-\(entry.id)", title: String(localized: "Switch to \(entry.name)"), subtitle: String(localized: "Notebook"), systemImage: "books.vertical") {
                 library.selectedID = entry.id
             }
         }
@@ -337,10 +337,10 @@ struct CommandPalette: View {
     private var themes: [PaletteItem] {
         let appearance = EditorAppearance.shared
         return appearance.themes.map { theme in
-            PaletteItem(id: "theme-\(theme.id)", title: "Theme: \(theme.name)",
-                        subtitle: theme.id == appearance.themeID ? "Current theme" : nil,
+            PaletteItem(id: "theme-\(theme.id)", title: String(localized: "Theme: \(theme.name)"),
+                        subtitle: theme.id == appearance.themeID ? String(localized: "Current theme") : nil,
                         systemImage: theme.id == appearance.themeID ? "paintpalette.fill" : "paintpalette",
-                        keywords: "appearance colors") {
+                        keywords: String(localized: "appearance colors")) {
                 appearance.themeID = theme.id
             }
         }
@@ -357,7 +357,7 @@ struct CommandPalette: View {
 
     private var folderItems: [PaletteItem] {
         guard case .moveToFolder(let path) = stage else { return [] }
-        var items = [PaletteItem(id: "to-root", title: session.name, subtitle: "Notebook folder", systemImage: "folder") {
+        var items = [PaletteItem(id: "to-root", title: session.name, subtitle: String(localized: "Notebook folder"), systemImage: "folder") {
             Task { try? await session.move(path, toFolder: nil) }
         }]
         items += NoteListView.flatten(session.folders).map { folder in

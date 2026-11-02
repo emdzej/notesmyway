@@ -183,9 +183,9 @@ struct ThemeLibrarySection: View {
 
     private var footer: String {
         #if os(macOS)
-        "Open a .nmwtheme file, or drop one here, to install it. Themes are JSON files in the Themes folder: edit a duplicate, then Reload."
+        String(localized: "Open a .nmwtheme file, or drop one here, to install it. Themes are JSON files in the Themes folder: edit a duplicate, then Reload.")
         #else
-        "Tap a .nmwtheme file in Files, Mail or Messages to install it. Themes are JSON files in Files › On My iPhone › Notes my Way › Themes."
+        String(localized: "Tap a .nmwtheme file in Files, Mail or Messages to install it. Themes are JSON files in Files › On My iPhone › Notes my Way › Themes.")
         #endif
     }
 
@@ -194,10 +194,10 @@ struct ThemeLibrarySection: View {
             let url = try ThemeStore.duplicate(theme)
             appearance.reloadThemes()
             #if os(macOS)
-            message = "Saved \(url.lastPathComponent). Edit it, then press Reload."
+            message = String(localized: "Saved \(url.lastPathComponent). Edit it, then press Reload.")
             NSWorkspace.shared.activateFileViewerSelecting([url])
             #else
-            message = "Saved \(url.lastPathComponent) in the Themes folder."
+            message = String(localized: "Saved \(url.lastPathComponent) in the Themes folder.")
             #endif
         } catch {
             message = error.localizedDescription
@@ -257,7 +257,7 @@ final class ThemeInstaller {
         // Files outside the sandbox (iCloud Drive, Mail) read through a coordinator.
         NSFileCoordinator().coordinate(readingItemAt: url, options: [], error: nil) { data = try? Data(contentsOf: $0) }
         guard let data else {
-            failure = "“\(url.lastPathComponent)” couldn’t be read."
+            failure = String(localized: "“\(url.lastPathComponent)” couldn’t be read.")
             return
         }
         open(data, name: url.lastPathComponent)
@@ -268,7 +268,7 @@ final class ThemeInstaller {
             let theme = try ThemeStore.validate(data)
             pending = Pending(theme: theme, existing: ThemeStore.existing(theme))
         } catch {
-            failure = "“\(name)” can’t be installed. \(error.localizedDescription)"
+            failure = String(localized: "“\(name)” can’t be installed. \(error.localizedDescription)")
         }
     }
 
@@ -279,7 +279,7 @@ final class ThemeInstaller {
             appearance.reloadThemes()
             if use { appearance.themeID = theme.id }
         } catch {
-            failure = "“\(theme.name)” couldn’t be installed. \(error.localizedDescription)"
+            failure = String(localized: "“\(theme.name)” couldn’t be installed. \(error.localizedDescription)")
         }
     }
 }
@@ -325,18 +325,18 @@ private struct ThemeInstallAlerts: ViewModifier {
 
     private var title: String {
         guard let pending = installer.pending else { return "" }
-        if let existing = pending.existing { return "“\(existing.name)” Is Already Installed" }
-        return "Install “\(pending.theme.name)”?"
+        if let existing = pending.existing { return String(localized: "“\(existing.name)” Is Already Installed") }
+        return String(localized: "Install “\(pending.theme.name)”?")
     }
 
     private func message(_ pending: ThemeInstaller.Pending) -> String {
         let modes = switch pending.theme.requiredScheme {
-        case .dark: "It has only a dark mode, so the app switches to dark while it’s on."
-        case .light: "It has only a light mode, so the app switches to light while it’s on."
-        default: "It has light and dark modes."
+        case .dark: String(localized: "It has only a dark mode, so the app switches to dark while it’s on.")
+        case .light: String(localized: "It has only a light mode, so the app switches to light while it’s on.")
+        default: String(localized: "It has light and dark modes.")
         }
         if let existing = pending.existing {
-            let what = ThemeStore.isUserTheme(existing.id) ? "Replace it" : "Replace the built-in theme"
+            let what = ThemeStore.isUserTheme(existing.id) ? String(localized: "Replace it") : String(localized: "Replace the built-in theme")
             return "\(what) with this file, or keep both. \(modes)"
         }
         return modes

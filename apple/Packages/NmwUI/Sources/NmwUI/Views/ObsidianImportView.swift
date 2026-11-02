@@ -128,7 +128,8 @@ struct ObsidianImportView: View {
         if report.otherFiles > 0 { parts.append("\(report.otherFiles) files no note links to were copied where they were.") }
         if report.embeddedNotes > 0 { parts.append("\(report.embeddedNotes) embedded notes became links.") }
         if report.unresolvedLinks > 0 { parts.append("\(report.unresolvedLinks) links point at notes or files that aren’t in the vault; they were left as written.") }
-        if !report.failures.isEmpty { parts.append("Couldn’t copy: \(report.failures.prefix(5).joined(separator: ", ")).") }
+        let failed = report.failures.prefix(5).joined(separator: ", ")
+        if !report.failures.isEmpty { parts.append(String(localized: "Couldn’t copy: \(failed).")) }
         return parts.joined(separator: " ")
     }
 
@@ -137,7 +138,7 @@ struct ObsidianImportView: View {
         let vaultPath = url.standardizedFileURL.resolvingSymlinksInPath().path + "/"
         // Importing a folder that holds this notebook would copy the notebook into itself.
         guard !root.hasPrefix(vaultPath) else {
-            errorMessage = "That folder contains this notebook. Choose the vault’s own folder."
+            errorMessage = String(localized: "That folder contains this notebook. Choose the vault’s own folder.")
             return
         }
         errorMessage = nil

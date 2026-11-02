@@ -18,7 +18,7 @@ enum ImportSize {
     static func spaceWarning(_ bytes: Int64, at folder: URL) -> String? {
         guard let free = try? folder.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
             .volumeAvailableCapacityForImportantUsage, free > 0, free < bytes else { return nil }
-        return "Only \(format(free)) is free on the notebook’s disk."
+        return String(localized: "Only \(format(free)) is free on the notebook’s disk.")
     }
 
     /// `name` in `root`, or "name 2", "name 3", … if that folder is already there.

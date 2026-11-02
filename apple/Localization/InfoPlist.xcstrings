@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Markdown Document" : {
+      "comment" : "A document type or file type name in Info.plist.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dokument Markdown"
+          }
+        }
+      }
+    },
+    "Notes my Way Items" : {
+      "comment" : "A document type or file type name in Info.plist.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elementy Notes my Way"
+          }
+        }
+      }
+    },
+    "Notes my Way Theme" : {
+      "comment" : "A document type or file type name in Info.plist.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motyw Notes my Way"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

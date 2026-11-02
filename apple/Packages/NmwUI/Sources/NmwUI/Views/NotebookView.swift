@@ -184,7 +184,7 @@ struct LinkFixBanner: View {
     private var message: String {
         var parts: [String] = []
         if let move = fix.move {
-            parts.append(move.from.parent == move.to.parent ? "Renamed to “\(move.to.stem)”" : "Moved to \(move.to.parent?.rawValue ?? session.name)")
+            parts.append(move.from.parent == move.to.parent ? String(localized: "Renamed to “\(move.to.stem)”") : String(localized: "Moved to \(move.to.parent?.rawValue ?? session.name)"))
         }
         if !fix.notes.isEmpty {
             parts.append(fix.notes.count == 1 ? "updated links in 1 note" : "updated links in \(fix.notes.count) notes")

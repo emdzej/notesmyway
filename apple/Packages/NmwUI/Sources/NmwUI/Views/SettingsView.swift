@@ -73,9 +73,11 @@ public struct SettingsView: View {
 struct GeneralSettingsForm: View {
     @AppStorage(EditorMode.key) private var editorMode = EditorMode.formatted
     @AppStorage(ChecklistSettings.movesCheckedKey) private var movesCheckedToBottom = false
+    @State private var language = AppLanguage.current()
 
     var body: some View {
         Form {
+            LanguageSection(language: $language)
             Section {
                 Picker("Notes open as", selection: $editorMode) {
                     ForEach(EditorMode.allCases) { Text($0.title).tag($0) }
@@ -92,6 +94,52 @@ struct GeneralSettingsForm: View {
         }
         .formStyle(.grouped)
     }
+}
+
+/// System, English or Polski; applies when the app next starts.
+private struct LanguageSection: View {
+    @Binding var language: AppLanguage
+
+    /// The chosen language differs from the one showing.
+    private var needsRestart: Bool {
+        let wanted = language == .system
+            ? (Locale.preferredLanguages.first?.hasPrefix("pl") == true ? AppLanguage.polish : .english)
+            : language
+        return wanted != AppLanguage.running
+    }
+
+    var body: some View {
+        Section {
+            Picker("Language", selection: $language) {
+                ForEach(AppLanguage.allCases) { Text(verbatim: $0.title).tag($0) }
+            }
+            .onChange(of: language) { _, new in new.apply() }
+            #if os(macOS)
+            if needsRestart {
+                Button("Restart Notes my Way") { Self.relaunch() }
+            }
+            #endif
+        } footer: {
+            if needsRestart {
+                #if os(macOS)
+                Text("The new language shows after Notes my Way restarts.").foregroundStyle(.secondary)
+                #else
+                Text("The new language shows after you close Notes my Way and open it again.").foregroundStyle(.secondary)
+                #endif
+            }
+        }
+    }
+
+    #if os(macOS)
+    /// Opens a new copy of the app, then quits this one (which saves open notes).
+    private static func relaunch() {
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.createsNewApplicationInstance = true
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: configuration) { _, _ in
+            DispatchQueue.main.async { NSApp.terminate(nil) }
+        }
+    }
+    #endif
 }
 
 /// The theme, light / dark, the sidebar, and the editor's text.
@@ -221,8 +269,8 @@ struct NotebookSettingsForm: View {
     private var example: String {
         let name = folderName.isEmpty ? attachments.folderName : folderName
         switch attachments.placement {
-        case .nextToNote: return "Files dropped into Projects/Idea.md go to Projects/\(name)/."
-        case .notebookRoot: return "Files dropped into Projects/Idea.md go to \(name)/Idea/."
+        case .nextToNote: return String(localized: "Files dropped into Projects/Idea.md go to Projects/\(name)/.")
+        case .notebookRoot: return String(localized: "Files dropped into Projects/Idea.md go to \(name)/Idea/.")
         }
     }
 
@@ -230,7 +278,7 @@ struct NotebookSettingsForm: View {
         let name = folderName.trimmingCharacters(in: .whitespaces)
         guard name != attachments.folderName else { return }
         guard NotebookConfig.Attachments.isValidFolderName(name) else {
-            errorMessage = "“\(name)” can’t be used as a folder name."
+            errorMessage = String(localized: "“\(name)” can’t be used as a folder name.")
             folderName = attachments.folderName
             return
         }

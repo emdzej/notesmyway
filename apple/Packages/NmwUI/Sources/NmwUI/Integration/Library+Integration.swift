@@ -35,9 +35,9 @@ public enum IntegrationError: LocalizedError {
 
     public var errorDescription: String? {
         switch self {
-        case .noNotebook: "Open a folder as a notebook in Notes my Way first."
-        case .noteNotFound: "The note couldn’t be found."
-        case .folderNotFound: "The folder couldn’t be found in the notebook."
+        case .noNotebook: String(localized: "Open a folder as a notebook in Notes my Way first.")
+        case .noteNotFound: String(localized: "The note couldn’t be found.")
+        case .folderNotFound: String(localized: "The folder couldn’t be found in the notebook.")
         }
     }
 }

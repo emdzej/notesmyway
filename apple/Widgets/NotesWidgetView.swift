@@ -71,8 +71,8 @@ struct NotesWidgetView: View {
     }
 
     private var emptyMessage: String {
-        guard entry.hasNotebooks else { return "Open Notes my Way to add a notebook." }
-        return kind == .pinned ? "Pin a note to see it here." : "No notes yet."
+        guard entry.hasNotebooks else { return String(localized: "Open Notes my Way to add a notebook.") }
+        return kind == .pinned ? String(localized: "Pin a note to see it here.") : String(localized: "No notes yet.")
     }
 
     private func row(_ note: WidgetSnapshot.Note) -> some View {

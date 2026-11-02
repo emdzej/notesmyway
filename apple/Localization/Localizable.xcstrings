@@ -1,0 +1,4996 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+      "shouldTranslate" : false
+    },
+    "%@" : {
+      "shouldTranslate" : false
+    },
+    "%@  %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@  %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@  %2$@"
+          }
+        }
+      }
+    },
+    "%@ has only a %@ mode." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ has only a %2$@ mode."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motyw %1$@ ma tylko tryb %2$@."
+          }
+        }
+      }
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "shouldTranslate" : false
+    },
+    "%lld characters" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld character"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld characters"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld znaki"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld znaków"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld znak"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld znaku"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld days left" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld days left"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "zostały %lld dni"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "zostało %lld dni"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "został %lld dzień"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "zostało %lld dnia"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld images" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld image"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld images"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld obrazki"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld obrazków"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld obrazek"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld obrazka"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld locked notes will be skipped: unlock them in Apple Notes first to import them." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld locked note will be skipped: unlock it in Apple Notes first to import it."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld locked notes will be skipped: unlock them in Apple Notes first to import them."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld zablokowane notatki zostaną pominięte: aby je zaimportować, najpierw odblokuj je w Notatkach Apple."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld zablokowanych notatek zostanie pominiętych: aby je zaimportować, najpierw odblokuj je w Notatkach Apple."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld zablokowana notatka zostanie pominięta: aby ją zaimportować, najpierw odblokuj ją w Notatkach Apple."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld zablokowanej notatki zostanie pominięte: aby je zaimportować, najpierw odblokuj je w Notatkach Apple."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld notes and %lld other files, about %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@notes@ and %#@files@, about %3$@."
+          },
+          "substitutions" : {
+            "files" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld other file"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld other files"
+                    }
+                  }
+                }
+              }
+            },
+            "notes" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld note"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notes"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@notes@ i %#@files@, około %3$@."
+          },
+          "substitutions" : {
+            "files" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld inne pliki"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld innych plików"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld inny plik"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld innego pliku"
+                    }
+                  }
+                }
+              }
+            },
+            "notes" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatki"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatek"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatka"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatki"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld notes in %lld folders, about %@ with attachments." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@notes@ in %#@folders@, about %3$@ with attachments."
+          },
+          "substitutions" : {
+            "folders" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld folder"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld folders"
+                    }
+                  }
+                }
+              }
+            },
+            "notes" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld note"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notes"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@notes@ w %#@folders@, około %3$@ z załącznikami."
+          },
+          "substitutions" : {
+            "folders" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld folderach"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld folderach"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld folderze"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%2$lld folderu"
+                    }
+                  }
+                }
+              }
+            },
+            "notes" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatki"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatek"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatka"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatki"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld notes in “%@” link to “%@”. Their links will break." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld notes in “%2$@” link to “%3$@”. Their links will break."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W „%2$@” %#@notes@ łącza do „%3$@”. Te łącza przestaną działać."
+          },
+          "substitutions" : {
+            "notes" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatki zawierają"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatek zawiera"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatka zawiera"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatki zawiera"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld notes. Restore the folder to open them." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld note. Restore the folder to open it."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld notes. Restore the folder to open them."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld notatki. Przywróć folder, aby je otworzyć."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld notatek. Przywróć folder, aby je otworzyć."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld notatka. Przywróć folder, aby ją otworzyć."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld notatki. Przywróć folder, aby je otworzyć."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld pt" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld pkt"
+          }
+        }
+      }
+    },
+    "%lld words" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld word"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld words"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld słowa"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld słów"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld słowo"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld słowa"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "1 note in “%@” links to “%@”. That link will break." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "1 note in “%1$@” links to “%2$@”. That link will break."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 notatka w „%1$@” zawiera łącze do „%2$@”. To łącze przestanie działać."
+          }
+        }
+      }
+    },
+    "A folder in the notebook, such as Projects/2026." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder w notatniku, na przykład Projekty/2026."
+          }
+        }
+      }
+    },
+    "A notebook is any folder of Markdown files. Your notes stay plain .md files you can open anywhere." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatnikiem może być dowolny folder z plikami Markdown. Twoje notatki pozostają zwykłymi plikami .md, które otworzysz w każdym programie."
+          }
+        }
+      }
+    },
+    "About" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informacje"
+          }
+        }
+      }
+    },
+    "Acknowledgements" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podziękowania"
+          }
+        }
+      }
+    },
+    "Actions for %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czynności dla: %@"
+          }
+        }
+      }
+    },
+    "Actual Size" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozmiar rzeczywisty"
+          }
+        }
+      }
+    },
+    "Add Notebook…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj notatnik…"
+          }
+        }
+      }
+    },
+    "Add another notebook first (notebook menu › Add Notebook…)." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najpierw dodaj inny notatnik (menu notatnika › Dodaj notatnik…)."
+          }
+        }
+      }
+    },
+    "Add to Inbox" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj do Inbox"
+          }
+        }
+      }
+    },
+    "Added to Inbox.md in the notebook, under today’s date." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodawane do Inbox.md w notatniku, pod dzisiejszą datą."
+          }
+        }
+      }
+    },
+    "Adds text at the end of a note." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaje tekst na końcu notatki."
+          }
+        }
+      }
+    },
+    "Align" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyrównanie"
+          }
+        }
+      }
+    },
+    "All Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystkie notatki"
+          }
+        }
+      }
+    },
+    "Allow access to “%@” to show this note’s images and save dropped files next to it." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zezwól na dostęp do „%@”, aby pokazać obrazki tej notatki i zapisywać upuszczone pliki obok niej."
+          }
+        }
+      }
+    },
+    "Allow…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zezwól…"
+          }
+        }
+      }
+    },
+    "Appearance" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wygląd"
+          }
+        }
+      }
+    },
+    "Append ${text} to ${note}" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dopisz ${text} do ${note}"
+          }
+        }
+      }
+    },
+    "Append to Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dopisz do notatki"
+          }
+        }
+      }
+    },
+    "Apple Notes’ database couldn’t be read: %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można odczytać bazy danych Notatek Apple: %@"
+          }
+        }
+      }
+    },
+    "Attach" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Załącz"
+          }
+        }
+      }
+    },
+    "Attach Files" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Załącz pliki"
+          }
+        }
+      }
+    },
+    "Attachments" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Załączniki"
+          }
+        }
+      }
+    },
+    "Backlinks" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linki zwrotne"
+          }
+        }
+      }
+    },
+    "Body" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Treść"
+          }
+        }
+      }
+    },
+    "Bold" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pogrubienie"
+          }
+        }
+      }
+    },
+    "Books for the winter" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Książki na zimę"
+          }
+        }
+      }
+    },
+    "Bulleted List" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lista punktowana"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anuluj"
+          }
+        }
+      }
+    },
+    "Can’t Install Theme" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można zainstalować motywu"
+          }
+        }
+      }
+    },
+    "Center" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do środka"
+          }
+        }
+      }
+    },
+    "Check All" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaznacz wszystkie"
+          }
+        }
+      }
+    },
+    "Checklist" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lista kontrolna"
+          }
+        }
+      }
+    },
+    "Checklist (⇧⌘L)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lista kontrolna (⇧⌘L)"
+          }
+        }
+      }
+    },
+    "Checklist Items" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pozycje listy kontrolnej"
+          }
+        }
+      }
+    },
+    "Choose Apple Notes’ data folder, “group.com.apple.notes”." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz folder danych Notatek Apple, „group.com.apple.notes”."
+          }
+        }
+      }
+    },
+    "Choose File…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz plik…"
+          }
+        }
+      }
+    },
+    "Choose Folder…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz folder…"
+          }
+        }
+      }
+    },
+    "Choose Vault…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz sejf…"
+          }
+        }
+      }
+    },
+    "Code" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kod"
+          }
+        }
+      }
+    },
+    "Collapse" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zwiń"
+          }
+        }
+      }
+    },
+    "Command Palette…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paleta poleceń…"
+          }
+        }
+      }
+    },
+    "Comment" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Komentarz"
+          }
+        }
+      }
+    },
+    "Couldn’t Complete" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można dokończyć"
+          }
+        }
+      }
+    },
+    "Couldn’t Restore" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można przywrócić"
+          }
+        }
+      }
+    },
+    "Couldn’t copy: %@." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można skopiować: %@."
+          }
+        }
+      }
+    },
+    "Couldn’t read: %@." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można odczytać: %@."
+          }
+        }
+      }
+    },
+    "Couldn’t remember access to “%@”." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można zapamiętać dostępu do „%@”."
+          }
+        }
+      }
+    },
+    "Create" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utwórz"
+          }
+        }
+      }
+    },
+    "Create Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utwórz notatkę"
+          }
+        }
+      }
+    },
+    "Create note ${noteTitle} with ${body}" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utwórz notatkę ${noteTitle} z treścią ${body}"
+          }
+        }
+      }
+    },
+    "Creates a Markdown note in a notebook." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tworzy notatkę Markdown w notatniku."
+          }
+        }
+      }
+    },
+    "Current theme" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bieżący motyw"
+          }
+        }
+      }
+    },
+    "Dark" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciemny"
+          }
+        }
+      }
+    },
+    "Dark (set by theme)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciemny (ustawiony przez motyw)"
+          }
+        }
+      }
+    },
+    "Dark only" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tylko ciemny"
+          }
+        }
+      }
+    },
+    "Date Created" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data utworzenia"
+          }
+        }
+      }
+    },
+    "Date Modified" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data modyfikacji"
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń"
+          }
+        }
+      }
+    },
+    "Delete %lld Items" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Delete %lld Item"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Delete %lld Items"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Usuń %lld elementy"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Usuń %lld elementów"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Usuń %lld element"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Usuń %lld elementu"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Delete Checked" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń zaznaczone"
+          }
+        }
+      }
+    },
+    "Delete Now" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń teraz"
+          }
+        }
+      }
+    },
+    "Delete Now…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń teraz…"
+          }
+        }
+      }
+    },
+    "Delete Theme" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń motyw"
+          }
+        }
+      }
+    },
+    "Delete “%@” Now?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunąć „%@” teraz?"
+          }
+        }
+      }
+    },
+    "Delete “%@”?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunąć „%@”?"
+          }
+        }
+      }
+    },
+    "Deleted %@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Deleted %1$@ · %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunięto %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "Deleted notes and folders stay here for %lld days." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Deleted notes and folders stay here for %lld day."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Deleted notes and folders stay here for %lld days."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Usunięte notatki i foldery zostają tu przez %lld dni."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Usunięte notatki i foldery zostają tu przez %lld dni."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Usunięte notatki i foldery zostają tu przez %lld dzień."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Usunięte notatki i foldery zostają tu przez %lld dnia."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gotowe"
+          }
+        }
+      }
+    },
+    "Duplicate" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplikuj"
+          }
+        }
+      }
+    },
+    "Duplicate “%@”" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplikuj „%@”"
+          }
+        }
+      }
+    },
+    "Editor" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edytor"
+          }
+        }
+      }
+    },
+    "Empty Trash" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opróżnij kosz"
+          }
+        }
+      }
+    },
+    "Empty the Trash?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opróżnić kosz?"
+          }
+        }
+      }
+    },
+    "Everything in Recently Deleted is deleted. This can’t be undone." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystko w Ostatnio usuniętych zostanie usunięte. Tej operacji nie można cofnąć."
+          }
+        }
+      }
+    },
+    "Expand" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozwiń"
+          }
+        }
+      }
+    },
+    "Export as PDF…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eksportuj jako PDF…"
+          }
+        }
+      }
+    },
+    "File Names" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nazwy plików"
+          }
+        }
+      }
+    },
+    "Files dropped into Projects/Idea.md go to %@/Idea/." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pliki upuszczone w Projekty/Pomysł.md trafiają do %@/Pomysł/."
+          }
+        }
+      }
+    },
+    "Files dropped into Projects/Idea.md go to Projects/%@/." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pliki upuszczone w Projekty/Pomysł.md trafiają do Projekty/%@/."
+          }
+        }
+      }
+    },
+    "Files opened from Finder that aren’t in a notebook open in their own window." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pliki otwarte z Findera, które nie należą do notatnika, otwierają się we własnym oknie."
+          }
+        }
+      }
+    },
+    "Find and Replace" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znajdź i zastąp"
+          }
+        }
+      }
+    },
+    "Find in Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znajdź w notatce"
+          }
+        }
+      }
+    },
+    "Find in Note…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znajdź w notatce…"
+          }
+        }
+      }
+    },
+    "Finds notes by their text, with tag: and path: filters like the app's search." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Znajduje notatki po treści, z filtrami tag: i path: jak wyszukiwanie w aplikacji."
+          }
+        }
+      }
+    },
+    "Folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder"
+          }
+        }
+      }
+    },
+    "Folder name" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nazwa folderu"
+          }
+        }
+      }
+    },
+    "Folders" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foldery"
+          }
+        }
+      }
+    },
+    "Font" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czcionka"
+          }
+        }
+      }
+    },
+    "Format" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Format"
+          }
+        }
+      }
+    },
+    "Formatted" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sformatowane"
+          }
+        }
+      }
+    },
+    "Free software: you may share and change it under the GPL." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wolne oprogramowanie: możesz je udostępniać i zmieniać na warunkach licencji GPL."
+          }
+        }
+      }
+    },
+    "Full Width" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pełna szerokość"
+          }
+        }
+      }
+    },
+    "GPLv3 or later" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPLv3 lub nowsza"
+          }
+        }
+      }
+    },
+    "General" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogólne"
+          }
+        }
+      }
+    },
+    "Get Note Text" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobierz tekst notatki"
+          }
+        }
+      }
+    },
+    "Get the text of ${note}" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobierz tekst notatki ${note}"
+          }
+        }
+      }
+    },
+    "Go to #%@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przejdź do #%@"
+          }
+        }
+      }
+    },
+    "Go to %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przejdź do: %@"
+          }
+        }
+      }
+    },
+    "Go to All Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przejdź do Wszystkich notatek"
+          }
+        }
+      }
+    },
+    "Go to Pinned" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przejdź do Przypiętych"
+          }
+        }
+      }
+    },
+    "Go to Recently Deleted" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przejdź do Ostatnio usuniętych"
+          }
+        }
+      }
+    },
+    "Heading" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nagłówek"
+          }
+        }
+      }
+    },
+    "Hide Keyboard" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukryj klawiaturę"
+          }
+        }
+      }
+    },
+    "Hide Outline and Backlinks" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ukryj konspekt i linki zwrotne"
+          }
+        }
+      }
+    },
+    "Icon" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ikona"
+          }
+        }
+      }
+    },
+    "Image Size" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozmiar obrazka"
+          }
+        }
+      }
+    },
+    "Import" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj"
+          }
+        }
+      }
+    },
+    "Import from Apple Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj z Notatek Apple"
+          }
+        }
+      }
+    },
+    "Import from Apple Notes…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj z Notatek Apple…"
+          }
+        }
+      }
+    },
+    "Import from Obsidian" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj z Obsidiana"
+          }
+        }
+      }
+    },
+    "Import from Obsidian…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj z Obsidiana…"
+          }
+        }
+      }
+    },
+    "Imported %lld notes into “%@”." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported %#@notes@ into “%2$@”."
+          },
+          "substitutions" : {
+            "notes" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld note"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notes"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaimportowano %#@notes@ do „%2$@”."
+          },
+          "substitutions" : {
+            "notes" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "few" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatki"
+                    }
+                  },
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatek"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatkę"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%1$lld notatki"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Importing %lld of %lld…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Importing %1$lld of %2$lld…"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importowanie %1$lld z %2$lld…"
+          }
+        }
+      }
+    },
+    "In Recently Deleted · %lld days left" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "In Recently Deleted · %lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "In Recently Deleted · %lld days left"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W Ostatnio usuniętych · zostały %lld dni"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W Ostatnio usuniętych · zostało %lld dni"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W Ostatnio usuniętych · został %lld dzień"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "W Ostatnio usuniętych · zostało %lld dnia"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "In the notebook folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W folderze notatnika"
+          }
+        }
+      }
+    },
+    "Indent" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zwiększ wcięcie"
+          }
+        }
+      }
+    },
+    "Indexing…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indeksowanie…"
+          }
+        }
+      }
+    },
+    "Ingredients for one tray" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Składniki na jedną blachę"
+          }
+        }
+      }
+    },
+    "Insert Table" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstaw tabelę"
+          }
+        }
+      }
+    },
+    "Insert Table (⌥⌘T)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstaw tabelę (⌥⌘T)"
+          }
+        }
+      }
+    },
+    "Install" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zainstaluj"
+          }
+        }
+      }
+    },
+    "Install Theme…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zainstaluj motyw…"
+          }
+        }
+      }
+    },
+    "Install and Use" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zainstaluj i użyj"
+          }
+        }
+      }
+    },
+    "Install “%@”?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zainstalować „%@”?"
+          }
+        }
+      }
+    },
+    "Into the folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do folderu"
+          }
+        }
+      }
+    },
+    "It has light and dark modes." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ma tryb jasny i ciemny."
+          }
+        }
+      }
+    },
+    "It has no “%@”." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brakuje w nim „%@”."
+          }
+        }
+      }
+    },
+    "It has only a dark mode, so the app switches to dark while it’s on." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ma tylko tryb ciemny, więc gdy jest włączony, aplikacja przechodzi w tryb ciemny."
+          }
+        }
+      }
+    },
+    "It has only a light mode, so the app switches to light while it’s on." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ma tylko tryb jasny, więc gdy jest włączony, aplikacja przechodzi w tryb jasny."
+          }
+        }
+      }
+    },
+    "It isn’t a theme." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To nie jest motyw."
+          }
+        }
+      }
+    },
+    "It isn’t a theme: the file isn’t valid JSON." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To nie jest motyw: plik nie jest poprawnym JSON-em."
+          }
+        }
+      }
+    },
+    "Italic" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursywa"
+          }
+        }
+      }
+    },
+    "Its file is removed from the Themes folder." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jego plik zostanie usunięty z folderu Motywy."
+          }
+        }
+      }
+    },
+    "Its name is empty." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jego nazwa jest pusta."
+          }
+        }
+      }
+    },
+    "Keep Both" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zachowaj obie"
+          }
+        }
+      }
+    },
+    "Keep Mine" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zachowaj moją"
+          }
+        }
+      }
+    },
+    "Kitchen budget" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Budżet kuchni"
+          }
+        }
+      }
+    },
+    "LaTeX formulas, with its math fonts." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wzory LaTeX wraz z czcionkami matematycznymi."
+          }
+        }
+      }
+    },
+    "Language" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Język"
+          }
+        }
+      }
+    },
+    "Large" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duży"
+          }
+        }
+      }
+    },
+    "Larger Text" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Większy tekst"
+          }
+        }
+      }
+    },
+    "Left" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do lewej"
+          }
+        }
+      }
+    },
+    "Light" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jasny"
+          }
+        }
+      }
+    },
+    "Light (set by theme)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jasny (ustawiony przez motyw)"
+          }
+        }
+      }
+    },
+    "Light only" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tylko jasny"
+          }
+        }
+      }
+    },
+    "Limit" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limit"
+          }
+        }
+      }
+    },
+    "Line spacing" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odstęp między wierszami"
+          }
+        }
+      }
+    },
+    "Link Previews" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podglądy łączy"
+          }
+        }
+      }
+    },
+    "Link to Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Łącze do notatki"
+          }
+        }
+      }
+    },
+    "Link to Note…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Łącze do notatki…"
+          }
+        }
+      }
+    },
+    "Link to note…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Łącze do notatki…"
+          }
+        }
+      }
+    },
+    "Links Will Break" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Łącza przestaną działać"
+          }
+        }
+      }
+    },
+    "Links to notes inside it are updated." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Łącza do notatek w nim zostaną zaktualizowane."
+          }
+        }
+      }
+    },
+    "Links to this note are updated." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Łącza do tej notatki zostaną zaktualizowane."
+          }
+        }
+      }
+    },
+    "Lisbon in spring" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lizbona wiosną"
+          }
+        }
+      }
+    },
+    "Load previews for web links" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wczytuj podglądy łączy internetowych"
+          }
+        }
+      }
+    },
+    "Location" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miejsce"
+          }
+        }
+      }
+    },
+    "Look" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wygląd"
+          }
+        }
+      }
+    },
+    "MIT; fonts: SIL OFL, GUST" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MIT; czcionki: SIL OFL, GUST"
+          }
+        }
+      }
+    },
+    "Make Notes my Way the Default" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustaw Notes my Way jako domyślną"
+          }
+        }
+      }
+    },
+    "Mark as Checked" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oznacz jako zaznaczone"
+          }
+        }
+      }
+    },
+    "Markdown Files" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pliki Markdown"
+          }
+        }
+      }
+    },
+    "Markdown Source" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Źródło Markdown"
+          }
+        }
+      }
+    },
+    "Markdown source" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Źródło Markdown"
+          }
+        }
+      }
+    },
+    "Medium" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Średni"
+          }
+        }
+      }
+    },
+    "Modified" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmodyfikowano"
+          }
+        }
+      }
+    },
+    "Monospaced" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O stałej szerokości"
+          }
+        }
+      }
+    },
+    "More" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Więcej"
+          }
+        }
+      }
+    },
+    "More Functions" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Więcej funkcji"
+          }
+        }
+      }
+    },
+    "Move %lld Notes to Trash" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Move %lld Note to Trash"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Move %lld Notes to Trash"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przenieś %lld notatki do kosza"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przenieś %lld notatek do kosza"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przenieś %lld notatkę do kosza"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przenieś %lld notatki do kosza"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Move Anyway" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś mimo to"
+          }
+        }
+      }
+    },
+    "Move Checked to Bottom" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś zaznaczone na dół"
+          }
+        }
+      }
+    },
+    "Move To" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś do"
+          }
+        }
+      }
+    },
+    "Move checked items to the bottom" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenoś zaznaczone pozycje na dół"
+          }
+        }
+      }
+    },
+    "Move to Folder…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś do folderu…"
+          }
+        }
+      }
+    },
+    "Move to Notebook…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś do notatnika…"
+          }
+        }
+      }
+    },
+    "Move to Trash" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś do kosza"
+          }
+        }
+      }
+    },
+    "Move to Trash…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś do kosza…"
+          }
+        }
+      }
+    },
+    "Move to folder…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś do folderu…"
+          }
+        }
+      }
+    },
+    "Move “%@” to Notebook" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieś „%@” do notatnika"
+          }
+        }
+      }
+    },
+    "Move “%@” to Recently Deleted?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przenieść „%@” do Ostatnio usuniętych?"
+          }
+        }
+      }
+    },
+    "Moved to %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przeniesiono do: %@"
+          }
+        }
+      }
+    },
+    "My Way" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Way"
+          }
+        }
+      }
+    },
+    "Name" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nazwa"
+          }
+        }
+      }
+    },
+    "New Folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nowy folder"
+          }
+        }
+      }
+    },
+    "New Folder…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nowy folder…"
+          }
+        }
+      }
+    },
+    "New Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nowa notatka"
+          }
+        }
+      }
+    },
+    "Next to the note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obok notatki"
+          }
+        }
+      }
+    },
+    "Next, choose the vault’s folder." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Następnie wybierz folder sejfu."
+          }
+        }
+      }
+    },
+    "Next, choose the “group.com.apple.notes” folder. It’s already selected in the window that opens; click Open." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Następnie wybierz folder „group.com.apple.notes”. Będzie już zaznaczony w oknie, które się otworzy; kliknij Otwórz."
+          }
+        }
+      }
+    },
+    "No Notebook" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak notatnika"
+          }
+        }
+      }
+    },
+    "No Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak notatek"
+          }
+        }
+      }
+    },
+    "No Recently Deleted Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak ostatnio usuniętych notatek"
+          }
+        }
+      }
+    },
+    "No additional text" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak dodatkowego tekstu"
+          }
+        }
+      }
+    },
+    "No headings" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak nagłówków"
+          }
+        }
+      }
+    },
+    "No notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak notatek"
+          }
+        }
+      }
+    },
+    "No notes link here" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Żadna notatka tu nie prowadzi"
+          }
+        }
+      }
+    },
+    "No notes yet." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie ma jeszcze notatek."
+          }
+        }
+      }
+    },
+    "Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatka"
+          }
+        }
+      }
+    },
+    "Notebook" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatnik"
+          }
+        }
+      }
+    },
+    "Notebook folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder notatnika"
+          }
+        }
+      }
+    },
+    "Notes keep their folders, dates, pinned state, checklists, tables and attachments." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatki zachowują foldery, daty, przypięcie, listy kontrolne, tabele i załączniki."
+          }
+        }
+      }
+    },
+    "Notes my Way" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes my Way"
+          }
+        }
+      }
+    },
+    "Notes my Way copies an Obsidian vault into “%@”: notes keep their folders and dates, wikilinks become standard Markdown links, and attachments move to this notebook’s attachment folders. The vault isn’t changed." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes my Way kopiuje sejf Obsidiana do „%@”: notatki zachowują foldery i daty, wikilinki stają się zwykłymi łączami Markdown, a załączniki trafiają do folderów załączników tego notatnika. Sejf nie zostaje zmieniony."
+          }
+        }
+      }
+    },
+    "Notes my Way is built with this open-source software. Thank you to its authors." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes my Way korzysta z tego oprogramowania open source. Dziękujemy jego autorom."
+          }
+        }
+      }
+    },
+    "Notes my Way needs this folder to show the note’s images and save files you drop into it." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes my Way potrzebuje tego folderu, aby pokazać obrazki notatki i zapisywać upuszczane w niej pliki."
+          }
+        }
+      }
+    },
+    "Notes my Way reads Apple Notes’ data folder and writes each note as a Markdown file in “%@”. Apple Notes isn’t changed." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes my Way odczytuje folder danych Notatek Apple i zapisuje każdą notatkę jako plik Markdown w „%@”. Notatki Apple nie zostają zmienione."
+          }
+        }
+      }
+    },
+    "Notes open as" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatki otwierają się jako"
+          }
+        }
+      }
+    },
+    "Nothing Selected" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nic nie zaznaczono"
+          }
+        }
+      }
+    },
+    "Nothing to save." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie ma nic do zapisania."
+          }
+        }
+      }
+    },
+    "Numbered List" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lista numerowana"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "Only %@ is free on the notebook’s disk." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na dysku notatnika wolne jest tylko %@."
+          }
+        }
+      }
+    },
+    "Only links marked {.preview} are fetched." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pobierane są tylko łącza oznaczone {.preview}."
+          }
+        }
+      }
+    },
+    "Open ${note}" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz ${note}"
+          }
+        }
+      }
+    },
+    "Open File…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz plik…"
+          }
+        }
+      }
+    },
+    "Open Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz notatkę"
+          }
+        }
+      }
+    },
+    "Open Notes my Way and add a notebook first." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najpierw otwórz Notes my Way i dodaj notatnik."
+          }
+        }
+      }
+    },
+    "Open Notes my Way to add a notebook." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz Notes my Way, aby dodać notatnik."
+          }
+        }
+      }
+    },
+    "Open Quickly…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szybkie otwieranie…"
+          }
+        }
+      }
+    },
+    "Open Themes Folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz folder Motywy"
+          }
+        }
+      }
+    },
+    "Open a .nmwtheme file, or drop one here, to install it. Themes are JSON files in the Themes folder: edit a duplicate, then Reload." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz plik .nmwtheme albo upuść go tutaj, aby go zainstalować. Motywy to pliki JSON w folderze Motywy: edytuj duplikat, potem kliknij Wczytaj ponownie."
+          }
+        }
+      }
+    },
+    "Open a Folder as Notebook…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz folder jako notatnik…"
+          }
+        }
+      }
+    },
+    "Open a Markdown File…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz plik Markdown…"
+          }
+        }
+      }
+    },
+    "Open a folder as a notebook in Notes my Way first." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najpierw otwórz folder jako notatnik w Notes my Way."
+          }
+        }
+      }
+    },
+    "Open a folder as a notebook to change its settings." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz folder jako notatnik, aby zmienić jego ustawienia."
+          }
+        }
+      }
+    },
+    "Open note…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz notatkę…"
+          }
+        }
+      }
+    },
+    "Opens Markdown files" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwiera pliki Markdown"
+          }
+        }
+      }
+    },
+    "Opens a note in Notes my Way." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwiera notatkę w Notes my Way."
+          }
+        }
+      }
+    },
+    "Original" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oryginalny"
+          }
+        }
+      }
+    },
+    "Outdent" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmniejsz wcięcie"
+          }
+        }
+      }
+    },
+    "Outline" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konspekt"
+          }
+        }
+      }
+    },
+    "Outline and Backlinks" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konspekt i linki zwrotne"
+          }
+        }
+      }
+    },
+    "Outline and Backlinks (⌥⌘I)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konspekt i linki zwrotne (⌥⌘I)"
+          }
+        }
+      }
+    },
+    "Path" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ścieżka"
+          }
+        }
+      }
+    },
+    "Photo Library" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biblioteka zdjęć"
+          }
+        }
+      }
+    },
+    "Pin" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypnij"
+          }
+        }
+      }
+    },
+    "Pin %lld Notes" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pin %lld Note"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pin %lld Notes"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przypnij %lld notatki"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przypnij %lld notatek"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przypnij %lld notatkę"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Przypnij %lld notatki"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pin Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypnij notatkę"
+          }
+        }
+      }
+    },
+    "Pin a note to see it here." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypnij notatkę, aby ją tu zobaczyć."
+          }
+        }
+      }
+    },
+    "Pinned" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypięte"
+          }
+        }
+      }
+    },
+    "Pinned Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przypięte notatki"
+          }
+        }
+      }
+    },
+    "Press ⌘N to create one." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naciśnij ⌘N, aby ją utworzyć."
+          }
+        }
+      }
+    },
+    "Print…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drukuj…"
+          }
+        }
+      }
+    },
+    "Quote" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cytat"
+          }
+        }
+      }
+    },
+    "Quotes collected in October" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyceny zebrane w październiku"
+          }
+        }
+      }
+    },
+    "Reading Apple Notes…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odczytywanie Notatek Apple…"
+          }
+        }
+      }
+    },
+    "Reading list" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do przeczytania"
+          }
+        }
+      }
+    },
+    "Reading the vault…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odczytywanie sejfu…"
+          }
+        }
+      }
+    },
+    "Recent Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnie notatki"
+          }
+        }
+      }
+    },
+    "Recently Deleted" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnio usunięte"
+          }
+        }
+      }
+    },
+    "Reload" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wczytaj ponownie"
+          }
+        }
+      }
+    },
+    "Remove “%@” from Notes my Way" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń „%@” z Notes my Way"
+          }
+        }
+      }
+    },
+    "Rename" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień nazwę"
+          }
+        }
+      }
+    },
+    "Rename Folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień nazwę folderu"
+          }
+        }
+      }
+    },
+    "Rename Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień nazwę notatki"
+          }
+        }
+      }
+    },
+    "Rename Note…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień nazwę notatki…"
+          }
+        }
+      }
+    },
+    "Rename files to match the first heading" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmieniaj nazwy plików zgodnie z pierwszym nagłówkiem"
+          }
+        }
+      }
+    },
+    "Renamed to “%@”" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmieniono nazwę na „%@”"
+          }
+        }
+      }
+    },
+    "Rename…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień nazwę…"
+          }
+        }
+      }
+    },
+    "Replace" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastąp"
+          }
+        }
+      }
+    },
+    "Replace Built-in" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastąp wbudowany"
+          }
+        }
+      }
+    },
+    "Replace it" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastąp go"
+          }
+        }
+      }
+    },
+    "Replace the built-in theme" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zastąp wbudowany motyw"
+          }
+        }
+      }
+    },
+    "Restart Notes my Way" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uruchom ponownie Notes my Way"
+          }
+        }
+      }
+    },
+    "Restore" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przywróć"
+          }
+        }
+      }
+    },
+    "Restore the file to open it." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przywróć plik, aby go otworzyć."
+          }
+        }
+      }
+    },
+    "Returns a note's Markdown." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zwraca Markdown notatki."
+          }
+        }
+      }
+    },
+    "Right" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do prawej"
+          }
+        }
+      }
+    },
+    "Same as Theme" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taki jak motyw"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zachowaj"
+          }
+        }
+      }
+    },
+    "Save as" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zachowaj jako"
+          }
+        }
+      }
+    },
+    "Saved %@ in the Themes folder." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zachowano %@ w folderze Motywy."
+          }
+        }
+      }
+    },
+    "Saved %@. Edit it, then press Reload." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zachowano %@. Edytuj go, a potem kliknij Wczytaj ponownie."
+          }
+        }
+      }
+    },
+    "Saves your text and keeps the other version as a “(conflict …)” copy." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zachowuje Twój tekst, a drugą wersję zapisuje jako kopię „(conflict …)”."
+          }
+        }
+      }
+    },
+    "Search" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukaj"
+          }
+        }
+      }
+    },
+    "Search (tag:, path:)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukaj (tag:, path:)"
+          }
+        }
+      }
+    },
+    "Search Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukaj w notatkach"
+          }
+        }
+      }
+    },
+    "Search notes for ${query}" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukaj ${query} w notatkach"
+          }
+        }
+      }
+    },
+    "Select Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaznacz notatki"
+          }
+        }
+      }
+    },
+    "Select a deleted note to see it, or restore it." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaznacz usuniętą notatkę, aby ją zobaczyć lub przywrócić."
+          }
+        }
+      }
+    },
+    "Selection: %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaznaczenie: %@"
+          }
+        }
+      }
+    },
+    "Serif" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szeryfowa"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustawienia"
+          }
+        }
+      }
+    },
+    "Settings for “%@”, saved in the notebook (.nmw/config.json) so they sync with it." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustawienia notatnika „%@”, zapisane w nim (.nmw/config.json), więc synchronizują się razem z nim."
+          }
+        }
+      }
+    },
+    "Settings…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ustawienia…"
+          }
+        }
+      }
+    },
+    "Share" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udostępnij"
+          }
+        }
+      }
+    },
+    "Share “%@”…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udostępnij „%@”…"
+          }
+        }
+      }
+    },
+    "Shared Image" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udostępniony obrazek"
+          }
+        }
+      }
+    },
+    "Shared Link" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udostępnione łącze"
+          }
+        }
+      }
+    },
+    "Shared Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udostępniona notatka"
+          }
+        }
+      }
+    },
+    "Share…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Udostępnij…"
+          }
+        }
+      }
+    },
+    "Show Card as Link" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż kartę jako łącze"
+          }
+        }
+      }
+    },
+    "Show Formatted" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż sformatowane"
+          }
+        }
+      }
+    },
+    "Show Formatted (⇧⌘M)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż sformatowane (⇧⌘M)"
+          }
+        }
+      }
+    },
+    "Show Link as Preview Card" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż łącze jako kartę podglądu"
+          }
+        }
+      }
+    },
+    "Show Markdown Source" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż źródło Markdown"
+          }
+        }
+      }
+    },
+    "Show Markdown Source (⇧⌘M)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż źródło Markdown (⇧⌘M)"
+          }
+        }
+      }
+    },
+    "Show Notes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż notatki"
+          }
+        }
+      }
+    },
+    "Show Outline and Backlinks" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż konspekt i linki zwrotne"
+          }
+        }
+      }
+    },
+    "Show attachment folders in the sidebar" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokazuj foldery załączników na pasku bocznym"
+          }
+        }
+      }
+    },
+    "Show in Finder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż w Finderze"
+          }
+        }
+      }
+    },
+    "Sidebar" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pasek boczny"
+          }
+        }
+      }
+    },
+    "Small" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mały"
+          }
+        }
+      }
+    },
+    "Smaller Text" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mniejszy tekst"
+          }
+        }
+      }
+    },
+    "Sort" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortuj"
+          }
+        }
+      }
+    },
+    "Sort By" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sortuj według"
+          }
+        }
+      }
+    },
+    "Source code" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kod źródłowy"
+          }
+        }
+      }
+    },
+    "Sourdough focaccia" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Focaccia na zakwasie"
+          }
+        }
+      }
+    },
+    "Strikethrough" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przekreślenie"
+          }
+        }
+      }
+    },
+    "Subheading" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podtytuł"
+          }
+        }
+      }
+    },
+    "Switch the open note with the </> toolbar button (⇧⌘M)." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwartą notatkę przełączysz przyciskiem </> na pasku narzędzi (⇧⌘M)."
+          }
+        }
+      }
+    },
+    "Switch to %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przełącz na: %@"
+          }
+        }
+      }
+    },
+    "Syntax colours in code blocks." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolorowanie składni w blokach kodu."
+          }
+        }
+      }
+    },
+    "System" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Systemowy"
+          }
+        }
+      }
+    },
+    "System Default" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domyślny systemowy"
+          }
+        }
+      }
+    },
+    "Table" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tabela"
+          }
+        }
+      }
+    },
+    "Tag" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag"
+          }
+        }
+      }
+    },
+    "Tags" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tagi"
+          }
+        }
+      }
+    },
+    "Tap a .nmwtheme file in Files, Mail or Messages to install it. Themes are JSON files in Files › On My iPhone › Notes my Way › Themes." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stuknij plik .nmwtheme w Plikach, Mailu lub Wiadomościach, aby go zainstalować. Motywy to pliki JSON w Pliki › Na moim iPhonie › Notes my Way › Themes."
+          }
+        }
+      }
+    },
+    "Text" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekst"
+          }
+        }
+      }
+    },
+    "Text Styles" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Style tekstu"
+          }
+        }
+      }
+    },
+    "Text size" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wielkość tekstu"
+          }
+        }
+      }
+    },
+    "That folder contains this notebook. Choose the vault’s own folder." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten folder zawiera ten notatnik. Wybierz folder samego sejfu."
+          }
+        }
+      }
+    },
+    "The SQLite index for search, tags and backlinks." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indeks SQLite do wyszukiwania, tagów i linków zwrotnych."
+          }
+        }
+      }
+    },
+    "The TextKit 2 editor MarkdownKit grew from. Copyright 2026 Luca Chen and contributors." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edytor TextKit 2, z którego wyrósł MarkdownKit. Copyright 2026 Luca Chen i współtwórcy."
+          }
+        }
+      }
+    },
+    "The editor. Derived from swift-markdown-engine by Luca Chen and contributors." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edytor. Wywodzi się z swift-markdown-engine autorstwa Luki Chena i współtwórców."
+          }
+        }
+      }
+    },
+    "The file couldn’t be read." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można odczytać pliku."
+          }
+        }
+      }
+    },
+    "The folder and the notes in it go to Recently Deleted (.nmw/trash), where they’re kept for 30 days and can be restored." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folder i jego notatki trafią do Ostatnio usuniętych (.nmw/trash), gdzie są przechowywane przez 30 dni i można je przywrócić."
+          }
+        }
+      }
+    },
+    "The folder couldn’t be found in the notebook." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie znaleziono folderu w notatniku."
+          }
+        }
+      }
+    },
+    "The folder doesn’t contain Apple Notes’ database (NoteStore.sqlite)." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten folder nie zawiera bazy danych Notatek Apple (NoteStore.sqlite)."
+          }
+        }
+      }
+    },
+    "The link points to %@. Create it there?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Łącze prowadzi do %@. Utworzyć ją tam?"
+          }
+        }
+      }
+    },
+    "The new language shows after Notes my Way restarts." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nowy język pojawi się po ponownym uruchomieniu Notes my Way."
+          }
+        }
+      }
+    },
+    "The new language shows after you close Notes my Way and open it again." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nowy język pojawi się, gdy zamkniesz Notes my Way i otworzysz go ponownie."
+          }
+        }
+      }
+    },
+    "The note and the attachments it uses move to the other notebook." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatka i jej załączniki zostaną przeniesione do drugiego notatnika."
+          }
+        }
+      }
+    },
+    "The note couldn’t be found." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie znaleziono notatki."
+          }
+        }
+      }
+    },
+    "The note is created when Notes my Way opens." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatka zostanie utworzona przy otwarciu Notes my Way."
+          }
+        }
+      }
+    },
+    "The notebook selected in the app if empty." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeśli puste, notatnik wybrany w aplikacji."
+          }
+        }
+      }
+    },
+    "The notes you changed last." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatki zmienione ostatnio."
+          }
+        }
+      }
+    },
+    "The theme colors the notes, the note list and the app’s accent." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motyw nadaje kolory notatkom, liście notatek i akcentom aplikacji."
+          }
+        }
+      }
+    },
+    "Theme" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motyw"
+          }
+        }
+      }
+    },
+    "Theme: %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motyw: %@"
+          }
+        }
+      }
+    },
+    "Themes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motywy"
+          }
+        }
+      }
+    },
+    "Theme’s Font" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czcionka motywu"
+          }
+        }
+      }
+    },
+    "These colors aren’t hex colors like #1A8FA8: %@." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te kolory nie są kolorami szesnastkowymi, takimi jak #1A8FA8: %@."
+          }
+        }
+      }
+    },
+    "This can’t be undone." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tej operacji nie można cofnąć."
+          }
+        }
+      }
+    },
+    "This folder has no Obsidian settings (.obsidian), so it may not be a vault; its notes can still be imported." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten folder nie ma ustawień Obsidiana (.obsidian), więc może nie być sejfem; jego notatki i tak można zaimportować."
+          }
+        }
+      }
+    },
+    "This note changed on disk while you were editing it." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta notatka zmieniła się na dysku podczas edycji."
+          }
+        }
+      }
+    },
+    "Title" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tytuł"
+          }
+        }
+      }
+    },
+    "Title (optional)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tytuł (opcjonalnie)"
+          }
+        }
+      }
+    },
+    "Toggle Markdown Source" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przełącz źródło Markdown"
+          }
+        }
+      }
+    },
+    "Tram 28 early in the morning" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tramwaj 28 wcześnie rano"
+          }
+        }
+      }
+    },
+    "Trash" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kosz"
+          }
+        }
+      }
+    },
+    "Type a command or a note…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wpisz polecenie lub notatkę…"
+          }
+        }
+      }
+    },
+    "Uncheck All" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odznacz wszystkie"
+          }
+        }
+      }
+    },
+    "Undo" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cofnij"
+          }
+        }
+      }
+    },
+    "Unpin" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odepnij"
+          }
+        }
+      }
+    },
+    "Unpin %lld Notes" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Unpin %lld Note"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Unpin %lld Notes"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Odepnij %lld notatki"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Odepnij %lld notatek"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Odepnij %lld notatkę"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Odepnij %lld notatki"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Unpin Note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odepnij notatkę"
+          }
+        }
+      }
+    },
+    "Use" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Użyj"
+          }
+        }
+      }
+    },
+    "Use Disk Version" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Użyj wersji z dysku"
+          }
+        }
+      }
+    },
+    "Version %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wersja %@"
+          }
+        }
+      }
+    },
+    "Was in %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wcześniej w: %@"
+          }
+        }
+      }
+    },
+    "Welcome to Notes my Way" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Witaj w Notes my Way"
+          }
+        }
+      }
+    },
+    "When a note’s first heading changes, its file is renamed after it once you pause typing or leave the note. Links to it are updated. Notes without a heading, or named “Untitled…”, keep their name." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gdy zmieni się pierwszy nagłówek notatki, jej plik dostaje nazwę od niego, gdy przerwiesz pisanie lub opuścisz notatkę. Łącza do niej zostaną zaktualizowane. Notatki bez nagłówka lub nazwane „Untitled…” zachowują nazwę."
+          }
+        }
+      }
+    },
+    "Your pinned notes." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje przypięte notatki."
+          }
+        }
+      }
+    },
+    "Zoom In" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powiększ"
+          }
+        }
+      }
+    },
+    "Zoom Out" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomniejsz"
+          }
+        }
+      }
+    },
+    "appearance colors" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wygląd kolory appearance colors"
+          }
+        }
+      }
+    },
+    "create" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "utwórz nowy create"
+          }
+        }
+      }
+    },
+    "delete remove" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "usuń skasuj delete remove"
+          }
+        }
+      }
+    },
+    "deleted for good today" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zostanie usunięta na stałe dziś"
+          }
+        }
+      }
+    },
+    "find note switch" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "znajdź notatka przełącz find note switch"
+          }
+        }
+      }
+    },
+    "folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "folder"
+          }
+        }
+      }
+    },
+    "inspector headings" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "inspektor nagłówki inspector headings"
+          }
+        }
+      }
+    },
+    "migrate notes app" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "migracja notatki apple migrate notes app"
+          }
+        }
+      }
+    },
+    "migrate vault wikilinks" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "migracja sejf wikilinki migrate vault wikilinks"
+          }
+        }
+      }
+    },
+    "move" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "przenieś move"
+          }
+        }
+      }
+    },
+    "notesmyway.emdzej.pl" : {
+      "shouldTranslate" : false
+    },
+    "preferences options" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "preferencje opcje ustawienia preferences options"
+          }
+        }
+      }
+    },
+    "raw formatted view" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "surowy sformatowany widok raw formatted view"
+          }
+        }
+      }
+    },
+    "save pdf" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "zachowaj pdf save pdf"
+          }
+        }
+      }
+    },
+    "send export airdrop mail" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wyślij eksportuj airdrop mail send export"
+          }
+        }
+      }
+    },
+    "the notebook’s folder" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "folder notatnika"
+          }
+        }
+      }
+    },
+    "trash restore" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kosz przywróć trash restore"
+          }
+        }
+      }
+    },
+    "“%@” Is Already Installed" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motyw „%@” jest już zainstalowany"
+          }
+        }
+      }
+    },
+    "“%@” Notebook" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notatnik „%@”"
+          }
+        }
+      }
+    },
+    "“%@” can’t be installed. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "“%1$@” can’t be installed. %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można zainstalować „%1$@”. %2$@"
+          }
+        }
+      }
+    },
+    "“%@” can’t be used as a folder name." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@” nie może być nazwą folderu."
+          }
+        }
+      }
+    },
+    "“%@” couldn’t be installed. %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "“%1$@” couldn’t be installed. %2$@"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można zainstalować „%1$@”. %2$@"
+          }
+        }
+      }
+    },
+    "“%@” couldn’t be read." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie można odczytać „%@”."
+          }
+        }
+      }
+    },
+    "“%@” doesn’t exist yet" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@” jeszcze nie istnieje"
+          }
+        }
+      }
+    },
+    "“%@” has the wrong kind of value." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@” ma wartość złego rodzaju."
+          }
+        }
+      }
+    },
+    "“%@” isn’t UTF-8 text, so Notes my Way won’t edit it." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@” nie jest tekstem UTF-8, więc Notes my Way nie będzie go edytować."
+          }
+        }
+      }
+    },
+    "“modes” must list \"light\", \"dark\" or both." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„modes” musi zawierać \"light\", \"dark\" lub oba."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

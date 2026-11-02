@@ -205,7 +205,7 @@ public final class LinkPreviewStore: Sendable {
                 image = await thumbnail(for: imageURL)
             }
             if title.isEmpty { title = url.deletingPathExtension().lastPathComponent }
-            return LinkPreviewData(status: .ready, title: title, summary: summary, subtitle: "Note", imageURL: image)
+            return LinkPreviewData(status: .ready, title: title, summary: summary, subtitle: String(localized: "Note"), imageURL: image)
         }
 
         let kind = values?.contentType?.localizedDescription ?? url.pathExtension.uppercased()

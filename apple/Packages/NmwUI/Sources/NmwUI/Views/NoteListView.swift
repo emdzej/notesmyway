@@ -256,7 +256,7 @@ struct NoteListView: View {
 
     private func requestMoveToNotebook(_ path: NotebookPath) {
         if otherNotebooks.isEmpty {
-            errorMessage = "Add another notebook first (notebook menu › Add Notebook…)."
+            errorMessage = String(localized: "Add another notebook first (notebook menu › Add Notebook…).")
         } else {
             movingToNotebook = path
         }
@@ -281,11 +281,11 @@ struct NoteListView: View {
 
     private var title: String {
         switch session.scope {
-        case .all: "All Notes"
-        case .pinned: "Pinned"
+        case .all: String(localized: "All Notes")
+        case .pinned: String(localized: "Pinned")
         case .folder(let folder): folder?.name ?? session.name
         case .tag(let tag): "#\(tag)"
-        case .trash: "Recently Deleted"
+        case .trash: String(localized: "Recently Deleted")
         }
     }
 
@@ -377,7 +377,7 @@ struct NoteRow: View {
                     }
                 }
                 let date = Text(note.modified, format: .dateTime.day().month(.abbreviated).year()).foregroundStyle(.primary)
-                let snippet = Text(note.snippet.isEmpty ? "No additional text" : note.snippet).foregroundStyle(.secondary)
+                let snippet = Text(note.snippet.isEmpty ? String(localized: "No additional text") : note.snippet).foregroundStyle(.secondary)
                 Text("\(date)  \(snippet)")
                     .font(.subheadline)
                     .lineLimit(2, reservesSpace: true)

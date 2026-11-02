@@ -24,10 +24,10 @@ public final class EditorAppearance {
         public var id: String { rawValue }
         var title: String {
             switch self {
-            case .theme: "Theme’s Font"
-            case .system: "System"
-            case .serif: "Serif"
-            case .mono: "Monospaced"
+            case .theme: String(localized: "Theme’s Font")
+            case .system: String(localized: "System")
+            case .serif: String(localized: "Serif")
+            case .mono: String(localized: "Monospaced")
             }
         }
     }

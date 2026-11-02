@@ -49,9 +49,9 @@ public enum AppAppearance: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .system: "System"
-        case .light: "Light"
-        case .dark: "Dark"
+        case .system: String(localized: "System")
+        case .light: String(localized: "Light")
+        case .dark: String(localized: "Dark")
         }
     }
 
@@ -72,8 +72,8 @@ public enum SidebarStyle: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .system: "System Default"
-        case .myWay: "My Way"
+        case .system: String(localized: "System Default")
+        case .myWay: String(localized: "My Way")
         }
     }
 }
@@ -120,8 +120,8 @@ public enum EditorMode: String, CaseIterable, Identifiable, Sendable {
 
     var title: String {
         switch self {
-        case .formatted: "Formatted"
-        case .source: "Markdown Source"
+        case .formatted: String(localized: "Formatted")
+        case .source: String(localized: "Markdown Source")
         }
     }
 }

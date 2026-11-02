@@ -252,7 +252,7 @@ struct NoteEditorView: View {
 
     private func insertLink(to note: NoteSummary) {
         guard let link = link(to: note) else { return }
-        controller.insertText(link, actionName: "Link to Note")
+        controller.insertText(link, actionName: String(localized: "Link to Note"))
         controller.focus()
     }
 
@@ -295,7 +295,7 @@ struct NoteEditorView: View {
         guard let completion = linkCompletion else { return }
         linkCompletion = nil
         if let link = link(to: note), let range = completionRange(completion) {
-            controller.replace(range, with: link, actionName: "Link to Note")
+            controller.replace(range, with: link, actionName: String(localized: "Link to Note"))
         }
         refocusEditor()
     }
@@ -388,7 +388,7 @@ struct WordCountFooter: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(Self.summary(TextStatistics(markdown: text)))
             if let selected {
-                Text("Selection: " + Self.summary(TextStatistics(markdown: selected)))
+                Text("Selection: \(Self.summary(TextStatistics(markdown: selected)))")
             }
         }
         .font(.caption)
@@ -407,8 +407,7 @@ struct WordCountFooter: View {
     }
 
     static func summary(_ stats: TextStatistics) -> String {
-        func count(_ n: Int, _ unit: String) -> String { "\(n.formatted()) \(unit)\(n == 1 ? "" : "s")" }
-        return count(stats.words, "word") + " · " + count(stats.characters, "character")
+        String(localized: "\(stats.words) words") + " · " + String(localized: "\(stats.characters) characters")
     }
 }
 
@@ -434,7 +433,7 @@ struct ConflictBar: View {
 
 /// Fuzzy picker over the notebook's notes: "Link to Note" (⌘L) and the quick switcher (⌘O).
 struct NotePicker: View {
-    let prompt: String
+    let prompt: LocalizedStringKey
     let notes: [NoteSummary]
     /// Typing `]]` closes the picker with what was typed (the `[[` picker:
     /// the text stays a plain `[[…]]`).

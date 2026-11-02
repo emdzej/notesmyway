@@ -454,7 +454,7 @@ struct NmwCommands: Commands {
     }
 
     private static let sizes: [(MarkdownAttributes.Size, String)] = [
-        (.icon, "Icon"), (.small, "Small"), (.medium, "Medium"), (.large, "Large"), (.full, "Full Width"),
+        (.icon, String(localized: "Icon")), (.small, String(localized: "Small")), (.medium, String(localized: "Medium")), (.large, String(localized: "Large")), (.full, String(localized: "Full Width")),
     ]
 }
 

@@ -22,7 +22,7 @@ struct NmwWidgetBundle: WidgetBundle {
 enum NotesKind: String {
     case pinned, recent
 
-    var title: String { self == .pinned ? "Pinned Notes" : "Recent Notes" }
+    var title: String { self == .pinned ? String(localized: "Pinned Notes") : String(localized: "Recent Notes") }
     var symbol: String { self == .pinned ? "pin.fill" : "clock" }
 
     func notes(in snapshot: WidgetSnapshot) -> [WidgetSnapshot.Note] {
@@ -58,10 +58,10 @@ struct NotesProvider: TimelineProvider {
     }
 
     static let sample: [WidgetSnapshot.Note] = [
-        .init(notebookID: "", path: "Travel/Lisbon.md", title: "Lisbon in spring", snippet: "Tram 28 early in the morning", modified: Date(), pinned: true),
-        .init(notebookID: "", path: "Recipes/Focaccia.md", title: "Sourdough focaccia", snippet: "Ingredients for one tray", modified: Date().addingTimeInterval(-7200), pinned: true),
-        .init(notebookID: "", path: "Projects/Budget.md", title: "Kitchen budget", snippet: "Quotes collected in October", modified: Date().addingTimeInterval(-86400), pinned: false),
-        .init(notebookID: "", path: "Reading list.md", title: "Reading list", snippet: "Books for the winter", modified: Date().addingTimeInterval(-172800), pinned: false),
+        .init(notebookID: "", path: "Travel/Lisbon.md", title: String(localized: "Lisbon in spring"), snippet: String(localized: "Tram 28 early in the morning"), modified: Date(), pinned: true),
+        .init(notebookID: "", path: "Recipes/Focaccia.md", title: String(localized: "Sourdough focaccia"), snippet: String(localized: "Ingredients for one tray"), modified: Date().addingTimeInterval(-7200), pinned: true),
+        .init(notebookID: "", path: "Projects/Budget.md", title: String(localized: "Kitchen budget"), snippet: String(localized: "Quotes collected in October"), modified: Date().addingTimeInterval(-86400), pinned: false),
+        .init(notebookID: "", path: "Reading list.md", title: String(localized: "Reading list"), snippet: String(localized: "Books for the winter"), modified: Date().addingTimeInterval(-172800), pinned: false),
     ]
 }
 

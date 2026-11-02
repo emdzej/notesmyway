@@ -136,6 +136,13 @@ Last updated 2026-10-29. See `spec.md` for the design.
 - **macOS:** View › Actual Size (⌘0), Zoom In (⌘+, and plain ⌘= through a key monitor in `NmwAppDelegate`), Zoom Out (⌘−). iPhone and iPad: Smaller Text / size / Larger Text in the editor's "…" menu (tapping the size resets it). All step `EditorAppearance.fontSize` by 1 pt within 11–28 pt, so zoom is the Settings text size: app-wide and remembered.
 - Built for macOS and installed on the iPhone. **Not tried by hand:** the shortcuts, and whether the "…" menu stays open between taps and updates the size label.
 
+## Polish
+
+- The apps (app, widgets, share extension, Siri phrases, document type names) are in English and Polish: `apple/Localization/*.xcstrings` (≈410 strings, plurals for counts in both languages). `scripts/sync-strings.sh` merges the strings both platforms' builds extract and lists any without Polish. Plain `String` UI text moved to `String(localized:)`; `namePrompt`, `NotePicker` and the format-bar helpers take `LocalizedStringKey`.
+- Settings › General › Language: System / English / Polski (`AppLanguage`, the app's `AppleLanguages`; the Mac offers Restart, iOS asks to reopen). Widgets and the share extension follow the system language.
+- Engine (MarkdownKit): menu titles, table handle menus, marker bar and undo names through `EngineStrings.localized` with its own catalog; the context menu finds the system Font submenu by its Show Fonts item, not its English title.
+- Checked in a running Mac test copy launched in Polish (sidebar, list, title, dates). **Not tried by hand:** the Language picker and Restart, iOS screens, widgets, share sheet, Siri phrases, Finder's document kinds.
+
 ## Known gaps (app)
 
 - Not built yet: "Move to Notebook…" for standalone files, drag-to-move in the sidebar. Palette, Recently Deleted, Move to Notebook… and the heading rename are unit-tested and built for macOS and iOS but not clicked through in the running app.

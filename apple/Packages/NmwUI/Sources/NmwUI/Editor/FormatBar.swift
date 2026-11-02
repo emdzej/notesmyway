@@ -78,7 +78,7 @@ struct FormatBar: View {
         }
     }
 
-    private func button(_ title: String, _ systemImage: String, action: @escaping () -> Void) -> some View {
+    private func button(_ title: LocalizedStringKey, _ systemImage: String, action: @escaping () -> Void) -> some View {
         Button(action: action) { icon(systemImage) }
             .accessibilityLabel(title)
             .frame(maxWidth: .infinity)

@@ -77,7 +77,7 @@ enum ShareImporter {
     /// A title from the content: a link's title, else the first line of text.
     static func suggestedTitle(for items: [ShareJob.Item]) -> String {
         for item in items {
-            if case .url(let url, let title) = item { return title?.nilIfEmpty ?? url.host() ?? "Shared Link" }
+            if case .url(let url, let title) = item { return title?.nilIfEmpty ?? url.host() ?? String(localized: "Shared Link") }
         }
         for item in items {
             if case .text(let text) = item,
@@ -86,7 +86,7 @@ enum ShareImporter {
                 return String(line.prefix(60))
             }
         }
-        return items.contains { if case .image = $0 { true } else { false } } ? "Shared Image" : "Shared Note"
+        return items.contains { if case .image = $0 { true } else { false } } ? String(localized: "Shared Image") : String(localized: "Shared Note")
     }
 
     /// `<folder>/<name>.md`, numbered (`<name> 2.md`) if taken.

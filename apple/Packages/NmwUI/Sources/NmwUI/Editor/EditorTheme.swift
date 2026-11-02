@@ -418,7 +418,7 @@ enum ThemeStore {
 
         var errorDescription: String? {
             switch self {
-            case .unreadable: "The file couldn’t be read."
+            case .unreadable: String(localized: "The file couldn’t be read.")
             case .invalid(let reason): reason
             }
         }
@@ -431,25 +431,26 @@ enum ThemeStore {
         do {
             theme = try JSONDecoder().decode(EditorTheme.self, from: data)
         } catch let DecodingError.keyNotFound(key, _) {
-            throw .invalid("It has no “\(key.stringValue)”.")
+            throw .invalid(String(localized: "It has no “\(key.stringValue)”."))
         } catch let DecodingError.typeMismatch(_, context), let DecodingError.valueNotFound(_, context) {
             let path = context.codingPath.map(\.stringValue).joined(separator: ".")
-            throw .invalid("“\(path)” has the wrong kind of value.")
+            throw .invalid(String(localized: "“\(path)” has the wrong kind of value."))
         } catch DecodingError.dataCorrupted {
-            throw .invalid("It isn’t a theme: the file isn’t valid JSON.")
+            throw .invalid(String(localized: "It isn’t a theme: the file isn’t valid JSON."))
         } catch {
-            throw .invalid("It isn’t a theme.")
+            throw .invalid(String(localized: "It isn’t a theme."))
         }
-        guard !theme.name.trimmingCharacters(in: .whitespaces).isEmpty else { throw .invalid("Its name is empty.") }
+        guard !theme.name.trimmingCharacters(in: .whitespaces).isEmpty else { throw .invalid(String(localized: "Its name is empty.")) }
         if let modes = theme.modes {
             let known = modes.map { $0.lowercased() }
             guard !known.isEmpty, known.allSatisfy({ ["light", "dark"].contains($0) }) else {
-                throw .invalid("“modes” must list \"light\", \"dark\" or both.")
+                throw .invalid(String(localized: "“modes” must list \"light\", \"dark\" or both."))
             }
         }
         let bad = badColors(in: theme)
         if !bad.isEmpty {
-            throw .invalid("These colors aren’t hex colors like #1A8FA8: \(bad.prefix(4).joined(separator: ", ")).")
+            let colors = bad.prefix(4).joined(separator: ", ")
+            throw .invalid(String(localized: "These colors aren’t hex colors like #1A8FA8: \(colors)."))
         }
         return theme
     }

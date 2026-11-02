@@ -1,6 +1,7 @@
 name: nmw
 options:
   bundleIdPrefix: pl.emdzej
+  developmentLanguage: en
   deploymentTarget:
     macOS: "26.0"
     iOS: "26.0"
@@ -14,11 +15,14 @@ settings:
   base:
     MARKETING_VERSION: "0.2.0"
     CURRENT_PROJECT_VERSION: "3"
+    # English and Polish; strings live in Localization/ (scripts/sync-strings.sh adds new ones).
+    LOCALIZATION_PREFERS_STRING_CATALOGS: "YES"
+    SWIFT_EMIT_LOC_STRINGS: "YES"
 targets:
   nmw:
     type: application
     supportedDestinations: [macOS, iOS]
-    sources: [App]
+    sources: [App, Localization/Localizable.xcstrings, Localization/AppShortcuts.xcstrings, Localization/InfoPlist.xcstrings]
     dependencies:
       - package: NmwUI
       - target: NmwWidgets
@@ -104,7 +108,7 @@ targets:
   NmwWidgets:
     type: app-extension
     supportedDestinations: [macOS, iOS]
-    sources: [Widgets]
+    sources: [Widgets, Localization/Localizable.xcstrings]
     dependencies:
       - package: NmwShared
       - sdk: WidgetKit.framework
@@ -145,7 +149,7 @@ targets:
   NmwShare:
     type: app-extension
     supportedDestinations: [macOS, iOS]
-    sources: [ShareExtension]
+    sources: [ShareExtension, Localization/Localizable.xcstrings]
     dependencies:
       - package: NmwShared
     info:

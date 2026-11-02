@@ -8,6 +8,7 @@ Settings has four tabs on the Mac, and the same four pages on iPhone and iPad. T
 
 | Setting | Options |
 | --- | --- |
+| Language | System, English, Polski (shown after the app restarts) |
 | Notes open as | Formatted, Markdown Source |
 | Move checked items to the bottom | off |
 | Markdown files (Mac) | which app opens `.md` files, and a button to make it Notes my Way |
