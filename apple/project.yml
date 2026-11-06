@@ -27,9 +27,14 @@ targets:
       - package: NmwUI
       - target: NmwWidgets
       - target: NmwShare
+    configFiles:
+      Debug: App/Support.xcconfig
+      Release: App/Support.xcconfig
     info:
       path: App/Info.plist
       properties:
+        # Report a Problem (ALIAS); empty without App/Secrets.xcconfig, which hides it.
+        NmwAliasKey: $(NMW_ALIAS_KEY)
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDisplayName: Notes my Way

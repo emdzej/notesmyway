@@ -8,6 +8,7 @@
 //  edits, with one undo for the whole fix.
 //
 
+import CoreGraphics
 import Foundation
 import MarkdownEngine
 import NmwCore
@@ -106,6 +107,13 @@ public final class NotebookSession {
     public var isShowingAppleNotesImport = false
     /// Import from Obsidian (the notebook menu, File menu, palette).
     public var isShowingObsidianImport = false
+    /// Report a Problem is showing, with the window as it was when it was chosen.
+    public var problemReport: ProblemReport?
+
+    public struct ProblemReport: Identifiable {
+        public let id = UUID()
+        let window: CGImage?
+    }
     /// iPhone / iPad Settings sheet (the Mac has its Settings window).
     public var isShowingSettings = false
     /// Asks the note list to show its Rename alert for this note (palette).

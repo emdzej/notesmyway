@@ -41,6 +41,8 @@ struct Acknowledgement: Identifiable {
         Acknowledgement(id: "swiftmath", name: "SwiftMath", detail: String(localized: "LaTeX formulas, with its math fonts."),
                         license: String(localized: "MIT; fonts: SIL OFL, GUST"), url: URL(string: "https://github.com/mgriebling/SwiftMath")!,
                         files: ["SwiftMath", "STIX-Fonts-OFL", "GUST-Font-License"]),
+        Acknowledgement(id: "alias", name: "AliasSupport", detail: String(localized: "Report a Problem: the ALIAS support desk’s client."),
+                        license: "MIT", url: URL(string: "https://github.com/emdzej/alias-client-swift")!, files: ["AliasSupport"]),
     ]
 
     var text: String {

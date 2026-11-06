@@ -1,0 +1,19 @@
+{
+  "id": "notesmyway",
+  "name": "Notes my Way",
+  "privacy_url": "https://notesmyway.emdzej.pl/privacy",
+  "contact": "off",
+  "fields": [
+    {"name": "screen", "label": "Screen", "type": "text"},
+    {"name": "notes", "label": "Notes in the notebook", "type": "number"},
+    {"name": "notebooks", "label": "Notebooks", "type": "number"},
+    {"name": "editor", "label": "Editor mode", "type": "text"},
+    {"name": "platform", "label": "Platform", "type": "text"},
+    {"name": "language", "label": "App language", "type": "text"}
+  ],
+  "redact": [
+    {"path": "/note", "strategy": "regex", "pattern": "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}", "replace": "[email]"}
+  ],
+  "removable": ["/context/notes", "/context/notebooks"],
+  "branding": {"colour": "#1A8FA8", "accent": "#5CCFDB"}
+}

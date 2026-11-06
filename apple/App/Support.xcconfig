@@ -1,0 +1,9 @@
+// Report a Problem (ALIAS). The product keys are in Secrets.xcconfig, which is git-ignored:
+//   NMW_ALIAS_KEY_IOS = …
+//   NMW_ALIAS_KEY_MACOS = …
+// A build without it (CI, a fork) has no Report a Problem item.
+NMW_ALIAS_KEY_IOS =
+NMW_ALIAS_KEY_MACOS =
+#include? "Secrets.xcconfig"
+NMW_ALIAS_KEY = $(NMW_ALIAS_KEY_IOS)
+NMW_ALIAS_KEY[sdk=macosx*] = $(NMW_ALIAS_KEY_MACOS)

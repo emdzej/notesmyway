@@ -391,6 +391,14 @@ struct NmwCommands: Commands {
                 .disabled(!appearance.canZoomOut)
             Divider()
         }
+        CommandGroup(after: .help) {
+            if SupportDesk.isAvailable {
+                Button("Report a Problem…", systemImage: "exclamationmark.bubble") {
+                    if let session { SupportDesk.report(from: session, notebooks: Library.shared.entries.count) }
+                }
+                .disabled(session == nil)
+            }
+        }
         CommandMenu("Format") {
             Group {
             // Paragraph and character styles (Apple Notes' shortcuts).

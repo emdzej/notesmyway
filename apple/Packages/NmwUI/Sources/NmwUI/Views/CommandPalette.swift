@@ -300,6 +300,12 @@ struct CommandPalette: View {
                                  keywords: String(localized: "migrate vault wikilinks"), presents: true) {
             session.isShowingObsidianImport = true
         })
+        if SupportDesk.isAvailable {
+            items.append(PaletteItem(id: "report-problem", title: String(localized: "Report a Problem…"), systemImage: "exclamationmark.bubble",
+                                     keywords: String(localized: "support bug help feedback"), presents: true) {
+                SupportDesk.report(from: session, notebooks: library.entries.count)
+            })
+        }
         return items
     }
 

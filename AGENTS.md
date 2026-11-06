@@ -120,6 +120,15 @@ Settings › General › Language picks one (it sets the app's own `AppleLanguag
   `Sources/MarkdownEngineCore/Resources/Localizable.xcstrings`, filled by hand. `EngineStringsTests` fails
   when a menu title has no Polish.
 
+## Report a Problem (ALIAS)
+
+The in-app support desk is [ALIAS](https://getalias.support) at `help.getalias.support`, product `notesmyway`
+(`apple/Support/alias-product.json`; change it with `aliasctl products apply`). Its product keys live in
+`apple/App/Secrets.xcconfig` (git-ignored; `NMW_ALIAS_KEY_IOS`, `NMW_ALIAS_KEY_MACOS`), read through
+`App/Support.xcconfig` into Info.plist's `NmwAliasKey`. Without the file the menu items don't show, so CI and
+forks build without it. Never send note titles, text or paths in a report's context; new fields must be
+declared on the product first.
+
 ## Licences
 
 Every dependency's licence ships in the app: `Settings › About` (`Views/AboutView.swift`) reads the texts in

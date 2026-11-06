@@ -730,6 +730,16 @@
         }
       }
     },
+    "A way to reach you (optional)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontakt do Ciebie (opcjonalnie)"
+          }
+        }
+      }
+    },
     "About" : {
       "localizations" : {
         "pl" : {
@@ -780,6 +790,16 @@
         }
       }
     },
+    "Add Screenshot" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj zrzut ekranu"
+          }
+        }
+      }
+    },
     "Add another notebook first (notebook menu › Add Notebook…)." : {
       "localizations" : {
         "pl" : {
@@ -806,6 +826,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dodawane do Inbox.md w notatniku, pod dzisiejszą datą."
+          }
+        }
+      }
+    },
+    "Adds a picture of the window, which you can black out before sending" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaje obraz okna, który przed wysłaniem możesz zamalować"
           }
         }
       }
@@ -860,6 +890,16 @@
         }
       }
     },
+    "Answered by an agent, not a person" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odpowiedź od agenta AI, nie od człowieka"
+          }
+        }
+      }
+    },
     "Appearance" : {
       "localizations" : {
         "pl" : {
@@ -896,6 +936,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nie można odczytać bazy danych Notatek Apple: %@"
+          }
+        }
+      }
+    },
+    "Asked: someone will join when they can." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poproszono: ktoś dołączy, gdy tylko będzie mógł."
           }
         }
       }
@@ -940,6 +990,26 @@
         }
       }
     },
+    "Black Out Parts…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zamaluj fragmenty…"
+          }
+        }
+      }
+    },
+    "Black out what you don’t want to send" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zamaluj to, czego nie chcesz wysłać"
+          }
+        }
+      }
+    },
     "Body" : {
       "localizations" : {
         "pl" : {
@@ -966,6 +1036,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Książki na zimę"
+          }
+        }
+      }
+    },
+    "Box" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prostokąt"
+          }
+        }
+      }
+    },
+    "Brush" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pędzel"
           }
         }
       }
@@ -1086,6 +1176,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wybierz sejf…"
+          }
+        }
+      }
+    },
+    "Clear" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyczyść"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zamknij"
+          }
+        }
+      }
+    },
+    "Closed" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zamknięte"
           }
         }
       }
@@ -1840,6 +1960,16 @@
         }
       }
     },
+    "I agree" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zgadzam się"
+          }
+        }
+      }
+    },
     "Icon" : {
       "localizations" : {
         "pl" : {
@@ -2046,6 +2176,16 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "In progress" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W toku"
           }
         }
       }
@@ -2456,6 +2596,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lizbona wiosną"
+          }
+        }
+      }
+    },
+    "Live: support is here." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na żywo: pomoc techniczna jest tutaj."
           }
         }
       }
@@ -2932,6 +3082,16 @@
         }
       }
     },
+    "No reports yet." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak zgłoszeń."
+          }
+        }
+      }
+    },
     "Note" : {
       "localizations" : {
         "pl" : {
@@ -3042,6 +3202,16 @@
         }
       }
     },
+    "Nothing else." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nic więcej."
+          }
+        }
+      }
+    },
     "Nothing to save." : {
       "localizations" : {
         "pl" : {
@@ -3088,6 +3258,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pobierane są tylko łącza oznaczone {.preview}."
+          }
+        }
+      }
+    },
+    "Open" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwarte"
           }
         }
       }
@@ -3634,6 +3814,46 @@
         }
       }
     },
+    "Report a Problem" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zgłoś problem"
+          }
+        }
+      }
+    },
+    "Report a Problem: the ALIAS support desk’s client." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zgłoś problem: klient pomocy technicznej ALIAS."
+          }
+        }
+      }
+    },
+    "Report a Problem…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zgłoś problem…"
+          }
+        }
+      }
+    },
+    "Resolved" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozwiązane"
+          }
+        }
+      }
+    },
     "Restart Notes my Way" : {
       "localizations" : {
         "pl" : {
@@ -3744,6 +3964,16 @@
         }
       }
     },
+    "Screenshot" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zrzut ekranu"
+          }
+        }
+      }
+    },
     "Search" : {
       "localizations" : {
         "pl" : {
@@ -3810,6 +4040,56 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zaznaczenie: %@"
+          }
+        }
+      }
+    },
+    "Send" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyślij"
+          }
+        }
+      }
+    },
+    "Send the screenshot" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wyślij zrzut ekranu"
+          }
+        }
+      }
+    },
+    "Sending…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wysyłanie…"
+          }
+        }
+      }
+    },
+    "Sent with the report" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wysyłane ze zgłoszeniem"
+          }
+        }
+      }
+    },
+    "Sent. Support’s answer will show in Your Reports." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wysłano. Odpowiedź pomocy technicznej pojawi się w Twoich zgłoszeniach."
           }
         }
       }
@@ -4104,6 +4384,26 @@
         }
       }
     },
+    "Support" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomoc techniczna"
+          }
+        }
+      }
+    },
+    "Support is typing…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomoc techniczna pisze…"
+          }
+        }
+      }
+    },
     "Switch the open note with the </> toolbar button (⇧⌘M)." : {
       "localizations" : {
         "pl" : {
@@ -4180,6 +4480,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tagi"
+          }
+        }
+      }
+    },
+    "Talk Live" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Porozmawiaj na żywo"
           }
         }
       }
@@ -4656,6 +4966,16 @@
         }
       }
     },
+    "Waiting on you" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czeka na Ciebie"
+          }
+        }
+      }
+    },
     "Was in %@" : {
       "localizations" : {
         "pl" : {
@@ -4676,12 +4996,52 @@
         }
       }
     },
+    "What happened?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Co się stało?"
+          }
+        }
+      }
+    },
     "When a note’s first heading changes, its file is renamed after it once you pause typing or leave the note. Links to it are updated. Notes without a heading, or named “Untitled…”, keep their name." : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Gdy zmieni się pierwszy nagłówek notatki, jej plik dostaje nazwę od niego, gdy przerwiesz pisanie lub opuścisz notatkę. Łącza do niej zostaną zaktualizowane. Notatki bez nagłówka lub nazwane „Untitled…” zachowują nazwę."
+          }
+        }
+      }
+    },
+    "Write a reply" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Napisz odpowiedź"
+          }
+        }
+      }
+    },
+    "You" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ty"
+          }
+        }
+      }
+    },
+    "Your Reports" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoje zgłoszenia"
           }
         }
       }
@@ -4859,6 +5219,16 @@
         }
       }
     },
+    "support bug help feedback" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pomoc błąd zgłoszenie opinia"
+          }
+        }
+      }
+    },
     "the notebook’s folder" : {
       "localizations" : {
         "pl" : {
@@ -4875,6 +5245,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "kosz przywróć trash restore"
+          }
+        }
+      }
+    },
+    "you@example.com" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ty@example.com"
           }
         }
       }

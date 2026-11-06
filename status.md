@@ -143,6 +143,13 @@ Last updated 2026-10-29. See `spec.md` for the design.
 - Engine (MarkdownKit): menu titles, table handle menus, marker bar and undo names through `EngineStrings.localized` with its own catalog; the context menu finds the system Font submenu by its Show Fonts item, not its English title.
 - Checked in a running Mac test copy launched in Polish (sidebar, list, title, dates). **Not tried by hand:** the Language picker and Restart, iOS screens, widgets, share sheet, Siri phrases, Finder's document kinds.
 
+## Report a Problem (ALIAS)
+
+- Help › Report a Problem… (Mac), the notebook menu and the palette: ALIAS's report sheet (`AliasSupport` / `AliasSupportUI` 0.4.1) to the desk at help.getalias.support, product `notesmyway` (`apple/Support/alias-product.json`), keys `ios-1` and `macos-1` in the git-ignored `apple/App/Secrets.xcconfig` (no file: no menu item). `Integration/SupportDesk.swift`, `Views/ReportProblemView.swift`; the sheet's words come from the app's catalog (Polish too).
+- Context: screen kind, note and notebook counts (removable), editor mode, platform, app language; never titles, text or paths. The window's screenshot is taken when the sheet opens but added only by Add Screenshot; email addresses in the report text are masked (a product redaction rule).
+- Identity: the Keychain on iOS; on the Mac the data protection keychain when the build is entitled for it, else a 0600 file in the sandbox (an ad hoc build gets `KeychainError` from the keychain).
+- Checked in a running Mac test copy: a report with a screenshot reached the desk with its context, support's answer showed in Your Reports. **Not tried:** iOS, Polish, the screenshot editor, a Developer ID build's keychain.
+
 ## Known gaps (app)
 
 - Not built yet: "Move to Notebook…" for standalone files, drag-to-move in the sidebar. Palette, Recently Deleted, Move to Notebook… and the heading rename are unit-tested and built for macOS and iOS but not clicked through in the running app.

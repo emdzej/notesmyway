@@ -3,6 +3,7 @@
 Something not working, or an idea for the app?
 
 - **Read the guide first:** the [feature guide](/guide/) covers every part of the app.
+- **Report a problem from the app:** **Help › Report a Problem…** on the Mac, or **Report a Problem…** in the notebook menu on iPhone and iPad. Describe what happened and, if it helps, add a screenshot of the window, blacking out anything private. No account is needed, and the answer shows in the app under **Your Reports**. See [Privacy](/privacy) for what's sent.
 - **Report a bug or suggest a feature:** open an issue on [GitHub](https://github.com/emdzej/notesmyway/issues). Say what you did, what you expected and what happened, plus your macOS or iOS version.
 - **Contribute:** the source is on [GitHub](https://github.com/emdzej/notesmyway); see [CONTRIBUTING.md](https://github.com/emdzej/notesmyway/blob/main/CONTRIBUTING.md).
 

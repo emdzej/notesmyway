@@ -43,6 +43,9 @@ struct NotebookView: View {
         .sheet(isPresented: $session.isShowingAppleNotesImport) { AppleNotesImportView(session: session) }
         #endif
         .sheet(isPresented: $session.isShowingObsidianImport) { ObsidianImportView(session: session) }
+        .sheet(item: $session.problemReport) { report in
+            if let client = SupportDesk.client { ReportProblemView(client: client, window: report.window) }
+        }
         .sheet(isPresented: $session.isShowingPalette) {
             CommandPalette(session: session, library: library)
         }
@@ -89,7 +92,8 @@ struct NotebookView: View {
     #if DEBUG
     /// Screenshots: `-NmwScope all|pinned|folder:<path>|tag:<tag>` and
     /// `-NmwOpenNote <path in the notebook>`, applied once indexing is done;
-    /// `-NmwSettingsPage general|appearance|themes` opens that Settings page.
+    /// `-NmwSettingsPage general|appearance|themes` opens that Settings page;
+    /// `-NmwReportProblem YES` opens Report a Problem once the note shows.
     /// (Settings such as `-nmw.theme paper` or `-nmw.showsInspector YES`
     /// work as launch arguments already.)
     private func applyLaunchOptions() async {
@@ -106,6 +110,10 @@ struct NotebookView: View {
             else { session.scope = .all }
         }
         if let note = defaults.string(forKey: "NmwOpenNote") { session.selection = NotebookPath(note) }
+        if defaults.bool(forKey: "NmwReportProblem"), SupportDesk.isAvailable {
+            try? await Task.sleep(for: .seconds(1.5))
+            SupportDesk.report(from: session, notebooks: library.entries.count)
+        }
     }
     #endif
 
@@ -537,6 +545,11 @@ struct NotebookMenu: View {
             #if !os(macOS)
             Button("Settings…", systemImage: "gearshape") { session.isShowingSettings = true }
             #endif
+            if SupportDesk.isAvailable {
+                Button("Report a Problem…", systemImage: "exclamationmark.bubble") {
+                    SupportDesk.report(from: session, notebooks: library.entries.count)
+                }
+            }
             if let current = library.entries.first(where: { $0.id == library.selectedID }) {
                 // Only forgets the folder; its files stay where they are.
                 Button("Remove “\(current.name)” from Notes my Way", systemImage: "minus.circle") { library.remove(current) }

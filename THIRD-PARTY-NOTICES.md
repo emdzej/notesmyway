@@ -13,6 +13,7 @@ full text, in **Settings › About** (the text files are in
 | [highlight.js](https://highlightjs.org) (inside HighlighterSwift) | Code highlighting | BSD 3-Clause | 2006-2026 Josh Goebel and contributors |
 | [SwiftMath](https://github.com/mgriebling/SwiftMath) | LaTeX formulas | MIT | 2023 Computer Inspirations |
 | SwiftMath's math fonts (STIX, Latin Modern and others) | LaTeX formulas | SIL Open Font License, GUST Font License | their authors |
+| [AliasSupport](https://github.com/emdzej/alias-client-swift) | Report a Problem (the ALIAS support desk) | MIT | 2026 Michał Jaskólski |
 
 When adding a dependency, add its licence file to that folder, add an entry to `Acknowledgement.all` in
 `Views/AboutView.swift`, and add a row here.

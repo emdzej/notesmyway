@@ -16,3 +16,5 @@ docs/.vitepress/dist/
 docs/.vitepress/cache/
 # Machine-specific notes for agents (devices, signing)
 AGENTS.local.md
+# ALIAS product keys (Report a Problem); see apple/App/Support.xcconfig
+apple/App/Secrets.xcconfig
